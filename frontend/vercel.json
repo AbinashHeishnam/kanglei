@@ -1,4 +1,5 @@
 {
-    "cleanUrls": true,
-    "trailingSlash": false
+  "outputDirectory": "frontend/dist",
+  "cleanUrls": true,
+  "trailingSlash": false
 }
