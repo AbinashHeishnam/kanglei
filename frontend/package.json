@@ -8,6 +8,7 @@
     "build:css": "mkdir -p dist/css && npx tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --minify",
     "build:static": "mkdir -p dist && cp -r src/*.html dist/ && cp -r src/admin dist/ && cp -r src/js dist/ && (test -d src/assets && cp -r src/assets dist/ || true) && (test -d src/img && cp -r src/img dist/ || true)",
     "build": "npm run clean && npm run build:static && npm run build:css",
+    "build": "tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --minify && rm -rf ./src/dist && mkdir -p ./src/dist/css && cp -r ./dist/css/style.css ./src/dist/css/style.css",
     "start": "python3 -m http.server 5173 --directory dist"
   },
   "devDependencies": {
