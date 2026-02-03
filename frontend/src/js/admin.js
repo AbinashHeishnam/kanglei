@@ -1,0 +1,441 @@
+import { apiPost, apiGet, apiPatch, apiPostForm, apiDelete, toAssetUrl, API_BASE } from './api.js';
+import { showToast } from './app.js';
+
+// Paths (Relative to help plain static server)
+const LOGIN_PAGE = 'login.html';
+const DASHBOARD_PAGE = 'index.html';
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Determine Page Type
+    const isLoginPage = !!document.getElementById('login-form');
+    const isDashboard = !!document.getElementById('appointments-tbody');
+    const isGallery = !!document.getElementById('gallery-grid');
+
+    // DEBUG: Populate debug info on login page
+    const debugInfo = document.getElementById('debug-info');
+    if (debugInfo) {
+        debugInfo.textContent = `API_BASE: ${API_BASE}`;
+    }
+
+    // 1. Auth Guard (Skip if on Login Page)
+    if (!isLoginPage) {
+        const token = localStorage.getItem('kanglei_admin_token');
+        if (!token) {
+            window.location.href = LOGIN_PAGE;
+            return;
+        }
+    }
+
+    // 2. Init Logic
+    if (isLoginPage) initLogin();
+    if (isDashboard) initDashboard();
+    if (isGallery) initGallery();
+
+    // Global Logout
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('Sign out?')) {
+                localStorage.removeItem('kanglei_admin_token');
+                window.location.href = LOGIN_PAGE;
+            }
+        });
+    }
+
+    // Expose for usage in HTML onclick
+    window.updateStatus = updateStatus;
+});
+
+// ... Login Init Code ... (Keep initLogin intact via diff logic if not included, but here I must match context)
+// To avoid huge replacement, I'll skip initLogin body in this chunk if possible, or include it if range demands.
+// The range I selected (1-137) includes initLogin. So I have to include it or split.
+// Let's replace only the top section first (1-7) to update imports? No, I need state variables later down.
+// Let's stick to replacing lines 1-137 means I need to re-print initLogin.
+// Wait, I can just replacements of smaller blocks.
+// Let's replace just line 1 first.
+
+
+// --- LOGIN PAGE ---
+function initLogin() {
+    // If already logged in, go to dashboard
+    if (localStorage.getItem('kanglei_admin_token')) {
+        window.location.href = DASHBOARD_PAGE;
+        return;
+    }
+
+    const form = document.getElementById('login-form');
+    const errorDiv = document.getElementById('login-error');
+    const loading = document.getElementById('login-loading');
+    const debugErr = document.getElementById('debug-error');
+
+    const toggleBtn = document.getElementById('toggle-password');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const input = document.getElementById('password-input');
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+
+            // Toggle Icon
+            if (type === 'text') {
+                toggleBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                    </svg>
+                `;
+            } else {
+                toggleBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                `;
+            }
+        });
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Reset UI
+        errorDiv.classList.add('hidden');
+        if (debugErr) debugErr.classList.add('hidden');
+        loading.classList.remove('hidden');
+
+        // Capture data
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // Basic validation
+        if (!data.username || !data.password) {
+            errorDiv.textContent = 'Please enter both username and password.';
+            errorDiv.classList.remove('hidden');
+            loading.classList.add('hidden');
+            return;
+        }
+
+        try {
+            // Expected: POST /auth/login with JSON body
+            const res = await apiPost('/auth/login', data);
+
+            if (res.access_token) {
+                localStorage.setItem('kanglei_admin_token', res.access_token);
+                window.location.href = DASHBOARD_PAGE;
+            } else {
+                throw new Error('No access token in response');
+            }
+        } catch (err) {
+            console.error("Login failed:", err);
+            errorDiv.textContent = err.message || 'Login failed. Check console.';
+            errorDiv.classList.remove('hidden');
+
+            if (debugErr) {
+                debugErr.textContent = `Error: ${err.message}\nIf connection refused, check if backend is running on port 8000.`;
+                debugErr.classList.remove('hidden');
+            }
+        } finally {
+            loading.classList.add('hidden');
+        }
+    });
+}
+
+// --- DASHBOARD (APPOINTMENTS) ---
+let currentLimit = 50;
+let currentOffset = 0;
+let selectedIds = new Set();
+let loadedAppointments = [];
+
+function initDashboard() {
+    // Event bindings
+    document.getElementById('apply-filters').addEventListener('click', () => {
+        currentOffset = 0;
+        loadAppointments();
+    });
+
+    document.getElementById('prev-page').addEventListener('click', () => {
+        if (currentOffset >= currentLimit) {
+            currentOffset -= currentLimit;
+            loadAppointments();
+        }
+    });
+
+    document.getElementById('next-page').addEventListener('click', () => {
+        currentOffset += currentLimit;
+        loadAppointments();
+    });
+
+    document.getElementById('export-excel').addEventListener('click', () => downloadExport('xlsx'));
+    document.getElementById('export-csv').addEventListener('click', () => downloadExport('csv'));
+
+    // Selection Logic
+    const selectAllCb = document.getElementById('select-all');
+
+    selectAllCb.addEventListener('change', (e) => {
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = e.target.checked;
+            const id = parseInt(cb.dataset.id);
+            if (e.target.checked) selectedIds.add(id);
+            else selectedIds.delete(id);
+        });
+        updateDeleteButton();
+    });
+
+    // Delegated event for row selection
+    document.getElementById('appointments-tbody').addEventListener('change', (e) => {
+        if (e.target.classList.contains('row-checkbox')) {
+            const id = parseInt(e.target.dataset.id);
+            if (e.target.checked) selectedIds.add(id);
+            else selectedIds.delete(id);
+
+            // Update Select All state
+            const all = document.querySelectorAll('.row-checkbox');
+            const checked = document.querySelectorAll('.row-checkbox:checked');
+            selectAllCb.checked = all.length > 0 && all.length === checked.length;
+            selectAllCb.indeterminate = checked.length > 0 && checked.length < all.length;
+
+            updateDeleteButton();
+        }
+    });
+
+    // Delete Flow
+    const deleteBtn = document.getElementById('delete-selected-btn');
+    const modal = document.getElementById('delete-modal');
+    const cancelBtn = document.getElementById('cancel-delete');
+    const confirmBtn = document.getElementById('confirm-delete');
+    const deleteMsg = document.getElementById('delete-msg');
+
+    deleteBtn.addEventListener('click', () => {
+        if (selectedIds.size === 0) return;
+        deleteMsg.textContent = `This action cannot be undone. You are about to delete ${selectedIds.size} appointment(s).`;
+        modal.classList.remove('hidden');
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+
+    confirmBtn.addEventListener('click', async () => {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Deleting...';
+
+        try {
+            // Sequential delete loop since no bulk endpoint yet
+            const ids = Array.from(selectedIds);
+            let successCount = 0;
+
+            for (const id of ids) {
+                try {
+                    await apiDelete(`/admin/appointments/${id}`, true);
+                    successCount++;
+                } catch (e) {
+                    console.error(`Failed to delete ${id}`, e);
+                }
+            }
+
+            modal.classList.add('hidden');
+            showToast(`Deleted ${successCount} appointment(s)`);
+
+            // Refresh
+            selectedIds.clear();
+            updateDeleteButton();
+            document.getElementById('select-all').checked = false;
+            loadAppointments();
+
+        } catch (err) {
+            console.error(err);
+            showToast('Error processing deletion', 'error');
+        } finally {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Delete';
+            modal.classList.add('hidden');
+        }
+    });
+
+    loadAppointments();
+}
+
+function updateDeleteButton() {
+    const btn = document.getElementById('delete-selected-btn');
+    const countSpan = document.getElementById('selected-count');
+
+    if (selectedIds.size > 0) {
+        btn.disabled = false;
+        countSpan.textContent = `(${selectedIds.size})`;
+        countSpan.classList.remove('hidden');
+    } else {
+        btn.disabled = true;
+        countSpan.textContent = '';
+        countSpan.classList.add('hidden');
+    }
+}
+
+async function loadAppointments() {
+    const tbody = document.getElementById('appointments-tbody');
+    const searchQ = document.getElementById('search-q').value || '';
+
+    // Reset selection on page load
+    selectedIds.clear();
+    updateDeleteButton();
+    const selectAll = document.getElementById('select-all');
+    if (selectAll) selectAll.checked = false;
+
+    // Provide loading state
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-400">Loading...</td></tr>`;
+
+    const params = new URLSearchParams({
+        limit: currentLimit,
+        offset: currentOffset
+    });
+    if (searchQ) params.append('q', searchQ);
+
+    try {
+        const data = await apiGet(`/admin/appointments?${params.toString()}`, true); // auth=true
+        loadedAppointments = data || [];
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-500">No appointments found.</td></tr>`;
+            document.getElementById('page-info').textContent = '0 results';
+            return;
+        }
+
+        tbody.innerHTML = data.map((apt, index) => `
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-t border-slate-100 dark:border-slate-800 transition-colors">
+                <td class="py-3 px-4 text-center align-middle">
+                    <input type="checkbox" data-id="${apt.id}" class="row-checkbox rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                </td>
+                <td class="py-3 px-4 text-xs font-mono text-slate-500 align-middle">
+                    ${currentOffset + index + 1}
+                </td>
+                <td class="py-3 px-4 text-sm font-medium text-slate-900 dark:text-white align-middle">
+                    ${apt.name}
+                </td>
+                <td class="py-3 px-4 text-sm font-mono text-slate-600 dark:text-slate-400 align-middle">
+                    ${apt.phone}
+                </td>
+                <td class="py-3 px-4 align-middle">
+                    <div class="text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate" title="${apt.message || ''}">
+                        ${apt.message || '-'}
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        document.getElementById('page-info').textContent = `Showing ${currentOffset + 1} - ${currentOffset + data.length}`;
+
+    } catch (err) {
+        console.error("Load failed", err);
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-red-500">Error loading data.</td></tr>`;
+    }
+}
+
+async function updateStatus(id, newStatus) {
+    try {
+        await apiPatch(`/admin/appointments/${id}/status`, { status: newStatus }, true);
+        showToast(`Updated appointment #${id} to ${newStatus}`);
+    } catch (err) {
+        console.error(err);
+        showToast(`Failed to update status: ${err.message}`, 'error');
+    }
+}
+
+async function downloadExport(format) {
+    const token = localStorage.getItem('kanglei_admin_token');
+    if (!token) return;
+
+    showToast(`Downloading ${format.toUpperCase()}...`);
+    try {
+        const res = await fetch(`${API_BASE}/admin/appointments/export?format=${format}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Download failed');
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `appointments.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (err) {
+        showToast('Export failed', 'error');
+    }
+}
+
+// --- GALLERY PAGE ---
+function initGallery() {
+    loadGalleryImages();
+
+    document.getElementById('refresh-btn').addEventListener('click', loadGalleryImages);
+
+    const form = document.getElementById('gallery-upload-form');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button[type="submit"]');
+        const origText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Uploading...';
+
+        try {
+            const formData = new FormData(form);
+            await apiPostForm('/admin/gallery', formData, true);
+            showToast('Image uploaded successfully');
+            form.reset();
+            loadGalleryImages(); // Refresh grid
+        } catch (err) {
+            console.error(err);
+            showToast(err.message || 'Upload failed', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = origText;
+        }
+    });
+}
+
+async function loadGalleryImages() {
+    const grid = document.getElementById('gallery-grid');
+    grid.innerHTML = `<div class="col-span-full h-32 flex items-center justify-center text-gray-400">Loading...</div>`;
+
+    try {
+        const images = await apiGet('/gallery'); // Public read
+
+        if (!images || images.length === 0) {
+            grid.innerHTML = `<div class="col-span-full h-32 flex items-center justify-center text-gray-500">No images found.</div>`;
+            return;
+        }
+
+        grid.innerHTML = images.map(img => `
+            <div class="relative aspect-square group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
+                <img src="${toAssetUrl(img.image_url)}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                    <p class="text-white text-xs truncate w-full mb-2">${img.caption || 'No caption'}</p>
+                    <button onclick="deleteGalleryImage(${img.id})" class="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1.5 rounded transition-colors w-full">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        grid.innerHTML = `<div class="col-span-full h-32 flex items-center justify-center text-red-500">Failed to load gallery.</div>`;
+    }
+}
+
+async function deleteGalleryImage(id) {
+    if (!confirm('Are you sure you want to delete this image?')) return;
+
+    try {
+        await import('./api.js').then(m => m.apiDelete(`/admin/gallery/${id}`, true));
+        showToast('Image deleted');
+        loadGalleryImages();
+    } catch (err) {
+        console.error(err);
+        showToast('Failed to delete image', 'error');
+    }
+}
+
+// Expose to window
+window.deleteGalleryImage = deleteGalleryImage;

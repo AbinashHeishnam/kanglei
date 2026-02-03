@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Kanglei Career</title>
+    <link rel="stylesheet" href="../../dist/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body
+    class="bg-gray-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans antialiased min-h-screen flex items-center justify-center p-4">
+
+    <!-- Header -->
+    <nav class="absolute top-0 left-0 w-full p-4 sm:p-6 flex justify-between items-center z-10">
+        <a href="../index.html"
+            class="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to Home
+        </a>
+        <button id="theme-toggle"
+            class="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+            <span class="sr-only">Toggle Theme</span>
+            <!-- Sun -->
+            <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                </path>
+            </svg>
+            <!-- Moon -->
+            <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+        </button>
+    </nav>
+
+    <div class="w-full max-w-md relative z-0">
+
+        <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <img src="../img/logo.png" alt="Admin Logo"
+                        class="w-16 h-16 rounded-full object-cover mx-auto mb-4 shadow-lg shadow-blue-500/30">
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Admin Portal</h1>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2">Sign in to manage the platform</p>
+                </div>
+
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Username</label>
+                        <input type="text" name="username" required
+                            class="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-slate-400"
+                            placeholder="Enter username">
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password" name="password" id="password-input" required
+                                class="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-slate-400 pr-10"
+                                placeholder="••••••••">
+                            <button type="button" id="toggle-password"
+                                class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Errors -->
+                    <div id="login-error"
+                        class="hidden text-red-600 text-sm p-3 bg-red-50 dark:bg-red-900/20 rounded-lg text-center font-medium border border-red-200 dark:border-red-900">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                        <span>Sign In</span>
+                        <div id="login-loading"
+                            class="hidden w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin">
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="../js/app.js"></script>
+    <script type="module" src="../js/admin.js"></script>
+</body>
+
+</html>

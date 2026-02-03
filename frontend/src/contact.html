@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Kanglei Career Solution</title>
+    <link rel="stylesheet" href="../dist/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 font-sans antialiased opacity-0">
+
+    <header class="fixed w-full top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 sm:h-20">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img src="./img/logo.png" alt="Kanglei Career Solution Logo"
+                            class="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover">
+                        <span
+                            class="font-bold text-lg sm:text-xl tracking-tight block truncate max-w-[200px] sm:max-w-none">Kanglei
+                            Career Solution</span>
+                    </a>
+                </div>
+                <nav class="hidden md:flex items-center gap-6 lg:gap-8">
+                    <a href="index.html"
+                        class="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors text-sm lg:text-base">Home</a>
+                    <a href="about.html"
+                        class="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors text-sm lg:text-base">About</a>
+                    <a href="services.html"
+                        class="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors text-sm lg:text-base">Services</a>
+                    <a href="contact.html" class="text-blue-600 font-medium text-sm lg:text-base">Contact</a>
+                    <button id="theme-toggle"
+                        class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            </path>
+                        </svg>
+                        <svg class="w-5 h-5 hidden dark:block text-yellow-500" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                    </button>
+                    <a href="services.html#book"
+                        class="bg-blue-600 text-white px-5 py-2 lg:px-6 lg:py-2.5 rounded-full font-medium text-sm lg:text-base shadow-lg hover:bg-blue-700 transition-all">Book
+                        Now</a>
+                </nav>
+                <div class="md:hidden flex items-center gap-4">
+                    <button id="theme-toggle-mobile" class="theme-toggle-mirror p-2 text-gray-600 dark:text-gray-300">
+                        <svg class="w-6 h-6 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            </path>
+                        </svg>
+                        <svg class="w-6 h-6 hidden dark:block text-yellow-500" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                    </button>
+                    <button id="mobile-menu-btn" class="text-gray-600 dark:text-gray-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu"
+            class="hidden md:hidden absolute top-16 sm:top-20 left-0 w-full bg-white dark:bg-gray-900 shadow-xl border-t dark:border-gray-800 p-4 flex flex-col gap-4">
+            <a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 py-2">Home</a>
+            <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 py-2">About</a>
+            <a href="services.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 py-2">Services</a>
+            <a href="contact.html" class="text-blue-600 font-medium py-2">Contact</a>
+            <a href="services.html#book"
+                class="bg-blue-600 text-white px-4 py-3 rounded-xl text-center shadow-lg font-medium">Book
+                Appointment</a>
+        </div>
+    </header>
+
+    <main class="pt-24 pb-12 sm:pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 sm:mb-16 reveal">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4">Contact Us</h1>
+                <p class="text-gray-600 dark:text-gray-400">Get in touch with us for any queries.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
+                <!-- Info -->
+                <div class="space-y-6 sm:space-y-8 reveal">
+                    <div class="glass p-6 sm:p-8 rounded-2xl">
+                        <h3 class="text-lg sm:text-xl font-bold mb-4">Office Address</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                            123 Career Street,<br>
+                            Imphal, Manipur - 795001<br>
+                            India
+                        </p>
+                    </div>
+
+                    <div class="glass p-6 sm:p-8 rounded-2xl">
+                        <h3 class="text-lg sm:text-xl font-bold mb-4">Contact Info</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-2 text-sm sm:text-base">Phone: +91 98765 43210</p>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm sm:text-base">Email:
+                            info@kangleicareer.com</p>
+
+                        <a href="https://wa.me/919876543210"
+                            class="inline-flex items-center gap-2 text-green-600 font-bold hover:underline text-sm sm:text-base">
+                            Chat on WhatsApp
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Form placeholder -->
+                <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg reveal delay-100">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-6">Send a Message</h3>
+                    <form class="space-y-4">
+                        <input type="text" placeholder="Your Name"
+                            class="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="email" placeholder="Your Email"
+                            class="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 outline-none focus:ring-2 focus:ring-blue-500">
+                        <textarea placeholder="Message" rows="4"
+                            class="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        <button type="button"
+                            class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">Send
+                            Message</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Map Stub -->
+            <div
+                class="mt-12 w-full h-[260px] sm:h-[320px] lg:h-[380px] bg-gray-200 dark:bg-gray-800 rounded-2xl flex items-center justify-center reveal delay-200 overflow-hidden">
+                <p class="text-gray-500">Google Map Placeholder</p>
+                <!-- Iframe would go here with w-full h-full -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 text-center sm:text-left">
+                <div>
+                    <div
+                        class="text-white font-bold text-xl mb-4 flex items-center justify-center sm:justify-start gap-2">
+                        <div class="w-8 h-8 rounded bg-blue-600 flex items-center justify-center">K</div>
+                        Kanglei Career
+                    </div>
+                    <p class="text-sm">Empowering students and professionals to achieve their career goals through
+                        expert guidance.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="services.html" class="hover:text-white transition-colors">Services</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li>Imphal, Manipur, India</li>
+                        <li>+91 98765 43210</li>
+                        <li>info@kangleicareer.com</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Follow Us</h4>
+                    <div class="flex gap-4 justify-center sm:justify-start">
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">FB</a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-400 hover:text-white transition-all">TW</a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all">IG</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-sm">
+                <p>&copy; <span id="year"></span> Kanglei Career Solution. All rights reserved.</p>
+                <p class="mt-2">Designed by <a href="https://saiyonix.vercel.app" target="_blank"
+                        rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 transition-colors">Sayonix
+                        Pvt. Ltd.</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+    <script type="module" src="./js/app.js"></script>
+</body>
+
+</html>
