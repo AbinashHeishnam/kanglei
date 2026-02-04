@@ -1,9 +1,3 @@
-/**
- * GLOBAL API CONFIG (works with normal <script> tags)
- * - Dev: localhost backend
- * - Prod: Render backend
- */
-
 (function () {
   const IS_LOCAL =
     window.location.hostname === "127.0.0.1" ||
@@ -27,27 +21,20 @@
     return `${API_ORIGIN}/${clean}`;
   }
 
-  async function apiRequest(endpoint, method = "GET", body = null, auth = false, isJson = true) {
-    const headers = { Accept: "application/json" };
-    if (isJson) headers["Content-Type"] = "application/json";
+  async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
+    const headers = { Accept: "application/json", "Content-Type": "application/json" };
     if (auth) Object.assign(headers, authHeader());
 
     const res = await fetch(`${API_BASE}${endpoint}`, {
       method,
       headers,
-      body: body ? (isJson ? JSON.stringify(body) : body) : undefined,
+      body: body ? JSON.stringify(body) : undefined,
     });
 
-    // read ONCE (fixes "body stream already read")
+    // READ ONCE (fixes body stream already read)
     const text = await res.text();
 
-    if (res.status === 401 && auth) {
-      localStorage.removeItem("kanglei_admin_token");
-      throw new Error("Unauthorized");
-    }
-
     if (!res.ok) {
-      // try parse json error
       try {
         const j = text ? JSON.parse(text) : null;
         throw new Error(j?.detail || `HTTP ${res.status}`);
@@ -56,47 +43,15 @@
       }
     }
 
-    // parse json
-    try {
-      return text ? JSON.parse(text) : null;
-    } catch {
-      return text;
-    }
-  }
-
-  async function apiPostForm(endpoint, formData, auth = true) {
-    const headers = { Accept: "application/json" };
-    if (auth) Object.assign(headers, authHeader());
-
-    const res = await fetch(`${API_BASE}${endpoint}`, {
-      method: "POST",
-      headers,
-      body: formData,
-    });
-
-    const text = await res.text();
-
-    if (res.status === 401 && auth) {
-      localStorage.removeItem("kanglei_admin_token");
-      throw new Error("Unauthorized");
-    }
-
-    if (!res.ok) {
-      throw new Error(text || `HTTP ${res.status}`);
-    }
-
     return text ? JSON.parse(text) : null;
   }
 
-  // expose globals (so admin.js can use them)
   window.API_ORIGIN = API_ORIGIN;
   window.API_BASE = API_BASE;
-  window.toAssetUrl = toAssetUrl;
-  window.authHeader = authHeader;
 
-  window.apiGet = (endpoint, auth = false) => apiRequest(endpoint, "GET", null, auth, true);
-  window.apiPost = (endpoint, body, auth = false) => apiRequest(endpoint, "POST", body, auth, true);
-  window.apiPatch = (endpoint, body, auth = true) => apiRequest(endpoint, "PATCH", body, auth, true);
-  window.apiDelete = (endpoint, auth = true) => apiRequest(endpoint, "DELETE", null, auth, false);
-  window.apiPostForm = apiPostForm;
+  window.toAssetUrl = toAssetUrl;
+  window.apiGet = (e, auth=false) => apiRequest(e, "GET", null, auth);
+  window.apiPost = (e, b, auth=false) => apiRequest(e, "POST", b, auth);
+  window.apiPatch = (e, b, auth=true) => apiRequest(e, "PATCH", b, auth);
+  window.apiDelete = (e, auth=true) => apiRequest(e, "DELETE", null, auth);
 })();
