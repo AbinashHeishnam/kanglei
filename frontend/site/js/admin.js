@@ -1,7 +1,5 @@
 import { apiPost, apiGet, apiPatch, apiPostForm, apiDelete, toAssetUrl, API_BASE } from './api.js';
 import { showToast } from './app.js';
-import { apiPost } from './api.js';
-import { apiPost, apiGet, toAssetUrl } from "./api.js";
 
 // Paths (Relative to help plain static server)
 const LOGIN_PAGE = 'login.html';
@@ -384,27 +382,28 @@ function initGallery() {
 
     document.getElementById('refresh-btn').addEventListener('click', loadGalleryImages);
 
-    const form = document.querySelector("#loginForm");
-
-    form.addEventListener("submit", async (e) => {
+    const form = document.getElementById('gallery-upload-form');
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        const username = document.querySelector("#username").value;
-        const password = document.querySelector("#password").value;
+        const btn = form.querySelector('button[type="submit"]');
+        const origText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Uploading...';
 
         try {
-            const res = await apiPost("/auth/login", {
-                username,
-                password
-            });
-
-            localStorage.setItem("kanglei_admin_token", res.access_token);
-            window.location.href = "./index.html";
+            const formData = new FormData(form);
+            await apiPostForm('/admin/gallery', formData, true);
+            showToast('Image uploaded successfully');
+            form.reset();
+            loadGalleryImages(); // Refresh grid
         } catch (err) {
-            alert("Login failed: " + err.message);
+            console.error(err);
+            showToast(err.message || 'Upload failed', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = origText;
         }
     });
-
 }
 
 async function loadGalleryImages() {
