@@ -24,13 +24,17 @@ def getenv(key: str, default: str | None = None) -> str:
 ENV = os.getenv("ENV", "development")
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
-DB_HOST = getenv("DB_HOST")
-DB_PORT = getenv("DB_PORT")
-DB_NAME = getenv("DB_NAME")
-DB_USER = getenv("DB_USER")
-DB_PASSWORD = getenv("DB_PASSWORD")
+# --- DB config (Render-friendly) ---
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+if not DATABASE_URL:
+    DB_HOST = getenv("DB_HOST")
+    DB_PORT = getenv("DB_PORT")
+    DB_NAME = getenv("DB_NAME")
+    DB_USER = getenv("DB_USER")
+    DB_PASSWORD = getenv("DB_PASSWORD")
+    DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
 
 SECRET_KEY = getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
