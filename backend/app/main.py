@@ -11,13 +11,27 @@ from app.core.config import DEBUG
 app = FastAPI(title="Kanglei Career Solution API")
 
 # CORS for frontend dev + production
+from fastapi.middleware.cors import CORSMiddleware
+import os
+
+FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "").strip()
+
+origins = []
+if FRONTEND_ORIGIN:
+    origins = [FRONTEND_ORIGIN]
+else:
+    # fallback for local dev
+    origins = ["http://localhost:5173", "http://127.0.0.1:5500", "http://localhost:5500"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-    "https://kanglei.netlify.app"
-],
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+
+
+
 # tighten in production later
     allow_credentials=True,
     allow_methods=["*"],
