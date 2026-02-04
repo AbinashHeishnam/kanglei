@@ -33,6 +33,7 @@ def on_startup():
 # backend/app/static_uploads/gallery -> /uploads/gallery/...
 uploads_dir = os.path.join(os.path.dirname(__file__), "static_uploads")
 os.makedirs(os.path.join(uploads_dir, "gallery"), exist_ok=True)
+os.makedirs(os.path.join(uploads_dir, "events"), exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
 app.include_router(api_router)
