@@ -27,6 +27,9 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 # --- DB config (Render-friendly) ---
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
+# --- DB CONFIG (Render/Prod friendly) ---
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 if not DATABASE_URL:
     DB_HOST = getenv("DB_HOST")
     DB_PORT = getenv("DB_PORT")
@@ -36,7 +39,11 @@ if not DATABASE_URL:
     DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
-SECRET_KEY = getenv("SECRET_KEY")
+
+SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("JWT_SECRET")
+if not SECRET_KEY:
+    raise RuntimeError("Missing required env var: SECRET_KEY (or JWT_SECRET)")
+
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 
