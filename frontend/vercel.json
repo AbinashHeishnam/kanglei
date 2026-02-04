@@ -19,6 +19,10 @@
             "destination": "/contact.html"
         },
         {
+            "source": "/login",
+            "destination": "/admin/login"
+        },
+        {
             "source": "/admin",
             "destination": "/admin/index.html"
         },
