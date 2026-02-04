@@ -1,25 +1,17 @@
-// frontend/site/js/api.js
-
-const isLocal =
+const IS_LOCAL =
   window.location.hostname === "127.0.0.1" ||
   window.location.hostname === "localhost";
 
-// ✅ Put your Render backend base here (NO trailing slash)
-const PROD_API_ORIGIN = "https://kanglei.onrender.com";
-
-// ✅ API base used for all REST calls
-export const API_BASE = isLocal
-  ? "http://127.0.0.1:8000/api/v1"
-  : `${PROD_API_ORIGIN}/api/v1`;
-
-// ✅ Origin used for building absolute URLs for uploaded assets
-export const API_ORIGIN = isLocal
+export const API_ORIGIN = IS_LOCAL
   ? "http://127.0.0.1:8000"
-  : PROD_API_ORIGIN;
+  : "https://kanglei.onrender.com"; // Render backend
+
+export const API_BASE = `${API_ORIGIN}/api/v1`;
 
 export function toAssetUrl(path) {
   if (!path) return "https://via.placeholder.com/400x300?text=No+Image";
   if (path.startsWith("http")) return path;
+
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
   return `${API_ORIGIN}/${cleanPath}`;
 }
@@ -37,77 +29,57 @@ async function apiRequest(endpoint, method = "GET", body = null, isJson = true, 
 
   if (auth) Object.assign(headers, authHeader());
 
-  const config = { method, headers };
+  const config = {
+    method,
+    headers,
+  };
 
   if (body) {
     config.body = isJson ? JSON.stringify(body) : body;
   }
 
-  const url = `${API_BASE}${endpoint}`;
+  const response = await fetch(`${API_BASE}${endpoint}`, config);
 
-  try {
-    const response = await fetch(url, config);
-
-    // Auth Error Handling
-    if (response.status === 401 && auth) {
-      console.warn("Unauthorized access. Clearing token and redirecting.");
-      localStorage.removeItem("kanglei_admin_token");
-
-      // ✅ More reliable redirect (works from /admin/* pages)
-      if (!window.location.pathname.includes("login.html")) {
-        const base = window.location.pathname.includes("/admin/") ? "/admin/" : "/";
-        window.location.href = `${base}login.html`;
-      }
-
-      throw new Error("Unauthorized");
+  if (response.status === 401 && auth) {
+    localStorage.removeItem("kanglei_admin_token");
+    if (!window.location.pathname.includes("login.html")) {
+      window.location.href = "./login.html";
     }
-
-    if (!response.ok) {
-      let errorMsg = `HTTP error! status: ${response.status}`;
-
-      try {
-        const errData = await response.json();
-        if (errData.detail) errorMsg = errData.detail;
-      } catch (e) {
-        const text = await response.text();
-        if (text) errorMsg += ` - ${text.substring(0, 120)}`;
-      }
-
-      throw new Error(errorMsg);
-    }
-
-    // Some DELETE endpoints might return empty response
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) return null;
-
-    return await response.json();
-  } catch (err) {
-    throw err;
+    throw new Error("Unauthorized");
   }
+
+  if (!response.ok) {
+    let errorMsg = `HTTP error! status: ${response.status}`;
+    try {
+      const errData = await response.json();
+      if (errData.detail) errorMsg = errData.detail;
+    } catch {
+      const text = await response.text();
+      if (text) errorMsg += ` - ${text.substring(0, 80)}`;
+    }
+    throw new Error(errorMsg);
+  }
+
+  return await response.json();
 }
 
-export async function apiGet(endpoint, auth = false) {
-  return apiRequest(endpoint, "GET", null, true, auth);
-}
+export const apiGet = (endpoint, auth = false) =>
+  apiRequest(endpoint, "GET", null, true, auth);
 
-export async function apiPost(endpoint, body, auth = false) {
-  return apiRequest(endpoint, "POST", body, true, auth);
-}
+export const apiPost = (endpoint, body, auth = false) =>
+  apiRequest(endpoint, "POST", body, true, auth);
 
-export async function apiPatch(endpoint, body, auth = true) {
-  return apiRequest(endpoint, "PATCH", body, true, auth);
-}
+export const apiPatch = (endpoint, body, auth = true) =>
+  apiRequest(endpoint, "PATCH", body, true, auth);
 
-export async function apiDelete(endpoint, auth = true) {
-  return apiRequest(endpoint, "DELETE", null, false, auth);
-}
+export const apiDelete = (endpoint, auth = true) =>
+  apiRequest(endpoint, "DELETE", null, false, auth);
 
 export async function apiPostForm(endpoint, formData, auth = true) {
   const headers = { Accept: "application/json" };
   if (auth) Object.assign(headers, authHeader());
 
-  const url = `${API_BASE}${endpoint}`;
-  const response = await fetch(url, {
+  const response = await fetch(`${API_BASE}${endpoint}`, {
     method: "POST",
     headers,
     body: formData,
@@ -115,10 +87,7 @@ export async function apiPostForm(endpoint, formData, auth = true) {
 
   if (response.status === 401) {
     localStorage.removeItem("kanglei_admin_token");
-    if (!window.location.pathname.includes("login.html")) {
-      const base = window.location.pathname.includes("/admin/") ? "/admin/" : "/";
-      window.location.href = `${base}login.html`;
-    }
+    window.location.href = "./login.html";
     throw new Error("Unauthorized");
   }
 
