@@ -1,0 +1,10 @@
+/admin            /admin/index.html     200
+/admin/login      /admin/login.html     200
+/admin/gallery    /admin/gallery.html   200
+/admin/events     /admin/events.html    200
+
+/login            /admin/login.html     200
+
+/about            /about.html           200
+/services         /services.html        200
+/contact          /contact.html         200
