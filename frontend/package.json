@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --watch",
-    "clean": "rm -rf dist",
-    "build:css": "mkdir -p dist/css && npx tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --minify",
-    "build:static": "mkdir -p dist && cp -r src/*.html dist/ && cp -r src/admin dist/ && cp -r src/js dist/ && (test -d src/assets && cp -r src/assets dist/ || true) && (test -d src/img && cp -r src/img dist/ || true)",
-    "build": "npx tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --minify && rm -rf ./site && mkdir -p ./site && cp -r ./src/* ./site/ && mkdir -p ./site/dist/css && cp ./dist/css/style.css ./site/dist/css/style.css"
+    "dev": "tailwindcss -i ./src/css/input.css -o ./site/css/style.css --watch",
+    "clean": "rm -rf site/css/style.css",
+    "build:css": "mkdir -p site/css && npx tailwindcss -i ./src/css/input.css -o ./site/css/style.css --minify",
+    "build": "npm run build:css"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.24",

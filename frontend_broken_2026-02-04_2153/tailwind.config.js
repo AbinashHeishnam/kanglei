@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  content: ["./src/**/*.{html,js}", "./site/**/*.{html,js}"],
+  content: ["./src/**/*.{html,js}"],
   theme: {
     extend: {
       colors: {
@@ -17,11 +17,6 @@ module.exports = {
           800: '#1e40af',
           900: '#1e3a8a',
           950: '#172554',
-        },
-        dark: {
-          bg: '#0f172a',
-          card: '#1e293b',
-          text: '#f8fafc'
         }
       },
       fontFamily: {
@@ -30,7 +25,6 @@ module.exports = {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out forwards',
         'slide-up': 'slideUp 0.8s ease-out forwards',
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {

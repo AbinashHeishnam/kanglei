@@ -6,17 +6,46 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Theme Management with Smooth Transitions
-// Theme Management (Enforced Light Mode)
 function initTheme() {
+    const themeToggles = document.querySelectorAll("[data-theme-toggle]");
     const root = document.documentElement;
 
-    // Always enforce light mode
-    root.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
+    function setTheme(theme, withTransition = false) {
+        // Add transition class for smooth theme switching
+        if (withTransition) {
+            root.classList.add('theme-transitioning');
+        }
 
-    // Remove toggle buttons if they exist
-    const themeToggles = document.querySelectorAll("[data-theme-toggle]");
-    themeToggles.forEach(btn => btn.remove());
+        if (theme === "dark") {
+            root.classList.add("dark");
+            localStorage.setItem("theme", "dark");
+        } else {
+            root.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+        }
+
+        // Remove transition class after animation completes
+        if (withTransition) {
+            setTimeout(() => {
+                root.classList.remove('theme-transitioning');
+            }, 500); // Match CSS transition duration
+        }
+    }
+
+    // Init on load (no transition on initial load)
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+        setTheme(savedTheme, false);
+    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        setTheme("dark", false);
+    }
+
+    themeToggles.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const isDark = root.classList.contains("dark");
+            setTheme(isDark ? "light" : "dark", true); // Enable transition on user toggle
+        });
+    });
 }
 
 // Navbar & Mobile Menu
@@ -53,13 +82,15 @@ function initScrollReveal() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('show');
+                entry.target.classList.add('animate-slide-up');
+                entry.target.classList.remove('opacity-0', 'translate-y-4');
                 observer.unobserve(entry.target);
             }
         });
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.reveal').forEach(el => {
+        el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-700');
         observer.observe(el);
     });
 }
@@ -156,19 +187,10 @@ function initPageLoader() {
     requestAnimationFrame(() => {
         setTimeout(() => {
             loader.classList.add('opacity-0');
-            loader.classList.add('opacity-0');
-            // Enforce non-blocking interaction
             loader.classList.add('pointer-events-none');
             // Also fade in body content
             document.body.classList.remove('opacity-0');
             document.body.classList.add('opacity-100');
-
-            // Backup safety: remove loader from DOM after transition to prevent z-index issues
-            setTimeout(() => {
-                // We don't remove it because we need it for page exit animation.
-                // But we can hide it.
-                loader.style.zIndex = '-1';
-            }, 500);
         }, 300); // 300ms initial hold
     });
 
@@ -187,7 +209,6 @@ function initPageLoader() {
             e.preventDefault();
 
             // Show Loader
-            loader.style.zIndex = '100';
             loader.classList.remove('pointer-events-none');
             loader.classList.remove('opacity-0');
 
@@ -195,13 +216,6 @@ function initPageLoader() {
             setTimeout(() => {
                 window.location.href = href;
             }, 600); // 600ms transition time
-
-            // Safety Circuit Breaker: If page doesn't unload in 5s (e.g. download, error, or cancelled), hide loader
-            setTimeout(() => {
-                loader.classList.add('opacity-0');
-                loader.classList.add('pointer-events-none');
-                setTimeout(() => { loader.style.zIndex = '-1'; }, 500);
-            }, 5000);
         });
     });
 }

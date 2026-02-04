@@ -40,22 +40,22 @@ function renderSlider(container, images) {
         <div class="relative w-full h-full overflow-hidden group">
             <!-- Track -->
             <div id="slider-track" class="flex h-full transition-transform duration-700 ease-in-out will-change-transform">
-                ${images.map((img, i) => `
-                    <div class="min-w-full h-full flex-shrink-0 relative bg-black flex items-center justify-center">
+                ${images.map(img => `
+                    <div class="min-w-full h-full flex-shrink-0 relative bg-black">
                         <img 
                             src="${toAssetUrl(img.image_url)}" 
                             alt="${img.caption || ''}" 
-                            class="w-full h-full object-cover md:object-cover sm:object-contain opacity-0 transition-opacity duration-500 ease-in-out"
-                            onload="this.classList.remove('opacity-0')"
+                            class="w-full h-full object-contain object-center select-none transition-all duration-500"
+                            decoding="async"
+                            loading="eager"
                             draggable="false"
                         >
                         
-                        <!-- Caption Overlay (Bottom) -->
-                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 sm:p-10 pt-20 flex flex-col justify-end items-start pointer-events-none">
-                            <h3 class="text-white text-lg sm:text-2xl font-bold mb-1 opacity-90 drop-shadow-md border-l-4 border-blue-500 pl-3">
-                                ${img.title || 'Kanglei Gallery'}
-                            </h3>
-                            ${img.caption ? `<p class="text-gray-200 text-sm sm:text-base line-clamp-2 max-w-2xl pl-3">${img.caption}</p>` : ''}
+                        <!-- Caption Overlay -->
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 pt-16 flex justify-between items-end">
+                            <p class="text-white text-sm sm:text-base font-medium line-clamp-2 max-w-[85%] text-shadow-sm leading-snug">
+                                ${img.caption || ''}
+                            </p>
                         </div>
                     </div>
                 `).join('')}

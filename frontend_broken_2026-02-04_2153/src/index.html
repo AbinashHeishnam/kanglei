@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanglei Career Solution - Shaping Your Future</title>
+  <link rel="stylesheet" href="../dist/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body
+  class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 font-sans antialiased opacity-0 transition-opacity duration-500">
+
+  <!-- Global Loader (Pre-injected for instant load) -->
+  <div id="global-loader"
+    class="fixed inset-0 z-[100] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
+    <div class="relative flex flex-col items-center">
+      <div
+        class="w-16 h-16 rounded-full border-4 border-blue-100 dark:border-blue-900/30 border-t-blue-600 dark:border-t-blue-400 animate-spin">
+      </div>
+      <div
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-blue-600/20 dark:bg-blue-400/20 rounded-full animate-pulse">
+      </div>
+      <div
+        class="absolute -bottom-12 text-sm font-bold tracking-widest text-slate-800 dark:text-white uppercase opacity-80 animate-pulse">
+        Loading
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="fixed w-full top-0 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16 sm:h-20">
+        <div class="flex-shrink-0 flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3">
+            <img src="./img/logo.png" alt="Kanglei Career Solution Logo"
+              class="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover">
+            <span class="font-bold text-lg sm:text-xl tracking-tight block truncate max-w-[200px] sm:max-w-none">Kanglei
+              Career Solution</span>
+          </a>
+        </div>
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="text-blue-600 dark:text-blue-400 font-medium">Home</a>
+          <a href="about.html"
+            class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About</a>
+          <a href="services.html"
+            class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Services</a>
+          <a href="contact.html"
+            class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a>
+
+          <button id="theme-toggle" data-theme-toggle
+            class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+            <svg class="w-5 h-5 hidden dark:block text-yellow-500" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+              </path>
+            </svg>
+          </button>
+
+          <a href="services.html#book"
+            class="bg-blue-600 text-white px-6 py-2.5 rounded-full font-medium shadow-lg shadow-blue-500/30 hover:bg-blue-700 hover:-translate-y-0.5 transition-all">
+            Book Consultant
+          </a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden flex items-center gap-4">
+          <button id="theme-toggle-mobile" data-theme-toggle class="theme-toggle-mirror p-2">
+            <!-- Cloned via JS or just duplicate logic if lazy, but let's stick to main toggle for now -->
+          </button>
+          <button id="mobile-menu-btn" class="text-gray-600 dark:text-gray-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu"
+      class="hidden md:hidden absolute top-20 left-0 w-full bg-white dark:bg-gray-900 shadow-xl border-t dark:border-gray-800">
+      <div class="flex flex-col p-4 gap-4">
+        <a href="index.html" class="text-blue-600 font-medium">Home</a>
+        <a href="about.html" class="text-gray-600 dark:text-gray-300">About</a>
+        <a href="services.html" class="text-gray-600 dark:text-gray-300">Services</a>
+        <a href="contact.html" class="text-gray-600 dark:text-gray-300">Contact</a>
+        <a href="services.html#book" class="bg-blue-600 text-white px-4 py-3 rounded-xl text-center shadow-lg">Book
+          Appointment</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-24 min-h-screen">
+    <!-- Hero Section (Banner Slider) -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
+      <div
+        class="relative w-full rounded-md border border-slate-300 dark:border-slate-700 shadow-lg overflow-hidden h-[340px] sm:h-[360px] lg:h-[420px] bg-black flex items-center justify-center">
+        <!-- Slider Container -->
+        <div id="homeSlider" class="absolute inset-0 w-full h-full bg-slate-200 dark:bg-slate-800">
+          <!-- Loaded via slider.js -->
+        </div>
+        <!-- Gradient Overlay for Contrast (Optional, minimal) -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+      </div>
+    </section>
+
+    <!-- Guidance Section (Below Hero) -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div
+        class="bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl p-6 sm:p-10 text-center reveal">
+
+        <h1 class="text-3xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+          Expert Guidance for Your <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Career Journey</span>
+        </h1>
+
+        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+          Navigate your professional path with confidence. Kanglei Career Solution offers personalized counseling, study
+          abroad programs, and skill development workshops tailored to your goals.
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-10">
+          <a href="services.html#book"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1">
+            Book a Consultation
+          </a>
+          <a href="about.html"
+            class="bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-slate-700 px-8 py-3.5 rounded-full font-bold transition-all">
+            About Us
+          </a>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-10 border-t border-gray-200 dark:border-gray-700">
+          <div class="flex flex-col items-center">
+            <span class="text-3xl font-bold text-blue-600 dark:text-blue-400">500+</span>
+            <span class="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mt-1">Students
+              Placed</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-3xl font-bold text-blue-600 dark:text-blue-400">98%</span>
+            <span class="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mt-1">Success
+              Rate</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-3xl font-bold text-blue-600 dark:text-blue-400">Global</span>
+            <span class="text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mt-1">Network
+              Access</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="bg-white dark:bg-gray-900 py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 reveal">
+          <h2 class="text-3xl font-bold mb-4">Why Choose Kanglei?</h2>
+          <p class="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">We bring decades of experience and a
+            personalized approach to help you achieve your career aspirations.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div
+            class="p-8 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors reveal">
+            <div
+              class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                </path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Expert Counseling</h3>
+            <p class="text-gray-600 dark:text-gray-400">Certified career counselors with industry-specific knowledge.
+            </p>
+          </div>
+          <div
+            class="p-8 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-purple-50 dark:hover:bg-gray-700 transition-colors reveal delay-100">
+            <div
+              class="w-14 h-14 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Global Network</h3>
+            <p class="text-gray-600 dark:text-gray-400">Partnerships with top universities and companies worldwide.</p>
+          </div>
+          <div
+            class="p-8 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-pink-50 dark:hover:bg-gray-700 transition-colors reveal delay-200">
+            <div
+              class="w-14 h-14 rounded-xl bg-pink-100 dark:bg-pink-900/30 text-pink-600 flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Proven Results</h3>
+            <p class="text-gray-600 dark:text-gray-400">Track record of successful placements and happy students.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Strip -->
+    <section class="py-20 relative overflow-hidden">
+      <div class="absolute inset-0 bg-blue-600 dark:bg-blue-900">
+        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+        </div>
+      </div>
+      <div class="relative max-w-4xl mx-auto px-4 text-center text-white reveal">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to start your journey?</h2>
+        <p class="text-blue-100 mb-8 text-lg">Book your free consultation today and take the first step towards your
+          dream career.</p>
+        <a href="services.html#book"
+          class="inline-block bg-white text-blue-600 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 hover:scale-105 transition-all">Book
+          Now</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="text-white font-bold text-xl mb-4 flex items-center gap-2">
+            <img src="./img/logo.png" alt="Kanglei Logo" class="w-8 h-8 rounded-full object-cover">
+            Kanglei Career
+          </div>
+          <p class="text-sm">Empowering students and professionals to achieve their career goals through expert
+            guidance.</p>
+        </div>
+        <div>
+          <h4 class="text-white font-bold mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+            <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
+            <li><a href="services.html" class="hover:text-white transition-colors">Services</a></li>
+            <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-bold mb-4">Contact</h4>
+          <ul class="space-y-2 text-sm">
+            <li>Imphal, Manipur, India</li>
+            <li>+91 98765 43210</li>
+            <li>info@kangleicareer.com</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-bold mb-4">Follow Us</h4>
+          <div class="flex gap-4">
+            <a href="#"
+              class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all group">
+              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path
+                  d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+            </a>
+            <a href="#"
+              class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-400 hover:text-white transition-all group">
+              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path
+                  d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+              </svg>
+            </a>
+            <a href="#"
+              class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all group">
+              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.205 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.948-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-sm">
+        <p>&copy; <span id="year"></span> Kanglei Career Solution. All rights reserved.</p>
+        <p class="mt-2">Designed by <a href="https://saiyonix.vercel.app" target="_blank" rel="noopener noreferrer"
+            class="text-blue-500 hover:text-blue-400 transition-colors">Sayonix Pvt. Ltd.</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Event Bubble Button -->
+  <button id="eventBubble" class="fixed top-20 right-4 z-[60] hidden w-12 h-12 md:w-14 md:h-14 rounded-full
+           bg-white/20 dark:bg-black/30 backdrop-blur-md border border-white/20
+           shadow-xl flex items-center justify-center
+           transition-transform duration-200 hover:scale-105 active:scale-95">
+    <span class="text-xl">🎉</span>
+  </button>
+
+  <!-- Event Overlay -->
+  <div id="eventOverlay" class="event-overlay hidden">
+    <!-- Overlay Content -->
+    <div class="event-overlay-inner">
+      <button id="eventClose" class="event-close-btn">✕</button>
+      <h2 class="event-title">Upcoming Events</h2>
+      <div id="eventContent" class="event-content"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script type="module" src="./js/app.js"></script>
+  <script type="module">
+    import { initSlider } from './js/slider.js';
+    import { initEventOverlay } from './js/events-overlay.js';
+
+    // Initialize slider
+    initSlider('homeSlider');
+
+    // Initialize event overlay system
+    initEventOverlay();
+  </script>
+</body>
+
+</html>

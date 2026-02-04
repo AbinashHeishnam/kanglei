@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events Admin - Kanglei Career</title>
+    <title>Gallery Admin - Kanglei Career</title>
     <link rel="stylesheet" href="../css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body
@@ -44,9 +43,9 @@
                         <a href="./index.html"
                             class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white transition-colors">Dashboard</a>
                         <a href="./gallery.html"
-                            class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white transition-colors">Gallery</a>
+                            class="px-3 py-2 rounded-md text-sm font-medium bg-slate-100 dark:bg-slate-700 text-blue-600 dark:text-blue-400">Gallery</a>
                         <a href="./events.html"
-                            class="px-3 py-2 rounded-md text-sm font-medium bg-slate-100 dark:bg-slate-700 text-blue-600 dark:text-blue-400">Events</a>
+                            class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white transition-colors">Events</a>
                     </div>
                 </div>
 
@@ -60,7 +59,12 @@
                         </svg>
                     </a>
                     <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
-
+                    <button id="theme-toggle" data-theme-toggle
+                        class="p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+                        <span class="sr-only">Toggle Theme</span>
+                        <span class="dark:hidden">🌙</span>
+                        <span class="hidden dark:inline">☀️</span>
+                    </button>
                     <button id="logout-btn"
                         class="text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
                         Sign Out
@@ -71,11 +75,11 @@
             <!-- Mobile Menu Tabs -->
             <div class="md:hidden flex border-t border-slate-200 dark:border-slate-700">
                 <a href="./index.html"
-                    class="flex-1 py-3 text-center text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white">Dash</a>
+                    class="flex-1 py-3 text-center text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white">Dashboard</a>
                 <a href="./gallery.html"
-                    class="flex-1 py-3 text-center text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white">Gallery</a>
+                    class="flex-1 py-3 text-center text-sm font-medium border-b-2 border-blue-600 text-blue-600 bg-slate-50 dark:bg-slate-800">Gallery</a>
                 <a href="./events.html"
-                    class="flex-1 py-3 text-center text-sm font-medium border-b-2 border-blue-600 text-blue-600 bg-slate-50 dark:bg-slate-800">Events</a>
+                    class="flex-1 py-3 text-center text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white">Events</a>
             </div>
         </div>
     </nav>
@@ -85,8 +89,8 @@
 
         <div class="mb-8 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Events Posters</h1>
-                <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage homepage event popups</p>
+                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Gallery Management</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Upload and manage website images</p>
             </div>
             <button id="refresh-btn" class="text-blue-600 hover:underline text-sm font-medium flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,18 +102,18 @@
             </button>
         </div>
 
-        <div class="grid lg:grid-cols-3 gap-8">
+        <div id="gallery-section" class="grid lg:grid-cols-3 gap-8">
 
             <!-- Upload Card -->
             <div class="lg:col-span-1">
                 <div
                     class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 sticky top-24">
-                    <h3 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Add Event Poster</h3>
+                    <h3 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Upload New Image</h3>
 
-                    <form id="events-upload-form" class="space-y-4">
+                    <form id="gallery-upload-form" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Poster
-                                Image</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Image
+                                File</label>
                             <label
                                 class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                                 <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
@@ -120,7 +124,8 @@
                                         </path>
                                     </svg>
                                     <p class="text-xs text-slate-500 dark:text-slate-400"><span
-                                            class="font-semibold text-blue-600">Click to upload</span></p>
+                                            class="font-semibold text-blue-600">Click to upload</span> or drag and drop
+                                    </p>
                                 </div>
                                 <input type="file" name="file" accept="image/*" required class="hidden" />
                             </label>
@@ -128,45 +133,23 @@
 
                         <div>
                             <label
-                                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Title</label>
-                            <input type="text" name="title" placeholder="Event Title (Optional)"
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Caption</label>
+                            <input type="text" name="caption" placeholder="Short description..."
                                 class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Start</label>
-                                <input type="text" name="starts_at" placeholder="Select Start Date"
-                                    class="w-full px-2 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">End</label>
-                                <input type="text" name="ends_at" placeholder="Select End Date"
-                                    class="w-full px-2 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" name="is_active" id="is_active" checked
-                                class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-                            <label for="is_active" class="text-sm font-medium text-slate-700 dark:text-slate-300">Active
-                                immediately</label>
                         </div>
 
                         <button type="submit"
                             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg shadow-sm transition-colors flex justify-center">
-                            Upload Event Poster
+                            Upload to Gallery
                         </button>
                     </form>
                 </div>
             </div>
 
-            <!-- List -->
+            <!-- Grid -->
             <div class="lg:col-span-2">
-                <div id="events-grid" class="space-y-4">
-                    <!-- Events loaded via JS -->
+                <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <!-- Loaded via JS -->
                 </div>
             </div>
 
@@ -175,8 +158,7 @@
     </main>
 
     <script type="module" src="../js/app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script type="module" src="../js/admin-events.js"></script>
+    <script type="module" src="../js/admin.js"></script>
 </body>
 
 </html>

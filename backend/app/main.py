@@ -33,9 +33,6 @@ app.add_middleware(
 
 
 # tighten in production later
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 # Create tables + bootstrap admin user

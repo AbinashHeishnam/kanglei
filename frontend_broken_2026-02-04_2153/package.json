@@ -1,0 +1,17 @@
+{
+  "name": "kanglei-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --watch",
+    "clean": "rm -rf dist",
+    "build:css": "mkdir -p dist/css && npx tailwindcss -i ./src/css/input.css -o ./dist/css/style.css --minify",
+    "build:static": "mkdir -p dist && cp -r src/*.html dist/ && cp -r src/admin dist/ && cp -r src/js dist/ && (test -d src/assets && cp -r src/assets dist/ || true) && (test -d src/img && cp -r src/img dist/ || true)",
+    "build": "mkdir -p site/css && npx tailwindcss -i ./src/css/input.css -o ./site/css/style.css --minify"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.24",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
+  }
+}
