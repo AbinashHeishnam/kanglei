@@ -14,34 +14,35 @@ export async function initEvents() {
     if (!triggerBtn || !overlay) return;
 
     // State
-    let currentEvent = null;
+    // State
+    let allEvents = [];
+    let currentIndex = 0;
     let isMenuOpen = false;
 
     try {
         // 1. Fetch Event Data
-        // Ideally: /api/v1/events/upcoming
-        // For development/testing: We might get a list and pick the first active one.
         const events = await apiGet('/events');
 
-        // Use the first active event (mock logic if needed)
-        // const upcomingEvent = events?.find(e => e.is_active !== false);
-        const upcomingEvent = events && events.length > 0 ? events[0] : null;
+        // Filter for active events just in case API returns everything
+        // (Though API /events usually returns active ones, let's be safe if logic changes)
+        allEvents = events ? events.filter(e => e.is_active !== false) : [];
 
-        if (!upcomingEvent) {
+        if (allEvents.length === 0) {
             console.log("No upcoming events found.");
             return;
         }
 
-        currentEvent = upcomingEvent;
-
         // Show trigger button
         triggerBtn.classList.remove('hidden');
 
-        // Render Content immediately so it's ready
-        renderEventContent(currentEvent, contentContainer);
+        // Render Initial Content
+        renderCurrentEvent();
 
-        // 2. Auto-Popup Logic
-        const sessionKey = `event_seen_${currentEvent.id}`;
+        // 2. Auto-Popup Logic (Check if ANY event in the list is unseen? Or just the latest?)
+        // Let's stick to the latest (first one) for the auto-popup trigger to avoid spam.
+        // Or specific logic: if the *first* one hasn't been seen.
+        const latestEventId = allEvents[0].id;
+        const sessionKey = `event_seen_${latestEventId}`;
         const hasSeen = sessionStorage.getItem(sessionKey);
 
         if (!hasSeen) {
@@ -58,7 +59,7 @@ export async function initEvents() {
 
         closeBtn.addEventListener('click', () => {
             closeEventPanel();
-            // Mark as seen on close
+            // Mark latest as seen
             sessionStorage.setItem(sessionKey, 'true');
         });
 
@@ -67,13 +68,42 @@ export async function initEvents() {
             if (e.key === 'Escape' && isMenuOpen) {
                 closeEventPanel();
             }
+            // Arrow keys for slider
+            if (isMenuOpen && allEvents.length > 1) {
+                if (e.key === 'ArrowRight') nextEvent();
+                if (e.key === 'ArrowLeft') prevEvent();
+            }
         });
 
 
     } catch (err) {
         console.error("Failed to initialize events:", err);
-        // Ensure UI stays hidden on error
         if (triggerBtn) triggerBtn.classList.add('hidden');
+    }
+
+    // --- Slider Logic ---
+    function renderCurrentEvent() {
+        if (allEvents.length === 0) return;
+        renderEventContent(allEvents[currentIndex], contentContainer, allEvents.length, currentIndex);
+
+        // Re-attach slider listeners if buttons exist
+        const prevBtn = document.getElementById('event-prev-btn');
+        const nextBtn = document.getElementById('event-next-btn');
+
+        if (prevBtn) prevBtn.onclick = prevEvent;
+        if (nextBtn) nextBtn.onclick = nextEvent;
+    }
+
+    function nextEvent() {
+        if (allEvents.length <= 1) return;
+        currentIndex = (currentIndex + 1) % allEvents.length;
+        renderCurrentEvent();
+    }
+
+    function prevEvent() {
+        if (allEvents.length <= 1) return;
+        currentIndex = (currentIndex - 1 + allEvents.length) % allEvents.length;
+        renderCurrentEvent();
     }
 
     // --- Animation Logic ---
@@ -108,54 +138,64 @@ export async function initEvents() {
         if (!isMenuOpen) return;
         isMenuOpen = false;
 
-        // Get trigger center position
         const rect = triggerBtn.getBoundingClientRect();
         const x = rect.left + rect.width / 2;
         const y = rect.top + rect.height / 2;
 
-        // Content fade out first
         contentContainer.classList.add('opacity-0');
-
-        // Collapse animation
         overlay.style.clipPath = `circle(0% at ${x}px ${y}px)`;
 
-        // Wait for transition to finish before hiding
         setTimeout(() => {
             overlay.classList.add('hidden');
             document.body.style.overflow = '';
-        }, 700); // Match CSS duration
+        }, 700);
     }
 }
 
-function renderEventContent(event, container) {
+function renderEventContent(event, container, total, index) {
     const imageUrl = event.image_url ? toAssetUrl(event.image_url) : null;
     const dateStr = event.date ? new Date(event.date).toLocaleDateString(undefined, {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     }) : 'Upcoming';
 
-    // Note: API might vary, adapting fields based on typical KCS usage we've seen
     const location = event.location || "Imphal, Manipur";
     const time = event.time || "10:00 AM";
 
+    // Slider Controls HTML
+    const sliderControls = total > 1 ? `
+        <div class="flex items-center gap-4 mt-6">
+            <button id="event-prev-btn" class="p-2 rounded-full border border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                <svg class="w-6 h-6 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                ${index + 1} / ${total}
+            </span>
+            <button id="event-next-btn" class="p-2 rounded-full border border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                <svg class="w-6 h-6 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+    ` : '';
+
     container.innerHTML = `
-        <div class="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start h-full overflow-y-auto lg:overflow-visible p-4 lg:p-0">
             
             <!-- Poster / Image Section -->
-            <div class="${imageUrl ? 'block' : 'hidden lg:block'} relative group">
-                <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-                <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-slate-100 dark:bg-slate-800 aspect-[4/5] or aspect-video flex items-center justify-center">
+            <!-- Adjusted for full image visibility without cropping -->
+            <div class="${imageUrl ? 'block' : 'hidden lg:block'} relative group w-full flex flex-col items-center">
+                <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl bg-black/5 dark:bg-slate-800 flex items-center justify-center">
                     ${imageUrl
-            ? `<img src="${imageUrl}" alt="${event.title}" class="w-full h-full object-cover">`
-            : `<div class="p-8 text-center text-gray-400">
-                             <svg class="w-20 h-20 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            ? `<img src="${imageUrl}" alt="${event.title}" class="w-full h-auto max-h-[70vh] object-contain rounded-xl">`
+            : `<div class="aspect-[4/5] w-full bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center text-gray-400 p-8">
+                             <svg class="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                              <span class="text-sm font-medium">Event Poster</span>
                            </div>`
         }
                 </div>
+                ${sliderControls}
             </div>
 
             <!-- Content Section -->
-            <div class="text-left space-y-6">
+            <div class="text-left space-y-6 lg:pt-8 w-full">
                 <!-- Badge -->
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-sm font-semibold tracking-wide uppercase">
                     <svg class="w-4 h-4 animate-pulse" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"></circle></svg>
@@ -216,6 +256,15 @@ function renderEventContent(event, container) {
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 110-2.684m0 8.368a3 3 0 110-2.684"></path></svg>
                         Share Event
                     </button>
+                    
+                     <!-- Mobile Slider Controls (Backup if space is tight) -->
+                     ${total > 1 ? `
+                     <div class="sm:hidden flex flex-1 justify-end gap-2">
+                        <!-- Controls are already below image, but typically image is stacked on top on mobile. 
+                             So duplicates might be confusing. Let's rely on the image-section controls. 
+                             Or maybe add a hint? -->
+                     </div>
+                     ` : ''}
                 </div>
             </div>
         </div>

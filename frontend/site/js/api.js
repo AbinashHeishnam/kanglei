@@ -1,18 +1,42 @@
-export const API_BASE =
-  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_BASE)
-    ? import.meta.env.VITE_API_BASE
-    : "https://kanglei.onrender.com/api/v1";
+// ===== API CONFIG =====
 
+// Detect local vs production
+const isLocal =
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname === "localhost";
 
-export const API_ORIGIN = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
-  ? 'http://127.0.0.1:8000'
-  : 'https://kanglei.onrender.com/api/v1';
+// 👉 PASTE YOUR NGROK URL HERE
+const NGROK_ORIGIN = " https://jedidiah-snarly-erlinda.ngrok-free.dev";
 
+// Server origin (NO /api/v1 here)
+export const API_ORIGIN = isLocal
+  ? "http://127.0.0.1:8000"
+  : NGROK_ORIGIN;
+
+// API base always includes /api/v1
+export const API_BASE = API_ORIGIN + "/api/v1";
+
+// Debug helper
+window._API_DEBUG_ = {
+  API_ORIGIN: API_ORIGIN,
+  API_BASE: API_BASE
+};
+
+// Debug Helper
+if (typeof window !== 'undefined') {
+  window._API_DEBUG_ = { API_ORIGIN, API_BASE, isLocal };
+  console.log('API Client Config:', window._API_DEBUG_);
+}
 
 export function toAssetUrl(path) {
   if (!path) return 'https://via.placeholder.com/400x300?text=No+Image';
   if (path.startsWith('http')) return path;
+
+  // Normalize path to ensure no double slashes if path starts with /
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+
+  // Asset URLs are relative to ORIGIN, not API_BASE
+  // e.g. http://127.0.0.1:8000/uploads/events/foo.jpg
   return `${API_ORIGIN}/${cleanPath}`;
 }
 
