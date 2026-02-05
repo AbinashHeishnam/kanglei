@@ -1,10 +1,13 @@
-export const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
-  ? 'http://127.0.0.1:8000/api/v1'
-  : '/api/v1';
+export const API_BASE =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_BASE)
+    ? import.meta.env.VITE_API_BASE
+    : "https://kanglei.onrender.com/api/v1";
+
 
 export const API_ORIGIN = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
   ? 'http://127.0.0.1:8000'
-  : '';
+  : 'https://kanglei.onrender.com/api/v1';
+
 
 export function toAssetUrl(path) {
   if (!path) return 'https://via.placeholder.com/400x300?text=No+Image';
