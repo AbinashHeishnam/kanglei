@@ -16,10 +16,14 @@ SCHEMA_NAME = "kanglei"
 
 def init_db():
     # Ensure schema exists (Render Postgres won't have it by default)
-    with engine.begin() as conn:
-        conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{SCHEMA_NAME}"'))
+    # Create schema if not exists (Postgres only)
+    # Check dialect
+    if "sqlite" not in str(engine.url):
+        with engine.connect() as conn:
+            conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{SCHEMA_NAME}"'))
+            conn.commit()
 
-    # Then create tables
+    # Create tables
     Base.metadata.create_all(bind=engine)
 
 

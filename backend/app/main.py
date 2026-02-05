@@ -12,27 +12,23 @@ app = FastAPI(title="Kanglei Career Solution API")
 
 # CORS for frontend dev + production
 from fastapi.middleware.cors import CORSMiddleware
-import os
-
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "").strip()
-
-origins = []
-if FRONTEND_ORIGIN:
-    origins = [FRONTEND_ORIGIN]
-else:
-    # fallback for local dev
-    origins = ["http://localhost:5173", "http://127.0.0.1:5500", "http://localhost:5500"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:8081",
+        "http://127.0.0.1:8081",
+        "https://kanglei-i9oj-a3ruoaaza-abinashheishnams-projects.vercel.app",
+        "https://jedidiah-snarly-erlinda.ngrok-free.dev"
+    ],
+    allow_origin_regex="https://.*\\.vercel\\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-
-
-
-# tighten in production later
 )
 
 # Create tables + bootstrap admin user
