@@ -18,7 +18,7 @@
     }
 }
 
-
+@tailwind utilities;
 
 @layer utilities {
     .animate-bounce-slow {
@@ -51,21 +51,12 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #d1d5db;
-    border-radius: 9999px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-    background-color: #374151;
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
 }
 
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #9ca3af;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-    background-color: #4b5563;
+    @apply bg-gray-400 dark:bg-gray-600;
 }
 
 #homeSlider img {
