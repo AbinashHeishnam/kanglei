@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Kanglei Career Solution</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/theme.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
@@ -14,19 +16,10 @@
 
     <!-- Global Loader -->
     <div id="global-loader"
-        class="fixed inset-0 z-[100] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="relative flex flex-col items-center">
-            <div
-                class="w-16 h-16 rounded-full border-4 border-blue-100 dark:border-blue-900/30 border-t-blue-600 dark:border-t-blue-400 animate-spin">
-            </div>
-            <div
-                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-blue-600/20 dark:bg-blue-400/20 rounded-full animate-pulse">
-            </div>
-            <div
-                class="absolute -bottom-12 text-sm font-bold tracking-widest text-slate-800 dark:text-white uppercase opacity-80 animate-pulse">
-                Loading
-            </div>
-        </div>
+        class="fixed inset-0 z-[100] bg-white dark:bg-slate-900 bg-opacity-90 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="loader-core"></div>
+        <div class="mt-6 text-xs font-bold tracking-[0.2em] text-slate-400 dark:text-slate-500 uppercase animate-pulse">
+            Loading</div>
     </div>
 
     <!-- Navbar -->
@@ -80,7 +73,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal">
 
         <!-- Header & Toolbar -->
         <div class="mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -90,27 +83,39 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-3">
-                <!-- Search with Button -->
-                <div class="flex items-center gap-2">
-                    <div class="relative">
-                        <input type="text" id="search-q" placeholder="Search name..."
-                            class="pl-10 pr-4 py-2 w-full sm:w-64 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
+                <!-- Search -->
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                    <button id="apply-filters"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
-                        Search
-                    </button>
+                    <input type="text" id="search-q"
+                        class="h-11 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm rounded-full focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 block pl-10 pr-4 outline-none transition-all shadow-sm hover:shadow-md"
+                        placeholder="Search appointments...">
+                </div>
+
+                <!-- Filter -->
+                <div class="relative">
+                    <select id="filter-type"
+                        class="h-11 w-48 sm:w-64 appearance-none bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm rounded-full pl-4 pr-10 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none shadow-sm hover:shadow-md cursor-pointer">
+                        <option value="">All Types</option>
+                        <option value="career">Career Counseling</option>
+                        <option value="guidance">Guidance</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div id="appointments-section"
-            class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div id="appointments-section" class="card-premium overflow-hidden">
 
             <!-- Table Header Controls -->
             <div
@@ -141,36 +146,97 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto min-h-[400px]">
-                <table class="w-full table-fixed text-left border-collapse">
-                    <thead
-                        class="bg-slate-50 dark:bg-slate-900/50 text-xs uppercase text-slate-500 dark:text-slate-400 font-semibold tracking-wider">
+            <div class="overflow-x-auto min-h-[400px] relative">
+                <table class="table-premium w-full text-left">
+                    <thead class="bg-slate-50 dark:bg-slate-800/80 sticky top-0 z-10 backdrop-blur-sm">
                         <tr>
                             <th
-                                class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 w-12 text-center align-middle">
+                                class="w-12 text-center py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
                                 <input type="checkbox" id="select-all"
-                                    class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                    class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4">
                             </th>
-                            <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 w-16 align-middle">ID
-                            </th>
-                            <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 w-48 align-middle">Name
-                            </th>
-                            <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 w-32 align-middle">
+                            <th
+                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
+                                #</th>
+                            <th
+                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
+                                Name</th>
+                            <th
+                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
                                 Phone</th>
-                            <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 w-48 align-middle">
+                            <th
+                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
                                 Address</th>
-                            <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 w-40 align-middle">
-                                Counseling</th>
-                            <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 w-32 align-middle">
+                            <th
+                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
+                                Type</th>
+                            <th
+                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
                                 Date</th>
-                            <th class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 align-middle">Message
-                            </th>
+                            <th
+                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
+                                Message</th>
                         </tr>
                     </thead>
-                    <tbody id="appointments-tbody" class="divide-y divide-slate-100 dark:divide-slate-700 text-sm">
+                    <tbody id="appointments-tbody" class="divide-y divide-slate-100 dark:divide-slate-700">
                         <!-- Rows rendered by admin.js -->
                     </tbody>
                 </table>
+
+                <!-- Loading Skeleton -->
+                <div id="table-loading"
+                    class="hidden absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-20">
+                    <div class="space-y-4 p-4 mt-8">
+                        <div class="animate-pulse flex space-x-4">
+                            <div class="rounded-full bg-slate-200 dark:bg-slate-700 h-10 w-10"></div>
+                            <div class="flex-1 space-y-6 py-1">
+                                <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                <div class="space-y-3">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-2"></div>
+                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="animate-pulse flex space-x-4">
+                            <div class="rounded-full bg-slate-200 dark:bg-slate-700 h-10 w-10"></div>
+                            <div class="flex-1 space-y-6 py-1">
+                                <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                <div class="space-y-3">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-2"></div>
+                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="animate-pulse flex space-x-4">
+                            <div class="rounded-full bg-slate-200 dark:bg-slate-700 h-10 w-10"></div>
+                            <div class="flex-1 space-y-6 py-1">
+                                <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                <div class="space-y-3">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-2"></div>
+                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="table-empty" class="hidden flex flex-col items-center justify-center p-12 text-slate-400">
+                    <svg class="w-16 h-16 mb-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                        </path>
+                    </svg>
+                    <h3 class="text-lg font-medium text-slate-600 dark:text-slate-300">No appointments found</h3>
+                    <p class="text-sm text-slate-500 mt-1">Try adjusting your search filters.</p>
+                </div>
             </div>
 
             <!-- Pagination -->
@@ -188,6 +254,10 @@
         </div>
 
     </main>
+
+    <footer class="py-6 text-center text-sm text-slate-400 dark:text-slate-600 reveal">
+        <p>Designed by saiyoniX Pvt.ltd</p>
+    </footer>
 
     <!-- Delete Confirmation Modal -->
     <div id="delete-modal"

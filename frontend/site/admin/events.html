@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Events Admin - Kanglei Career</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/theme.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
@@ -81,7 +83,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal">
 
         <div class="mb-8 flex justify-between items-center">
             <div>
@@ -98,66 +100,89 @@
             </button>
         </div>
 
-        <div class="grid lg:grid-cols-3 gap-8">
+        <div class="grid lg:grid-cols-3 gap-8 items-start">
 
             <!-- Upload Card -->
             <div class="lg:col-span-1">
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 sticky top-24">
-                    <h3 class="text-lg font-bold mb-4 text-slate-900 dark:text-white">Add Event Poster</h3>
+                    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 sticky top-24">
+                    <h3 class="text-lg font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Add Event Poster
+                    </h3>
 
                     <form id="events-upload-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Poster
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Poster
                                 Image</label>
-                            <label
-                                class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                                <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
-                                    <svg class="w-8 h-8 mb-2 text-slate-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
-                                        </path>
-                                    </svg>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400"><span
-                                            class="font-semibold text-blue-600">Click to upload</span></p>
+
+                            <div class="relative group">
+                                <input type="file" name="file" accept="image/*"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required />
+                                <div
+                                    class="dropzone-premium p-6 text-center border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-800/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/10 group-hover:border-blue-400 transition-all duration-300">
+                                    <div id="events-dropzone-content" class="flex flex-col items-center justify-center">
+                                        <div
+                                            class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-2 flex items-center justify-center">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Choose Image
+                                        </p>
+                                    </div>
+                                    <div id="events-file-preview" class="hidden flex flex-col items-center">
+                                        <img id="events-preview-img"
+                                            class="w-24 h-24 object-cover rounded-lg border border-slate-200 mb-2 shadow-sm" />
+                                        <p class="text-sm font-medium text-blue-600 break-all text-center"
+                                            id="events-file-name"></p>
+                                        <p class="text-xs text-slate-500 mb-1" id="events-file-size"></p>
+                                        <p class="text-xs text-green-600 font-medium">Ready to upload</p>
+                                    </div>
                                 </div>
-                                <input type="file" name="file" accept="image/*" required class="hidden" />
-                            </label>
+                            </div>
                         </div>
 
                         <div>
                             <label
-                                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Title</label>
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Title</label>
                             <input type="text" name="title" placeholder="Event Title (Optional)"
-                                class="w-full px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                class="input-premium w-full text-sm">
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label
-                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Start</label>
-                                <input type="text" name="starts_at" placeholder="Select Start Date"
-                                    class="w-full px-2 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Start</label>
+                                <input type="text" name="starts_at" class="input-premium w-full text-sm flatpickr-input"
+                                    placeholder="Select...">
                             </div>
                             <div>
                                 <label
-                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">End</label>
-                                <input type="text" name="ends_at" placeholder="Select End Date"
-                                    class="w-full px-2 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">End</label>
+                                <input type="text" name="ends_at" class="input-premium w-full text-sm flatpickr-input"
+                                    placeholder="Select...">
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-2">
+                        <div
+                            class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
                             <input type="checkbox" name="is_active" id="is_active" checked
-                                class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-                            <label for="is_active" class="text-sm font-medium text-slate-700 dark:text-slate-300">Active
+                                class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                            <label for="is_active"
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 select-none cursor-pointer">Active
                                 immediately</label>
                         </div>
 
                         <button type="submit"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg shadow-sm transition-colors flex justify-center">
-                            Upload Event Poster
+                            class="w-full btn-base btn-primary py-2.5 shadow-md flex justify-center items-center gap-2">
+                            <span>Upload Event Poster</span>
                         </button>
                     </form>
                 </div>
@@ -166,13 +191,47 @@
             <!-- List -->
             <div class="lg:col-span-2">
                 <div id="events-grid" class="space-y-4">
-                    <!-- Events loaded via JS -->
+                    <!-- Skeleton Loader -->
+                    <div
+                        class="animate-pulse flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div class="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
+                        <div class="flex-1 space-y-3">
+                            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+                            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                        </div>
+                    </div>
+                    <div
+                        class="animate-pulse flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div class="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
+                        <div class="flex-1 space-y-3">
+                            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+                            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="events-empty" class="hidden flex flex-col items-center justify-center py-12 text-center">
+                    <div
+                        class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-slate-900 dark:text-white font-medium">No active events</h3>
+                    <p class="text-slate-500 text-sm mt-1">Upload a poster to announce an event.</p>
                 </div>
             </div>
 
         </div>
 
     </main>
+
+    <footer class="py-6 text-center text-sm text-slate-400 dark:text-slate-600 reveal">
+        <p>Designed by saiyoniX Pvt.ltd</p>
+    </footer>
 
     <script type="module" src="../js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

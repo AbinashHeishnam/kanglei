@@ -1,9 +1,11 @@
 import { apiPost, apiGet, apiPatch, apiPostForm, apiDelete, toAssetUrl, API_BASE } from './api.js';
-import { showToast } from './app.js';
+import { showToast } from './toast.js';
+import { showConfirm } from './confirm.js';
 
 // Paths (Relative to help plain static server)
+// Paths (Relative to help plain static server)
 const LOGIN_PAGE = 'login.html';
-const DASHBOARD_PAGE = 'index.html';
+const DASHBOARD_PAGE = './index.html';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -35,9 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Global Logout
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', (e) => {
+        logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            if (confirm('Sign out?')) {
+            const confirmed = await showConfirm('Are you sure you want to sign out?', 'Sign Out');
+            if (confirmed) {
                 localStorage.removeItem('kanglei_admin_token');
                 window.location.href = LOGIN_PAGE;
             }
@@ -69,6 +72,12 @@ function initLogin() {
     const errorDiv = document.getElementById('login-error');
     const loading = document.getElementById('login-loading');
     const debugErr = document.getElementById('debug-error');
+    const statusEl = document.getElementById('login-status');
+    const debugInfo = document.getElementById('debug-info');
+    if (debugInfo) {
+        debugInfo.textContent = `API: ${API_BASE} | Token: ${localStorage.getItem('kanglei_admin_token') ? 'Yes' : 'No'}`;
+        debugInfo.classList.remove('opacity-0'); // Make visible for now
+    }
 
     const toggleBtn = document.getElementById('toggle-password');
     if (toggleBtn) {
@@ -76,7 +85,6 @@ function initLogin() {
             const input = document.getElementById('password-input');
             const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
             input.setAttribute('type', type);
-
             // Toggle Icon
             if (type === 'text') {
                 toggleBtn.innerHTML = `
@@ -98,44 +106,78 @@ function initLogin() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Reset UI
-        errorDiv.classList.add('hidden');
-        if (debugErr) debugErr.classList.add('hidden');
-        loading.classList.remove('hidden');
+        const btn = form.querySelector('button[type="submit"]');
 
-        // Capture data
+        // Reset UI
+        if (errorDiv) errorDiv.classList.add('hidden');
+        if (debugErr) debugErr.classList.add('hidden');
+        if (loading) loading.classList.remove('hidden');
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+        if (statusEl) {
+            statusEl.textContent = 'Authenticating...';
+            statusEl.className = 'text-center text-sm font-medium text-blue-600 dark:text-blue-400 mb-2 min-h-[20px] transition-all';
+        }
+
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        // Basic validation
         if (!data.username || !data.password) {
-            errorDiv.textContent = 'Please enter both username and password.';
-            errorDiv.classList.remove('hidden');
-            loading.classList.add('hidden');
+            if (errorDiv) {
+                errorDiv.textContent = 'Please enter both username and password.';
+                errorDiv.classList.remove('hidden');
+            }
+            if (loading) loading.classList.add('hidden');
+            btn.disabled = false;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            if (statusEl) statusEl.textContent = '';
             return;
         }
 
         try {
-            // Expected: POST /auth/login with JSON body
+            console.log('Sending login request...');
             const res = await apiPost('/auth/login', data);
 
-            if (res.access_token) {
+            console.log('Login response:', res);
+
+            if (res && res.access_token) {
+                if (statusEl) {
+                    statusEl.textContent = 'Login successful! Redirecting...';
+                    statusEl.classList.add('text-green-600', 'dark:text-green-400');
+                }
+
                 localStorage.setItem('kanglei_admin_token', res.access_token);
-                window.location.href = DASHBOARD_PAGE;
+                showToast('Login successful', 'success');
+
+                // Small delay to let user see success message
+                setTimeout(() => {
+                    window.location.href = DASHBOARD_PAGE;
+                }, 500);
+
             } else {
-                throw new Error('No access token in response');
+                throw new Error('Invalid response from server (No access_token)');
             }
         } catch (err) {
             console.error("Login failed:", err);
-            errorDiv.textContent = err.message || 'Login failed. Check console.';
-            errorDiv.classList.remove('hidden');
+
+            if (errorDiv) {
+                errorDiv.textContent = err.message || 'Login failed. Please check credentials.';
+                errorDiv.classList.remove('hidden');
+            }
+
+            if (statusEl) {
+                statusEl.textContent = 'Login failed.';
+                statusEl.classList.add('text-red-600');
+            }
 
             if (debugErr) {
-                debugErr.textContent = `Error: ${err.message}\nIf connection refused, check if backend is running on port 8000.`;
+                debugErr.textContent = `Error: ${err.message}`;
                 debugErr.classList.remove('hidden');
             }
-        } finally {
-            loading.classList.add('hidden');
+
+            if (loading) loading.classList.add('hidden');
+            btn.disabled = false;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
         }
     });
 }
@@ -148,10 +190,36 @@ let loadedAppointments = [];
 
 function initDashboard() {
     // Event bindings
-    document.getElementById('apply-filters').addEventListener('click', () => {
-        currentOffset = 0;
-        loadAppointments();
-    });
+    const searchInput = document.getElementById('search-q');
+    const filterSelect = document.getElementById('filter-type');
+    let debounceTimer;
+
+    // Search
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                currentOffset = 0;
+                loadAppointments();
+            }, 500);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                clearTimeout(debounceTimer);
+                currentOffset = 0;
+                loadAppointments();
+            }
+        });
+    }
+
+    // Filter
+    if (filterSelect) {
+        filterSelect.addEventListener('change', () => {
+            currentOffset = 0;
+            loadAppointments();
+        });
+    }
 
     document.getElementById('prev-page').addEventListener('click', () => {
         if (currentOffset >= currentLimit) {
@@ -273,16 +341,24 @@ function updateDeleteButton() {
 
 async function loadAppointments() {
     const tbody = document.getElementById('appointments-tbody');
-    const searchQ = document.getElementById('search-q').value || '';
+    const searchInput = document.getElementById('search-q');
+    const filterSelect = document.getElementById('filter-type');
+
+    // State elements
+    const loadingEl = document.getElementById('table-loading');
+    const emptyEl = document.getElementById('table-empty');
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    if (emptyEl) emptyEl.classList.add('hidden');
+    if (tbody) tbody.innerHTML = '';
+
+    const searchQ = searchInput ? searchInput.value.trim() : '';
+    const typeFilter = filterSelect ? filterSelect.value.toLowerCase() : '';
 
     // Reset selection on page load
     selectedIds.clear();
     updateDeleteButton();
     const selectAll = document.getElementById('select-all');
     if (selectAll) selectAll.checked = false;
-
-    // Provide loading state
-    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-400">Loading...</td></tr>`;
 
     const params = new URLSearchParams({
         limit: currentLimit,
@@ -291,54 +367,77 @@ async function loadAppointments() {
     if (searchQ) params.append('q', searchQ);
 
     try {
-        const data = await apiGet(`/admin/appointments?${params.toString()}`, true); // auth=true
+        let data = await apiGet(`/admin/appointments?${params.toString()}`, true);
         loadedAppointments = data || [];
 
+        // Client-side filtering for Type (Safety fallback since backend might not support it)
+        if (typeFilter) {
+            data = data.filter(item =>
+                (item.counseling_type || '').toLowerCase().includes(typeFilter)
+            );
+        }
+
         if (!data || data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-500">No appointments found.</td></tr>`;
-            document.getElementById('page-info').textContent = '0 results';
+            if (emptyEl) emptyEl.classList.remove('hidden');
+            // Update counts if possible, otherwise generic
+            const pageInfo = document.getElementById('page-info');
+            if (pageInfo) pageInfo.textContent = '0 results';
             return;
         }
 
-        tbody.innerHTML = data.map((apt, index) => `
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-t border-slate-100 dark:border-slate-800 transition-colors">
-                <td class="py-3 px-4 text-center align-middle">
-                    <input type="checkbox" data-id="${apt.id}" class="row-checkbox rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                </td>
-                <td class="py-3 px-4 text-xs font-mono text-slate-500 align-middle">
-                    ${currentOffset + index + 1}
-                </td>
-                <td class="py-3 px-4 text-sm font-medium text-slate-900 dark:text-white align-middle">
-                    ${apt.name}
-                </td>
-                <td class="py-3 px-4 text-sm font-mono text-slate-600 dark:text-slate-400 align-middle">
-                    ${apt.phone}
-                </td>
-                <td class="py-3 px-4 text-sm text-slate-600 dark:text-slate-400 align-middle truncate max-w-[150px]" title="${apt.address || ''}">
-                    ${apt.address || '-'}
-                </td>
-                <td class="py-3 px-4 text-sm text-slate-600 dark:text-slate-400 align-middle">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                        ${apt.counseling_type}
-                    </span>
-                </td>
-                <td class="py-3 px-4 text-sm text-slate-600 dark:text-slate-400 align-middle whitespace-nowrap">
-                    ${new Date(apt.created_at).toLocaleDateString()}
-                </td>
-                <td class="py-3 px-4 align-middle">
-                    <div class="text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate" title="${apt.message || ''}">
-                        ${apt.message || '-'}
-                    </div>
-                </td>
-            </tr>
-        `).join('');
+        if (tbody) {
+            tbody.innerHTML = data.map((apt, index) => `
+                <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 border-b border-slate-100 dark:border-slate-800 transition-colors group">
+                    <td class="py-3 px-4 text-center align-middle">
+                        <input type="checkbox" data-id="${apt.id}" class="row-checkbox rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4">
+                    </td>
+                    <td class="py-3 px-4 text-xs font-mono text-slate-500 align-middle">
+                        ${currentOffset + index + 1}
+                    </td>
+                    <td class="py-3 px-4 text-sm font-medium text-slate-900 dark:text-white align-middle">
+                        ${apt.name}
+                    </td>
+                    <td class="py-3 px-4 text-sm font-mono text-slate-600 dark:text-slate-400 align-middle">
+                        ${apt.phone}
+                    </td>
+                    <td class="py-3 px-4 text-sm text-slate-600 dark:text-slate-400 align-middle truncate max-w-[150px]" title="${apt.address || ''}">
+                        ${apt.address || '-'}
+                    </td>
+                    <td class="py-3 px-4 text-sm text-slate-600 dark:text-slate-400 align-middle">
+                        <span class="badge ${getBadgeColor(apt.counseling_type)}">
+                            ${apt.counseling_type}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-sm text-slate-600 dark:text-slate-400 align-middle whitespace-nowrap">
+                        ${new Date(apt.created_at).toLocaleDateString()}
+                    </td>
+                    <td class="py-3 px-4 align-middle">
+                        <div class="text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate" title="${apt.message || ''}">
+                            ${apt.message || '-'}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
 
-        document.getElementById('page-info').textContent = `Showing ${currentOffset + 1} - ${currentOffset + data.length}`;
-
+        const pageInfo = document.getElementById('page-info');
+        if (pageInfo) pageInfo.textContent = `Showing ${currentOffset + 1} - ${currentOffset + data.length}`;
     } catch (err) {
         console.error("Load failed", err);
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-red-500">Error loading data.</td></tr>`;
+        showToast('Failed to load appointments', 'error');
+        if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500">Error loading data.</td></tr>`;
+    } finally {
+        if (loadingEl) loadingEl.classList.add('hidden');
     }
+}
+
+function getBadgeColor(type) {
+    if (!type) return 'badge-green';
+    type = type.toLowerCase();
+    if (type.includes('career')) return 'badge-blue';
+    if (type.includes('guidance')) return 'badge-green';
+
+    return 'badge-blue';
 }
 
 async function updateStatus(id, newStatus) {
@@ -377,66 +476,134 @@ async function downloadExport(format) {
 }
 
 // --- GALLERY PAGE ---
+// --- GALLERY PAGE ---
 function initGallery() {
     loadGalleryImages();
 
     document.getElementById('refresh-btn').addEventListener('click', loadGalleryImages);
 
+    // Dropzone interaction
+    const fileInput = document.getElementById('gallery-file');
+    const contentDiv = document.getElementById('dropzone-content');
+    const previewDiv = document.getElementById('file-preview');
+    const fileName = document.getElementById('file-name');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const sizeEl = document.getElementById('file-size');
+            const imgEl = document.getElementById('gallery-preview-img');
+
+            if (file) {
+                contentDiv.classList.add('hidden');
+                previewDiv.classList.remove('hidden');
+                fileName.textContent = file.name;
+
+                // Size
+                const distinctSize = file.size < 1024 * 1024
+                    ? `${(file.size / 1024).toFixed(1)} KB`
+                    : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+                if (sizeEl) sizeEl.textContent = distinctSize;
+
+                // Preview
+                if (file.type.startsWith('image/') && imgEl) {
+                    imgEl.src = URL.createObjectURL(file);
+                    imgEl.classList.remove('hidden');
+                }
+            } else {
+                contentDiv.classList.remove('hidden');
+                previewDiv.classList.add('hidden');
+                if (imgEl && imgEl.src) URL.revokeObjectURL(imgEl.src);
+            }
+        });
+    }
+
     const form = document.getElementById('gallery-upload-form');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = form.querySelector('button[type="submit"]');
-        const origText = btn.textContent;
+
+        // Validation check
+        if (!fileInput.files.length) {
+            showToast('Please select an image', 'error');
+            return;
+        }
+
+        const origHtml = btn.innerHTML;
         btn.disabled = true;
-        btn.textContent = 'Uploading...';
+        btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
 
         try {
             const formData = new FormData(form);
             await apiPostForm('/admin/gallery', formData, true);
-            showToast('Image uploaded successfully');
+            showToast('Image uploaded successfully', 'success');
             form.reset();
+
+            // Reset Dropzone
+            contentDiv.classList.remove('hidden');
+            previewDiv.classList.add('hidden');
+
             loadGalleryImages(); // Refresh grid
         } catch (err) {
             console.error(err);
             showToast(err.message || 'Upload failed', 'error');
         } finally {
             btn.disabled = false;
-            btn.textContent = origText;
+            btn.innerHTML = origHtml;
         }
     });
 }
 
 async function loadGalleryImages() {
     const grid = document.getElementById('gallery-grid');
-    grid.innerHTML = `<div class="col-span-full h-32 flex items-center justify-center text-gray-400">Loading...</div>`;
+    // Show skeleton
+    grid.innerHTML = `
+        <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse"></div>
+        <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse"></div>
+        <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse"></div>
+    `;
 
     try {
         const images = await apiGet('/gallery'); // Public read
 
         if (!images || images.length === 0) {
-            grid.innerHTML = `<div class="col-span-full h-32 flex items-center justify-center text-gray-500">No images found.</div>`;
+            grid.innerHTML = '';
+            const empty = document.getElementById('gallery-empty');
+            if (empty) {
+                empty.classList.remove('hidden');
+                grid.appendChild(empty);
+            }
             return;
         }
 
+        // Hide empty state if previously shown
+        document.getElementById('gallery-empty')?.classList.add('hidden');
+
         grid.innerHTML = images.map(img => `
-            <div class="relative aspect-square group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
-                <img src="${toAssetUrl(img.image_url)}" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
-                    <p class="text-white text-xs truncate w-full mb-2">${img.caption || 'No caption'}</p>
-                    <button onclick="deleteGalleryImage(${img.id})" class="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1.5 rounded transition-colors w-full">
-                        Delete
+            <div class="relative aspect-square group rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700">
+                <img src="${toAssetUrl(img.image_url)}?v=${Date.now()}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                    <p class="text-white text-sm font-medium truncate w-full mb-3">${img.caption || 'No caption'}</p>
+                    <button onclick="deleteGalleryImage(${img.id})" 
+                        class="bg-red-500/90 hover:bg-red-600 text-white text-xs font-medium px-3 py-2 rounded-lg backdrop-blur-sm transition-colors w-full flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        Delete Image
                     </button>
                 </div>
             </div>
         `).join('');
 
     } catch (err) {
+        console.error(err);
+        showToast('Failed to load gallery', 'error');
         grid.innerHTML = `<div class="col-span-full h-32 flex items-center justify-center text-red-500">Failed to load gallery.</div>`;
     }
 }
 
 async function deleteGalleryImage(id) {
-    if (!confirm('Are you sure you want to delete this image?')) return;
+    const confirmed = await showConfirm('Are you sure you want to delete this image?', 'Delete Image');
+    if (!confirmed) return;
 
     try {
         await import('./api.js').then(m => m.apiDelete(`/admin/gallery/${id}`, true));

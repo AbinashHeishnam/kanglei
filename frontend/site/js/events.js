@@ -252,8 +252,7 @@ function renderEventContent(event, container, total, index) {
                     </a>` : ''}
                     
                     <button class="px-8 py-4 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-white font-semibold text-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
-                        onclick="navigator.share ? navigator.share({title: '${event.title}', text: 'Check out this event!', url: window.location.href}) : alert('Share Link Copied!')">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 110-2.684m0 8.368a3 3 0 110-2.684"></path></svg>
+                        onclick="navigator.share ? navigator.share({title: '${event.title}', text: 'Check out this event!', url: window.location.href}) : showToast('Share Link Copied!', 'success')">
                         Share Event
                     </button>
                     

@@ -26,15 +26,41 @@ function initNavbar() {
     const navbar = document.querySelector('header');
 
     if (mobileMenuBtn && mobileMenu) {
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        const closeMenu = () => {
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                document.removeEventListener('click', handleClickOutside);
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+
+        const handleClickOutside = (e) => {
+            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                closeMenu();
+            }
+        };
+
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        };
+
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isHidden = mobileMenu.classList.toggle('hidden');
+            if (!isHidden) {
+                document.addEventListener('click', handleClickOutside);
+                document.addEventListener('keydown', handleEscape);
+            } else {
+                document.removeEventListener('click', handleClickOutside);
+                document.removeEventListener('keydown', handleEscape);
+            }
         });
 
         // Close menu when clicking a link
         mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
+            link.addEventListener('click', closeMenu);
         });
     }
 
@@ -65,67 +91,12 @@ function initScrollReveal() {
 }
 
 // Toast Utility (Premium Glassmorphism)
-export function showToast(message, type = 'success') {
-    // Remove existing toasts to prevent stacking overload
-    const existing = document.querySelector('.premium-toast');
-    if (existing) existing.remove();
+// Toast Utility (Imported)
+import { showToast } from './toast.js';
 
-    const toast = document.createElement('div');
-    toast.className = `premium-toast fixed top-24 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-4 z-50 transform transition-all duration-500 hover:scale-105 cursor-pointer min-w-[320px] sm:min-w-[400px]
-        ${type === 'success'
-            ? 'bg-white/90 dark:bg-slate-800/90 border-green-500/30 text-slate-800 dark:text-white'
-            : 'bg-white/90 dark:bg-slate-800/90 border-red-500/30 text-slate-800 dark:text-white'
-        }`;
-
-    // Icon based on type
-    const icon = type === 'success'
-        ? `<div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
-               <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-           </div>`
-        : `<div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
-               <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-           </div>`;
-
-    toast.innerHTML = `
-        ${icon}
-        <div class="flex-1">
-            <h4 class="font-bold text-sm uppercase tracking-wide opacity-70 mb-0.5">${type}</h4>
-            <p class="font-medium text-sm leading-snug">${message}</p>
-        </div>
-        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Animation: Slide down from top
-    toast.style.transform = 'translate(-50%, -20px)';
-    toast.style.opacity = '0';
-
-    requestAnimationFrame(() => {
-        toast.style.transform = 'translate(-50%, 0)';
-        toast.style.opacity = '1';
-    });
-
-    // Auto-remove
-    const timer = setTimeout(() => {
-        removeToast(toast);
-    }, 4000);
-
-    // Pause on hover
-    toast.addEventListener('mouseenter', () => clearTimeout(timer));
-    toast.addEventListener('mouseleave', () => {
-        setTimeout(() => removeToast(toast), 1000);
-    });
-}
-
-function removeToast(el) {
-    if (!el) return;
-    el.style.transform = 'translate(-50%, -20px)';
-    el.style.opacity = '0';
-    setTimeout(() => el.remove(), 300);
-}
+// Override Native Alert with Premium Toast
+window.alert = (message) => showToast(message, 'info');
+window.showToast = showToast; // Expose globally for inline calls
 
 // Page Loader & Transitions
 function initPageLoader() {
@@ -206,6 +177,3 @@ function initPageLoader() {
     });
 }
 
-// Override Native Alert with Premium Toast
-window.alert = (message) => showToast(message, 'info'); // 'info' falls back to default style or red if error
-window.showToast = showToast; // Expose globally

@@ -55,15 +55,41 @@ function initNavbar() {
     const navbar = document.querySelector('header');
 
     if (mobileMenuBtn && mobileMenu) {
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        const closeMenu = () => {
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                document.removeEventListener('click', handleClickOutside);
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+
+        const handleClickOutside = (e) => {
+            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                closeMenu();
+            }
+        };
+
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        };
+
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isHidden = mobileMenu.classList.toggle('hidden');
+            if (!isHidden) {
+                document.addEventListener('click', handleClickOutside);
+                document.addEventListener('keydown', handleEscape);
+            } else {
+                document.removeEventListener('click', handleClickOutside);
+                document.removeEventListener('keydown', handleEscape);
+            }
         });
 
         // Close menu when clicking a link
         mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
+            link.addEventListener('click', closeMenu);
         });
     }
 
