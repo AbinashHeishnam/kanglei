@@ -428,6 +428,16 @@ async function loadAppointments() {
         if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500">Error loading data.</td></tr>`;
     } finally {
         if (loadingEl) loadingEl.classList.add('hidden');
+
+        // Update Pagination Buttons
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        if (prevBtn) prevBtn.disabled = (currentOffset === 0);
+
+        // If loadedAppointments is empty or less than limit, no next page
+        if (nextBtn) {
+            nextBtn.disabled = (!loadedAppointments || loadedAppointments.length < currentLimit);
+        }
     }
 }
 
