@@ -10,7 +10,12 @@ const DASHBOARD_PAGE = './index.html';
 // Init wrapper to handle module timing
 function init() {
     console.log('Admin JS Init');
+    // Force remove global loader (fix blank login on production)
+    const loader = document.getElementById('global-loader');
+    if (loader) loader.remove();
 
+    document.body.classList.remove('opacity-0');
+    document.body.style.opacity = '1';
     // Determine Page Type
     const isLoginPage = !!document.getElementById('login-form');
     const isDashboard = !!document.getElementById('appointments-tbody');
