@@ -49,8 +49,10 @@ function init() {
         });
     }
 
-    // Expose for usage in HTML onclick
-    window.updateStatus = updateStatus;
+    // Expose only if it exists (prevents blank page crash)
+    if (typeof updateStatus !== 'undefined') {
+        window.updateStatus = updateStatus;
+    }
 }
 
 if (document.readyState === 'loading') {
