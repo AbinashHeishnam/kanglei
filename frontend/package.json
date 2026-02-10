@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "tailwindcss -i ./src/css/input.css -o ./site/css/style.css --watch",
+    "dev": "tailwindcss -i ./site/css/input.css -o ./site/css/style.css --watch",
     "clean": "rm -rf site/css/style.css",
-    "build:css": "mkdir -p site/css && npx tailwindcss -i ./src/css/input.css -o ./site/css/style.css --minify",
+    "build:css": "mkdir -p site/css && npx tailwindcss -i ./site/css/input.css -o ./site/css/style.css --minify",
     "build": "npm run build:css"
   },
   "devDependencies": {
