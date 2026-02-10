@@ -6,11 +6,9 @@ const isLocal =
   window.location.hostname === "127.0.0.1" ||
   window.location.hostname === "localhost";
 
-// 👉 Change only when your tunnel changes
-const NGROK_ORIGIN = "https://jedidiah-snarly-erlinda.ngrok-free.dev";
+const NGROK_ORIGIN = "https://kanglei-2.onrender.com";
+const TRYCLOUDFLARE_API_ORIGIN = "https://kanglei-2.onrender.com";
 
-// ✅ Add this for Cloudflare tunnel backend URL
-const TRYCLOUDFLARE_API_ORIGIN = "https://end-smtp-wells-clothing.trycloudflare.com";
 // Detect if frontend is opened from a Cloudflare quick tunnel
 const isTryCloudflare = window.location.hostname.endsWith("trycloudflare.com");
 
