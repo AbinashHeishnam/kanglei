@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiDelete, apiPostForm, toAssetUrl } from './api.js';
+import { apiGet, apiPost, apiDelete, apiPostForm, apiPatch, toAssetUrl } from './api.js';
 import { showToast } from './toast.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -56,6 +56,8 @@ async function loadEvents() {
 
         grid.innerHTML = events.map(renderEventRow).join('');
         attachDeleteHandlers();
+        attachStatusHandlers();
+        startCountdownLoop();
 
     } catch (err) {
         console.error(err);
@@ -64,6 +66,9 @@ async function loadEvents() {
     }
 }
 
+// Global interval for countdowns
+let countdownInterval;
+
 function renderEventRow(evt) {
     const formatDate = (dateStr) => {
         if (!dateStr) return '<span class="text-slate-400">Not set</span>';
@@ -71,6 +76,19 @@ function renderEventRow(evt) {
             month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
         });
     };
+
+    // Calculate Scheduled Status
+    let scheduleStatus = '';
+    let isScheduled = false;
+
+    if (!evt.is_active && evt.starts_at) {
+        const start = new Date(evt.starts_at).getTime();
+        const now = Date.now();
+        if (start > now) {
+            isScheduled = true;
+            scheduleStatus = `<div class="countdown-timer text-xs font-mono text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded" data-target="${start}" data-id="${evt.id}">Waiting...</div>`;
+        }
+    }
 
     return `
         <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center group shadow-sm hover:shadow-md transition-all">
@@ -85,15 +103,32 @@ function renderEventRow(evt) {
             <!-- Content -->
             <div class="flex-1 min-w-0 w-full">
                 <div class="flex justify-between items-start">
-                    <h4 class="font-bold text-slate-900 dark:text-white truncate text-base mb-1">${evt.title || '<span class="italic text-slate-400">Untitled Event</span>'}</h4>
-                    <button data-id="${evt.id}" class="delete-btn text-slate-400 hover:text-red-500 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete Event">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </button>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-900 dark:text-white truncate text-base mb-1">${evt.title || '<span class="italic text-slate-400">Untitled Event</span>'}</h4>
+                        ${scheduleStatus}
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        ${!evt.is_active ? `
+                        <button data-id="${evt.id}" class="activate-btn text-xs font-medium bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 dark:text-green-400 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Activate Now
+                        </button>
+                        ` : `
+                        <button data-id="${evt.id}" class="deactivate-btn text-xs font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-2 py-1.5 rounded-md transition-colors" title="Deactivate">
+                            Deactivate
+                        </button>
+                        `}
+                        
+                        <button data-id="${evt.id}" class="delete-btn text-slate-400 hover:text-red-500 p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete Event">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-x-8 gap-y-1 mt-2 text-xs text-slate-500 dark:text-slate-400">
                     <div class="flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span>Start: <span class="font-medium text-slate-700 dark:text-slate-300">${formatDate(evt.starts_at)}</span></span>
                     </div>
                     <div class="flex items-center gap-1.5">
@@ -106,9 +141,55 @@ function renderEventRow(evt) {
     `;
 }
 
+function startCountdownLoop() {
+    if (countdownInterval) clearInterval(countdownInterval);
+
+    // Ticker function
+    const tick = () => {
+        const els = document.querySelectorAll('.countdown-timer');
+        if (els.length === 0) return;
+
+        const now = Date.now();
+        els.forEach((el) => {
+            if (el.dataset.activating) return; // Prevent double firing
+
+            const target = parseInt(el.dataset.target);
+            const diff = target - now;
+
+            if (diff <= 0) {
+                el.dataset.activating = "true";
+                el.textContent = "Activating...";
+                el.classList.add('text-green-600', 'animate-pulse');
+
+                // Trigger backend activation via simple reload
+                // The GET request will check and activate due events
+                console.log(`Timer expired for event ${el.dataset.id}. Reloading to trigger activation...`);
+                setTimeout(() => {
+                    loadEvents();
+                    showToast('Event activated!', 'success');
+                }, 1000);
+
+            } else {
+                // Formatting
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                el.textContent = `Activates in: ${hours}h ${mins}m ${secs}s`;
+            }
+        });
+    };
+
+    tick();
+    countdownInterval = setInterval(tick, 1000);
+}
+
 function setupForm() {
+    console.log('Setting up events form...');
     const form = document.getElementById('events-upload-form');
-    if (!form) return;
+    if (!form) {
+        console.warn('Events form not found in DOM');
+        return;
+    }
 
     // File Preview Logic
     const fileInput = form.querySelector('input[name="file"]');
@@ -120,10 +201,9 @@ function setupForm() {
 
     if (fileInput && contentDiv && previewDiv) {
         fileInput.addEventListener('change', (e) => {
+            console.log('Event File selected:', e.target.files[0]);
             const file = e.target.files[0];
             if (file) {
-                contentDiv.classList.add('hidden');
-                previewDiv.classList.remove('hidden');
                 fileName.textContent = file.name;
 
                 // Size
@@ -132,16 +212,30 @@ function setupForm() {
                     : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
                 fileSize.textContent = size;
 
-                // Image
+                // Preview
                 if (file.type.startsWith('image/')) {
-                    imgPreview.src = URL.createObjectURL(file);
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        if (imgPreview) {
+                            imgPreview.src = ev.target.result;
+                            // Toggle Containers
+                            contentDiv.classList.add('hidden');
+                            previewDiv.classList.remove('hidden');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    contentDiv.classList.add('hidden');
+                    previewDiv.classList.remove('hidden');
                 }
             } else {
                 contentDiv.classList.remove('hidden');
                 previewDiv.classList.add('hidden');
-                if (imgPreview.src) URL.revokeObjectURL(imgPreview.src);
+                if (imgPreview) imgPreview.src = '';
             }
         });
+    } else {
+        console.error('Missing elements for events file preview:', { fileInput, contentDiv, previewDiv });
     }
 
     // Initialize Flatpickr
@@ -160,6 +254,7 @@ function setupForm() {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('Event Upload Submitted');
         const btn = form.querySelector('button[type="submit"]');
         const originalHtml = btn.innerHTML;
 
@@ -170,6 +265,12 @@ function setupForm() {
             const formData = new FormData(form);
             const isActive = form.querySelector('[name="is_active"]').checked;
             formData.set('is_active', isActive);
+
+            // Cleanse empty dates to prevent backend validation error
+            if (!formData.get('starts_at')) formData.delete('starts_at');
+            if (!formData.get('ends_at')) formData.delete('ends_at');
+
+            console.log('Uploading event data...', formData);
 
             await apiPostForm('/admin/events', formData);
             showToast('Event poster published!', 'success');
@@ -182,10 +283,9 @@ function setupForm() {
                 if (imgPreview.src) URL.revokeObjectURL(imgPreview.src);
             }
 
-            // Re-init flatpickr or reset native inputs (handled by form.reset usually)
-
             loadEvents();
         } catch (err) {
+            console.error(err);
             showToast(err.message || 'Upload failed', 'error');
         } finally {
             btn.innerHTML = originalHtml;
@@ -210,5 +310,32 @@ function attachDeleteHandlers() {
                 showToast('Delete failed: ' + err, 'error');
             }
         });
+    });
+}
+
+function attachStatusHandlers() {
+    const handleStatus = async (btn, newStatus) => {
+        const id = btn.dataset.id;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = `<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+        btn.disabled = true;
+
+        try {
+            await apiPatch(`/admin/events/${id}/status?is_active=${newStatus}`, {});
+            loadEvents();
+            showToast(newStatus ? 'Event activated' : 'Event deactivated', 'success');
+        } catch (err) {
+            showToast('Update failed: ' + err.message, 'error');
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        }
+    };
+
+    document.querySelectorAll('.activate-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleStatus(btn, true));
+    });
+
+    document.querySelectorAll('.deactivate-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleStatus(btn, false));
     });
 }

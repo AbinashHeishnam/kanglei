@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class GalleryOut(BaseModel):
     id: int
     image_url: str

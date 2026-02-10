@@ -10,9 +10,8 @@ from app.core.config import DEBUG
 
 app = FastAPI(title="Kanglei Career Solution API")
 
-# CORS for frontend dev + production
-from fastapi.middleware.cors import CORSMiddleware
 
+# ✅ Correct CORS configuration (single middleware only)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -23,9 +22,9 @@ app.add_middleware(
         "http://localhost:8081",
         "http://127.0.0.1:8081",
         "https://kanglei-i9oj-a3ruoaaza-abinashheishnams-projects.vercel.app",
-        "https://jedidiah-snarly-erlinda.ngrok-free.dev"
+        "https://jedidiah-snarly-erlinda.ngrok-free.dev",
     ],
-    allow_origin_regex="https://.*\\.vercel\\.app",
+    allow_origin_regex=r"https://.*\.trycloudflare\.com|https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,12 +39,17 @@ def on_startup():
         ensure_bootstrap_admin(db)
     finally:
         db.close()
+    
+    # Start background scheduler
+    from app.core.scheduler import start_scheduler
+    start_scheduler()
 
 # Serve uploads from /uploads
 # backend/app/static_uploads/gallery -> /uploads/gallery/...
 uploads_dir = os.path.join(os.path.dirname(__file__), "static_uploads")
 os.makedirs(os.path.join(uploads_dir, "gallery"), exist_ok=True)
 os.makedirs(os.path.join(uploads_dir, "events"), exist_ok=True)
+
 app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
 app.include_router(api_router)

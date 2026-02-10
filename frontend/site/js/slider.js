@@ -34,18 +34,19 @@ export async function initSlider(containerId) {
 function renderSlider(container, images) {
     let currentIndex = 0;
     let timer;
+    let slideWidth = container.getBoundingClientRect().width;
 
     // 1. Render Slider Track + Internal Controls
     container.innerHTML = `
         <div class="relative w-full h-full overflow-hidden group">
             <!-- Track -->
-            <div id="slider-track" class="flex h-full transition-transform duration-700 ease-in-out will-change-transform">
+            <div id="slider-track" class="flex flex-nowrap h-full will-change-transform" style="transition: transform 500ms ease;">
                 ${images.map((img, i) => `
-                    <div class="min-w-full h-full flex-shrink-0 relative bg-black flex items-center justify-center">
+                    <div class="w-full h-full flex-none relative bg-black flex items-center justify-center overflow-hidden" style="flex: 0 0 100%; min-width: 100%;">
                         <img 
                             src="${toAssetUrl(img.image_url)}" 
                             alt="${img.caption || ''}" 
-                            class="w-full h-full object-cover md:object-cover sm:object-contain opacity-0 transition-opacity duration-500 ease-in-out"
+                            class="block w-full h-full object-cover object-center opacity-0 transition-opacity duration-500 ease-in-out"
                             onload="this.classList.remove('opacity-0')"
                             draggable="false"
                         >
@@ -75,7 +76,7 @@ function renderSlider(container, images) {
 
     function updateSlide(index) {
         currentIndex = index;
-        track.style.transform = `translateX(-${index * 100}%)`;
+        track.style.transform = `translateX(-${index * slideWidth}px)`;
 
         // Update Dots
         dots.forEach((dot, i) => {
@@ -95,12 +96,25 @@ function renderSlider(container, images) {
     }
 
     function startAutoplay() {
+        if (timer) clearInterval(timer);
         timer = setInterval(nextSlide, 3500);
     }
 
     function stopAutoplay() {
         clearInterval(timer);
     }
+
+    // Handle Resize
+    window.addEventListener('resize', () => {
+        slideWidth = container.getBoundingClientRect().width;
+        // Temporarily disable transition for instant resize sync
+        track.style.transition = 'none';
+        track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+        // Restore transition
+        setTimeout(() => {
+            track.style.transition = 'transform 500ms ease';
+        }, 50);
+    });
 
     startAutoplay();
 

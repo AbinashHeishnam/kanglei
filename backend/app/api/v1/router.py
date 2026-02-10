@@ -13,3 +13,5 @@ api_router.include_router(auth_router, tags=["auth"])
 api_router.include_router(gallery_router, tags=["gallery"])
 api_router.include_router(exports_router, tags=["exports"])
 api_router.include_router(events_router, tags=["events"])
+from app.api.v1.endpoints.trash import router as trash_router
+api_router.include_router(trash_router, tags=["trash"])

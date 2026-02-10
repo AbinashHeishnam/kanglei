@@ -60,13 +60,13 @@ def list_appointments(
     counseling_type: str | None = Query(default=None),
     date_from: str | None = Query(default=None, description="YYYY-MM-DD"),
     date_to: str | None = Query(default=None, description="YYYY-MM-DD"),
-    limit: int = Query(default=200, ge=1, le=500),
+    limit: int = Query(default=200, ge=1, le=10000),
     offset: int = Query(default=0, ge=0),
 
     db: Session = Depends(get_db),
     _admin=Depends(require_admin),
 ):
-    qry = db.query(Appointment)
+    qry = db.query(Appointment).filter(Appointment.deleted_at.is_(None))
 
     if q:
         qs = f"%{q.strip()}%"
@@ -117,7 +117,7 @@ def update_status(
     if new_status not in VALID_STATUSES:
         raise HTTPException(status_code=400, detail=f"Invalid status. Allowed: {sorted(VALID_STATUSES)}")
 
-    appt = db.query(Appointment).filter(Appointment.id == appointment_id).first()
+    appt = db.query(Appointment).filter(Appointment.id == appointment_id, Appointment.deleted_at.is_(None)).first()
     if not appt:
         raise HTTPException(status_code=404, detail="Appointment not found")
 
@@ -127,17 +127,21 @@ def update_status(
     return appt
 
 
-# -------- ADMIN: delete appointment --------
+# -------- ADMIN: delete appointment (Soft Delete) --------
 @router.delete("/admin/appointments/{appointment_id}")
 def delete_appointment(
     appointment_id: int,
     db: Session = Depends(get_db),
     _admin=Depends(require_admin),
 ):
-    appt = db.query(Appointment).filter(Appointment.id == appointment_id).first()
+    # Only find non-deleted ones
+    appt = db.query(Appointment).filter(Appointment.id == appointment_id, Appointment.deleted_at.is_(None)).first()
     if not appt:
+        # Check if already deleted
+        if db.query(Appointment).filter(Appointment.id == appointment_id).first():
+             raise HTTPException(status_code=404, detail="Appointment already in trash")
         raise HTTPException(status_code=404, detail="Appointment not found")
 
-    db.delete(appt)
+    appt.deleted_at = datetime.now().astimezone()
     db.commit()
-    return {"detail": "Deleted successfully"}
+    return {"detail": "Moved to trash"}

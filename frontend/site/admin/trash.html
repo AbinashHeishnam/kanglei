@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recycle Bin - Kanglei Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans antialiased min-h-screen flex flex-col opacity-0 transition-opacity duration-500">
+
+    <!-- Global Loader -->
+    <div id="global-loader"
+        class="fixed inset-0 z-[100] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative flex flex-col items-center">
+            <div
+                class="w-16 h-16 rounded-full border-4 border-blue-100 dark:border-blue-900/30 border-t-blue-600 dark:border-t-blue-400 animate-spin">
+            </div>
+            <div
+                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-blue-600/20 dark:bg-blue-400/20 rounded-full animate-pulse">
+            </div>
+            <div
+                class="absolute -bottom-12 text-sm font-bold tracking-widest text-slate-800 dark:text-white uppercase opacity-80 animate-pulse">
+                Loading</div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav
+        class="fixed top-0 left-0 right-0 z-[9999] h-auto md:h-[var(--header-h)] bg-surface/90 backdrop-blur-md border-b border-border transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-[var(--header-h)]">
+                <!-- Left side: Logo, Brand, Nav Links -->
+                <div class="flex items-center gap-8">
+                    <div class="flex-shrink-0 flex items-center gap-3">
+                        <img src="../img/logo.png" alt="Admin Logo" class="h-10 w-10 rounded-full object-cover">
+                        <span class="font-bold text-lg sm:text-xl">Kanglei Admin</span>
+                    </div>
+                    <!-- Desktop Nav Links -->
+                    <div class="hidden md:flex items-center space-x-1">
+                        <a href="./index.html"
+                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all">Dashboard</a>
+                        <a href="./gallery.html"
+                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all">Gallery</a>
+                        <a href="./events.html"
+                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all">Events</a>
+                        <a href="./trash.html"
+                            class="px-4 py-2 rounded-lg text-sm font-semibold text-red-700 bg-red-100 dark:bg-red-900/30 transition-all shadow-sm">Recycle
+                            Bin</a>
+                    </div>
+                </div>
+                <!-- Right side: Actions -->
+                <div class="flex items-center gap-4">
+                    <a href="../index.html" target="_blank"
+                        class="flex text-sm text-muted hover:text-accent gap-1 items-center font-medium transition-colors">
+                        <span class="hidden sm:inline">View Website</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </a>
+                    <div class="h-6 w-px bg-border hidden sm:block"></div>
+                    <button id="logout-btn"
+                        class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-900/20 transition-all hover:shadow-sm">Sign
+                        Out</button>
+                </div>
+            </div>
+            <!-- Mobile Menu Tabs -->
+            <div class="md:hidden flex border-t border-border">
+                <a href="./index.html"
+                    class="flex-1 py-3 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors">Dashboard</a>
+                <a href="./gallery.html"
+                    class="flex-1 py-3 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors">Gallery</a>
+                <a href="./events.html"
+                    class="flex-1 py-3 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors">Events</a>
+                <a href="./trash.html"
+                    class="flex-1 py-3 text-center text-sm font-bold text-red-700 bg-red-100 border-b-2 border-red-600">Trash</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main Content -->
+    <main class="page-content flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal trash-page">
+        <div class="trash-container max-w-6xl mx-auto space-y-6">
+
+            <!-- A) Page Header Row -->
+            <div class="trash-topbar pt-24 sm:pt-28 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex flex-col gap-1">
+                    <h1
+                        class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-tight flex items-center gap-3">
+                        <span class="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
+                        </span>
+                        Recycle Bin
+                    </h1>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium pl-1">Recover deleted items or
+                        delete forever</p>
+                </div>
+
+                <button id="empty-trash-btn"
+                    class="group flex items-center justify-center gap-2 px-5 py-2.5 bg-red-50 hover:bg-red-600 dark:bg-red-900/10 dark:hover:bg-red-600 text-red-600 hover:text-white rounded-lg transition-all duration-300 font-medium text-sm shadow-sm hover:shadow-red-600/20 border border-red-100 dark:border-red-900/30 hover:border-transparent">
+                    <svg class="w-4 h-4 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                    </svg>
+                    <span>Empty All</span>
+                </button>
+            </div>
+
+            <!-- B) Tabs Row -->
+            <div class="trash-tabs sticky top-20 z-30">
+                <div
+                    class="bg-white dark:bg-slate-800 rounded-xl p-1.5 shadow-sm border border-slate-200 dark:border-slate-700 inline-flex w-full sm:w-auto overflow-x-auto no-scrollbar">
+                    <button id="tab-appointments"
+                        class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Appointments
+                    </button>
+                    <button id="tab-gallery"
+                        class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Gallery
+                    </button>
+                    <button id="tab-events"
+                        class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z">
+                            </path>
+                        </svg>
+                        Events
+                    </button>
+
+                    <!-- Mobile Empty Btn (Hidden on desktop, shown if needed by JS logic but pure CSS hides it) 
+                         Keeping it purely for compatibility if JS looks for it, but referencing same handler. 
+                         Actually I will remove it from view but keep hidden input if absolutely needed, 
+                         OR just rely on the main button. 
+                         Given user said "Right: Primary action", I am using the top button. 
+                         I'll add a hidden dummy to satisfy "if (emptyBtnMobile)" check just in case JS has logic I missed,
+                         though the check is safe "if (emptyBtnMobile) ...". So I can omit safely. 
+                    -->
+                    <button id="empty-trash-btn-mobile" class="hidden"></button>
+                </div>
+            </div>
+
+            <!-- C) Content Card -->
+            <div
+                class="trash-card bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm min-h-[400px] relative overflow-hidden">
+
+                <!-- Loader Overlay -->
+                <div id="section-loader"
+                    class="absolute inset-0 bg-white/60 dark:bg-slate-900/60 backdrop-blur-[2px] z-20 hidden flex-col items-center justify-center transition-opacity duration-300">
+                    <div class="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+                </div>
+
+                <!-- 1. APPOINTMENTS TAB -->
+                <div id="content-appointments" class="tab-content hidden group/tab">
+
+                    <!-- D) Empty State -->
+                    <div id="trash-appointments-empty"
+                        class="hidden trash-empty flex flex-col items-center justify-center py-20 text-center px-4">
+                        <div
+                            class="w-20 h-20 bg-slate-50 dark:bg-slate-700/50 rounded-full flex items-center justify-center mb-6 ring-1 ring-slate-100 dark:ring-slate-600">
+                            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-slate-900 dark:text-white font-semibold text-lg mb-1">Trash is empty</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm max-w-sm">There are no deleted appointments
+                            to recover.</p>
+                    </div>
+
+                    <!-- E) Table List (Visible on all sizes, scrollable) -->
+                    <div class="trash-scroll-wrapper">
+                        <div class="card overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm p-0">
+                            <div class="table-container min-h-[400px] relative border-0 rounded-none shadow-none">
+                                <table class="table-premium trash-table w-full text-left">
+                                    <thead class="bg-slate-50 dark:bg-slate-800/80 sticky top-0 z-10 backdrop-blur-sm">
+                                        <tr>
+                                            <th
+                                                class="w-12 text-center py-4 px-4 border-b border-slate-200 dark:border-slate-700">
+                                                <input type="checkbox" id="select-all"
+                                                    class="w-4 h-4 rounded border-slate-300 text-red-600 focus:ring-red-500 cursor-pointer">
+                                            </th>
+                                            <th
+                                                class="py-4 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500 tracking-wider">
+                                                Item Details</th>
+                                            <th
+                                                class="py-4 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500 tracking-wider">
+                                                Type</th>
+                                            <th
+                                                class="py-4 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500 tracking-wider">
+                                                Deleted Date</th>
+                                            <th
+                                                class="py-4 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500 tracking-wider text-right">
+                                                Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="trash-table-body"
+                                        class="divide-y divide-slate-100 dark:divide-slate-800">
+                                        <!-- JS will populate this -->
+                                    </tbody>
+                                </table>
+
+                                <!-- Empty State -->
+                                <div id="trash-empty-state"
+                                    class="hidden flex flex-col items-center justify-center py-20 text-center">
+                                    <div
+                                        class="w-20 h-20 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mb-4">
+                                        <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-medium text-slate-900 dark:text-white">Trash is empty</h3>
+                                    <p class="text-slate-500 mt-1">No deleted items found</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. GALLERY TAB -->
+                <div id="content-gallery" class="tab-content hidden p-6">
+                    <div id="trash-gallery-empty"
+                        class="hidden trash-empty flex flex-col items-center justify-center py-20 text-center">
+                        <div
+                            class="w-20 h-20 bg-slate-50 dark:bg-slate-700/50 rounded-full flex items-center justify-center mb-6 ring-1 ring-slate-100 dark:ring-slate-600">
+                            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-slate-900 dark:text-white font-semibold text-lg mb-1">No deleted images</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Gallery trash is empty.</p>
+                    </div>
+
+                    <!-- Gallery Select All Bar -->
+                    <div id="gallery-select-bar"
+                        class="hidden flex items-center gap-3 mb-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <input type="checkbox" id="select-all-gallery"
+                            class="w-4 h-4 rounded border-slate-300 text-red-600 focus:ring-red-500 cursor-pointer">
+                        <label for="select-all-gallery"
+                            class="text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">Select All
+                            Images</label>
+                    </div>
+
+                    <div id="trash-gallery-grid"
+                        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <!-- JS Injected Grid -->
+                    </div>
+                </div>
+
+                <!-- 3. EVENTS TAB -->
+                <div id="content-events" class="tab-content hidden p-6">
+                    <div id="trash-events-empty"
+                        class="hidden trash-empty flex flex-col items-center justify-center py-20 text-center">
+                        <div
+                            class="w-20 h-20 bg-slate-50 dark:bg-slate-700/50 rounded-full flex items-center justify-center mb-6 ring-1 ring-slate-100 dark:ring-slate-600">
+                            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-slate-900 dark:text-white font-semibold text-lg mb-1">No deleted events</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Events trash is empty.</p>
+                    </div>
+
+                    <!-- Events Select All Bar -->
+                    <div id="events-select-bar"
+                        class="hidden flex items-center gap-3 mb-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <input type="checkbox" id="select-all-events"
+                            class="w-4 h-4 rounded border-slate-300 text-red-600 focus:ring-red-500 cursor-pointer">
+                        <label for="select-all-events"
+                            class="text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">Select All
+                            Events</label>
+                    </div>
+
+                    <div id="trash-events-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- JS Injected Grid -->
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center pt-8 pb-4">
+                <p class="text-xs text-slate-400 font-medium">Items in trash are permanently deleted after 30 days
+                    (Auto-policy)</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-6 text-center text-sm text-slate-400 dark:text-slate-600 reveal">
+        <p>Designed by saiyoniX Pvt.ltd</p>
+    </footer>
+
+    <script src="../js/reveal.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script type="module" src="../js/trash.js"></script>
+</body>
+
+</html>

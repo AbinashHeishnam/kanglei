@@ -21,13 +21,24 @@ def _uploads_abs_dir() -> str:
 @router.get("/events", response_model=list[EventResponse])
 def list_active_events(db: Session = Depends(get_db)):
     """List active events for public view (most recent first)."""
-    # Optional: Filter by date if starts_at/ends_at are used logic
-    # For now, just simplistic is_active check + sorting
-    items = db.query(EventPoster).filter(EventPoster.is_active == True).order_by(EventPoster.created_at.desc()).all()
+    # Auto-activate due events
+    _activate_due_events(db)
+
+    now = datetime.now()
+    from sqlalchemy import or_, and_
+    
+    items = db.query(EventPoster).filter(
+        and_(
+            EventPoster.deleted_at.is_(None),  # Must not be deleted
+            or_(
+                EventPoster.is_active == True,
+                and_(EventPoster.starts_at != None, EventPoster.starts_at <= now)
+            )
+        )
+    ).order_by(EventPoster.created_at.desc()).all()
     
     out = []
     for it in items:
-        # Convert stored path to url
         fname = os.path.basename(it.image_path)
         out.append(EventResponse(
             id=it.id,
@@ -45,8 +56,11 @@ def list_all_events(
     db: Session = Depends(get_db),
     _admin=Depends(require_admin)
 ):
-    """List all events for admin."""
-    items = db.query(EventPoster).order_by(EventPoster.created_at.desc()).all()
+    """List all events for admin (excluding deleted)."""
+    # Auto-activate due events
+    _activate_due_events(db)
+
+    items = db.query(EventPoster).filter(EventPoster.deleted_at.is_(None)).order_by(EventPoster.created_at.desc()).all()
     out = []
     for it in items:
         fname = os.path.basename(it.image_path)
@@ -60,6 +74,27 @@ def list_all_events(
             created_at=it.created_at
         ))
     return out
+
+def _activate_due_events(db: Session):
+    """Helper: Activate events that have passed their start time."""
+    now = datetime.now()
+    from sqlalchemy import and_
+    
+    # Find due events
+    due_events = db.query(EventPoster).filter(
+        and_(
+            EventPoster.is_active == False,
+            EventPoster.deleted_at.is_(None),
+            EventPoster.starts_at != None,
+            EventPoster.starts_at <= now
+        )
+    ).all()
+    
+    if due_events:
+        for ev in due_events:
+            print(f"Auto-activating event {ev.id} (Scheduled: {ev.starts_at})")
+            ev.is_active = True
+        db.commit()
 
 @router.post("/admin/events", response_model=EventResponse)
 def upload_event_poster(
@@ -117,16 +152,98 @@ def delete_event(
     db: Session = Depends(get_db),
     _admin=Depends(require_admin),
 ):
-    post = db.query(EventPoster).filter(EventPoster.id == event_id).first()
+    post = db.query(EventPoster).filter(EventPoster.id == event_id, EventPoster.deleted_at.is_(None)).first()
     if not post:
+        if db.query(EventPoster).filter(EventPoster.id == event_id).first():
+             raise HTTPException(status_code=404, detail="Event already in trash")
         raise HTTPException(status_code=404, detail="Event poster not found")
 
-    if post.image_path and os.path.exists(post.image_path):
-        try:
+    post.deleted_at = datetime.now().astimezone()
+    db.commit()
+    return {"status": "success", "deleted_id": event_id}
+
+@router.patch("/admin/events/{event_id}/status", response_model=EventResponse)
+def update_event_status(
+    event_id: int,
+    is_active: bool,
+    db: Session = Depends(get_db),
+    _admin=Depends(require_admin),
+):
+    """Toggle event active status."""
+    post = db.query(EventPoster).filter(EventPoster.id == event_id, EventPoster.deleted_at.is_(None)).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Event poster not found")
+    
+    post.is_active = is_active
+    db.commit()
+    db.refresh(post)
+    
+    fname = os.path.basename(post.image_path)
+    return EventResponse(
+        id=post.id,
+        title=post.title,
+        image_url=f"/uploads/events/{fname}",
+        is_active=post.is_active,
+        starts_at=post.starts_at,
+        ends_at=post.ends_at,
+        created_at=post.created_at
+    )
+@router.get("/admin/events/trash", response_model=list[EventResponse])
+def list_trashed_events(
+    db: Session = Depends(get_db),
+    _admin=Depends(require_admin),
+):
+    items = db.query(EventPoster).filter(
+        EventPoster.deleted_at.is_not(None)
+    ).order_by(EventPoster.deleted_at.desc()).all()
+
+    out = []
+    for it in items:
+        fname = os.path.basename(it.image_path)
+        out.append(EventResponse(
+            id=it.id,
+            title=it.title,
+            image_url=f"/uploads/events/{fname}",
+            is_active=it.is_active,
+            starts_at=it.starts_at,
+            ends_at=it.ends_at,
+            created_at=it.created_at
+        ))
+    return out
+
+
+@router.post("/admin/events/{event_id}/restore")
+def restore_event_from_trash(
+    event_id: int,
+    db: Session = Depends(get_db),
+    _admin=Depends(require_admin),
+):
+    post = db.query(EventPoster).filter(EventPoster.id == event_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    post.deleted_at = None
+    db.commit()
+    return {"status": "success", "restored_id": event_id}
+
+
+@router.delete("/admin/events/{event_id}/purge")
+def purge_event_permanently(
+    event_id: int,
+    db: Session = Depends(get_db),
+    _admin=Depends(require_admin),
+):
+    post = db.query(EventPoster).filter(EventPoster.id == event_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    # Optional: delete file too (safe)
+    try:
+        if post.image_path and os.path.exists(post.image_path):
             os.remove(post.image_path)
-        except OSError:
-            pass
+    except Exception:
+        pass
 
     db.delete(post)
     db.commit()
-    return {"status": "success", "deleted_id": event_id}
+    return {"status": "success", "purged_id": event_id}

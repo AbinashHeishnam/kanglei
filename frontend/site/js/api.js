@@ -6,12 +6,13 @@ const isLocal =
   window.location.hostname === "127.0.0.1" ||
   window.location.hostname === "localhost";
 
-// 👉 CHANGE THIS ONLY when ngrok URL changes
+// 👉 Change only when your tunnel changes
 const NGROK_ORIGIN = "https://jedidiah-snarly-erlinda.ngrok-free.dev";
 
-// ==============================
-// API Origin (server root)
-// ==============================
+// ✅ Add this for Cloudflare tunnel backend URL
+const TRYCLOUDFLARE_API_ORIGIN = "https://end-smtp-wells-clothing.trycloudflare.com";
+// Detect if frontend is opened from a Cloudflare quick tunnel
+const isTryCloudflare = window.location.hostname.endsWith("trycloudflare.com");
 
 export const API_ORIGIN = isLocal
   ? "http://127.0.0.1:8000"
@@ -19,7 +20,9 @@ export const API_ORIGIN = isLocal
     import.meta.env &&
     import.meta.env.VITE_API_ORIGIN)
     ? import.meta.env.VITE_API_ORIGIN
-    : NGROK_ORIGIN;
+    : isTryCloudflare
+      ? TRYCLOUDFLARE_API_ORIGIN
+      : NGROK_ORIGIN;
 
 // ==============================
 // API Base (/api/v1 always here)
