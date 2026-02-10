@@ -23,6 +23,9 @@ app.add_middleware(
         "http://127.0.0.1:8081",
         "https://kanglei-i9oj-a3ruoaaza-abinashheishnams-projects.vercel.app",
         "https://jedidiah-snarly-erlinda.ngrok-free.dev",
+        "https://kanglei-mzwu.vercel.app",
+"https://kanglei-mzwu-qmfp4gkr6-abinashheishnams-projects.vercel.app",
+
     ],
     allow_origin_regex=r"https://.*\.trycloudflare\.com|https://.*\.vercel\.app",
     allow_credentials=True,
