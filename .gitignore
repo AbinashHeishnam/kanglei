@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Environment
+.env
+
+# Uploads (user generated content)
+backend/app/static_uploads/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
