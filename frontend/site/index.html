@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
   <!-- Primary SEO -->
-  <title>Kanglei Career Solution | Career Counselling & Study Abroad in Manipur</title>
-  <meta name="description" content="Kanglei Career Solution, an initiative under Pamel Enterprises, is dedicated to guiding students towards a successful and fulfilling future. Your Future, Our Priority.">
+  <title>Kanglei Career Solution | Career Counselling &amp; Study Abroad in Manipur</title>
+  <meta name="description"
+    content="Kanglei Career Solution, an initiative under Pamel Enterprises, is dedicated to guiding students towards a successful and fulfilling future. Your Future, Our Priority.">
   <link rel="canonical" href="https://kangleicareersolution.co.in/">
 
   <!-- Open Graph -->
@@ -23,222 +24,794 @@
   <meta name="twitter:description" content="Your Future, Our Priority.">
   <meta name="twitter:image" content="https://kangleicareersolution.co.in/img/logo.png">
 
-  <!-- Favicon (VERY IMPORTANT FOR GOOGLE ICON) -->
+  <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/favicon-new.ico?v=3">
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon-new.ico?v=3"> 
-  <!-- Schema.org Logo Markup (THIS FIXES GOOGLE LOGO) -->
-   <!-- Schema.org Logo Markup -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Kanglei Career Solution",
-  "url": "https://kangleicareersolution.co.in/",
-  "logo": "https://kangleicareersolution.co.in/img/logo-512.png",
-  "sameAs": [
-    "https://www.facebook.com/profile.php?id=61584484165647",
-    "https://www.instagram.com/kangleicareer/"
-  ]
-}
-</script>
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon-new.ico?v=3">
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"Kanglei Career Solution","url":"https://kangleicareersolution.co.in/","logo":"https://kangleicareersolution.co.in/img/logo-512.png","sameAs":["https://www.facebook.com/profile.php?id=61584484165647","https://www.instagram.com/kangleicareer/"]}
+  </script>
 
   <!-- Styles -->
   <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
 
+  <style>
+    :root {
+      --em: #065f46;
+      --em-mid: #047857;
+      --em-light: #10b981;
+      --em-pale: #d1fae5;
+      --em-faint: #ecfdf5;
+      --cream: #f8f9fb;
+    }
 
+    * {
+      font-family: 'Inter', system-ui, sans-serif !important
+    }
 
+    html,
+    body {
+      overflow-x: hidden;
+      background: var(--cream);
+      color: #111827
+    }
 
+    /* HEADER */
+    .kh {
+      position: fixed;
+      top: 10px;
+      left: 12px;
+      right: 12px;
+      z-index: 100;
+      background: rgba(255, 255, 255, .85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(6, 95, 70, .12);
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .06);
+      max-width: 1280px;
+      margin: 0 auto
+    }
 
+    .kh-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px
+    }
 
+    .kh-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none
+    }
 
+    .kh-logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--em-pale)
+    }
+
+    .lt-brand {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -.02em
+    }
+
+    .lt-brand span {
+      color: var(--em-mid)
+    }
+
+    .lt-tag {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--em-mid);
+      letter-spacing: .1em;
+      text-transform: uppercase
+    }
+
+    .kh-nav {
+      display: none;
+      align-items: center;
+      gap: 32px
+    }
+
+    @media(min-width:768px) {
+      .kh-nav {
+        display: flex
+      }
+
+      .kh-mob-btn {
+        display: none !important
+      }
+    }
+
+    .kh-nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: #4b5563;
+      text-decoration: none;
+      transition: color .2s;
+      position: relative
+    }
+
+    .kh-nav a:hover {
+      color: var(--em)
+    }
+
+    .kh-nav a.active {
+      color: var(--em);
+      font-weight: 600
+    }
+
+    .kh-nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--em-light);
+      border-radius: 2px
+    }
+
+    .kh-cta {
+      background: var(--em) !important;
+      color: #fff !important;
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      box-shadow: 0 2px 8px rgba(6, 95, 70, .25);
+      transition: all .2s !important
+    }
+
+    .kh-cta:hover {
+      background: var(--em-mid) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 14px rgba(6, 95, 70, .3) !important
+    }
+
+    .kh-cta::after {
+      display: none !important
+    }
+
+    .kh-mob-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--em-faint);
+      border: none;
+      cursor: pointer;
+      color: var(--em)
+    }
+
+    .kh-mob-nav {
+      display: none;
+      padding: 12px 16px 16px;
+      border-top: 1px solid rgba(6, 95, 70, .08);
+      gap: 4px;
+      flex-direction: column
+    }
+
+    .kh-mob-nav.open {
+      display: flex
+    }
+
+    .kh-mob-nav a {
+      display: block;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #4b5563;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all .2s
+    }
+
+    .kh-mob-nav a:hover,
+    .kh-mob-nav a.active {
+      background: var(--em-faint);
+      color: var(--em)
+    }
+
+    .kh-mob-nav .mob-cta {
+      margin-top: 6px;
+      background: var(--em);
+      color: #fff !important;
+      text-align: center;
+      border-radius: 12px;
+      font-weight: 600 !important
+    }
+
+    /* SLIDER SECTION */
+    .slider-section {
+      padding-top: 78px
+    }
+
+    .slider-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 16px 0
+    }
+
+    .slider-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, .12);
+      border: 1px solid rgba(6, 95, 70, .08);
+      background: #f3f4f6;
+      aspect-ratio: 21/9
+    }
+
+    @media(max-width:768px) {
+      .slider-container {
+        aspect-ratio: 16/9
+      }
+    }
+
+    #homeSlider {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%
+    }
+
+    /* INTRO */
+    .intro-section {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 44px 20px 36px;
+      text-align: center;
+      animation: fadeUp .8s cubic-bezier(.2, .8, .2, 1) .1s both
+    }
+
+    .intro-title {
+      font-size: clamp(22px, 4vw, 36px);
+      font-weight: 800;
+      color: #0a1628;
+      line-height: 1.25;
+      letter-spacing: -.03em;
+      margin-bottom: 14px
+    }
+
+    .intro-title .hl {
+      background: linear-gradient(135deg, var(--em) 0%, var(--em-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+
+    .intro-sub {
+      font-size: 15px;
+      color: #5a6478;
+      line-height: 1.7;
+      margin-bottom: 28px
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px
+    }
+
+    .btn-primary-em {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--em);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 100px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(6, 95, 70, .25);
+      transition: all .25s
+    }
+
+    .btn-primary-em:hover {
+      background: var(--em-mid);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(6, 95, 70, .3)
+    }
+
+    .btn-outline-em {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--em);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 100px;
+      text-decoration: none;
+      border: 1.5px solid rgba(6, 95, 70, .25);
+      transition: all .25s
+    }
+
+    .btn-outline-em:hover {
+      background: var(--em-faint);
+      border-color: var(--em);
+      transform: translateY(-2px)
+    }
+
+    /* FEATURES */
+    .feat-section {
+      background: #f3f4f6;
+      border-top: 1px solid rgba(6, 95, 70, .07);
+      border-bottom: 1px solid rgba(6, 95, 70, .07);
+      padding: 48px 20px
+    }
+
+    .feat-inner {
+      max-width: 1100px;
+      margin: 0 auto
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px
+    }
+
+    @media(min-width:640px) {
+      .feat-grid {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+
+    .feat-card {
+      background: #fff;
+      border: 1px solid rgba(6, 95, 70, .08);
+      border-radius: 20px;
+      padding: 26px 22px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .04);
+      transition: all .3s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .feat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--em), var(--em-light));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s
+    }
+
+    .feat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(6, 95, 70, .10);
+      border-color: rgba(16, 185, 129, .2)
+    }
+
+    .feat-card:hover::after {
+      transform: scaleX(1)
+    }
+
+    .feat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      transition: transform .3s
+    }
+
+    .feat-card:hover .feat-icon {
+      transform: scale(1.1)
+    }
+
+    .feat-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 10px
+    }
+
+    .feat-desc {
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.65
+    }
+
+    /* STATS */
+    .stats-section {
+      padding: 52px 20px;
+      background: var(--cream)
+    }
+
+    .stats-inner {
+      max-width: 860px;
+      margin: 0 auto
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      text-align: center
+    }
+
+    @media(max-width:500px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px
+      }
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid rgba(6, 95, 70, .09);
+      border-radius: 18px;
+      padding: 28px 20px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .04);
+      transition: all .3s
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(6, 95, 70, .10)
+    }
+
+    .stat-num {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--em) 0%, var(--em-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 8px
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: .08em
+    }
+
+    /* FOOTER */
+    .sf {
+      background: #0a1f19;
+      color: rgba(255, 255, 255, .7);
+      padding: 40px 20px 20px
+    }
+
+    .sf-in {
+      max-width: 1060px;
+      margin: 0 auto
+    }
+
+    .sf-top {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 28px
+    }
+
+    @media(min-width:640px) {
+      .sf-top {
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 24px
+      }
+    }
+
+    .sf-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      margin-bottom: 12px
+    }
+
+    .sf-logo img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(16, 185, 129, .3);
+      object-fit: cover
+    }
+
+    .sf-logo-t {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff
+    }
+
+    .sf-desc {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .45);
+      line-height: 1.65
+    }
+
+    .sf-col h5 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .55);
+      margin-bottom: 14px
+    }
+
+    .sf-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0
+    }
+
+    .sf-col li {
+      margin-bottom: 10px
+    }
+
+    .sf-col a {
+      font-size: 13px;
+      color: rgba(255, 255, 255, .6);
+      text-decoration: none;
+      transition: color .2s
+    }
+
+    .sf-col a:hover {
+      color: var(--em-light)
+    }
+
+    .sf-ci {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, .6)
+    }
+
+    .sf-ci svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--em-light)
+    }
+
+    .sf-soc {
+      display: flex;
+      gap: 10px
+    }
+
+    .sf-sb {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, .55);
+      text-decoration: none;
+      transition: all .2s
+    }
+
+    .sf-sb:hover {
+      background: var(--em);
+      border-color: var(--em);
+      color: #fff;
+      transform: translateY(-2px)
+    }
+
+    .sf-div {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, .07);
+      margin-bottom: 16px
+    }
+
+    .sf-bot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center
+    }
+
+    @media(min-width:640px) {
+      .sf-bot {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left
+      }
+    }
+
+    .sf-copy {
+      font-size: 11px;
+      color: rgba(255, 255, 255, .3)
+    }
+
+    .sf-cred {
+      font-size: 11px;
+      color: rgba(255, 255, 255, .25)
+    }
+
+    .sf-cred a {
+      color: var(--em-light);
+      text-decoration: none;
+      font-weight: 500
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .6s cubic-bezier(.2, .8, .2, 1), transform .6s cubic-bezier(.2, .8, .2, 1)
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-gray-100 font-sans antialiased overflow-x-hidden">
 
-  <!-- Navbar -->
-  <header
-    class="fixed w-full top-0 z-50 transition-all duration-300 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-gray-100 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16 md:h-20">
-        <!-- Logo -->
-        <a href="index.html" class="flex items-center gap-3 group">
-          <div class="relative w-10 h-10 overflow-hidden rounded-full border border-gray-200 dark:border-slate-700">
-            <img src="img/logo.png" alt="KCS Logo"
-              class="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-500">
-          </div>
-          <div class="flex flex-col leading-tight">
-            <span class="text-gray-900 dark:text-white font-bold text-sm sm:text-base tracking-tight">Kanglei <span
-                class="text-blue-600">Career</span></span>
-            <span class="text-blue-600 font-extrabold text-[10px] sm:text-xs tracking-widest uppercase">Solution</span>
-          </div>
-        </a>
-
-        <!-- Desktop Nav -->
-        <nav class="hidden md:flex items-center gap-8">
-          <a href="index.html"
-            class="text-blue-600 font-medium relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-blue-600 after:rounded-full">Home</a>
-          <a href="about.html"
-            class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About</a>
-          <a href="services.html"
-            class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Services</a>
-          <a href="contact.html"
-            class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a>
-
-
-        </nav>
-
-        <!-- Mobile Actions -->
-        <div class="flex items-center gap-4 md:hidden">
-          <!-- Mobile Book Button (Icon only) -->
-          <a href="services.html#book" class="p-2 text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-full">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-          </a>
-
-          <button id="mobile-menu-btn" class="p-2 text-gray-600 dark:text-gray-300 focus:outline-none">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
+  <!-- HEADER -->
+  <header class="kh" id="site-header">
+    <div class="kh-inner">
+      <a href="index.html" class="kh-logo">
+        <img src="img/logo.png" alt="KCS Logo">
+        <div><span class="lt-brand">Kanglei <span>Career</span></span><span class="lt-tag">Solution</span></div>
+      </a>
+      <nav class="kh-nav">
+        <a href="index.html" class="active">Home</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+        <a href="services.html#book" class="kh-cta">Book Appointment</a>
+      </nav>
+      <button id="mobile-menu-btn" class="kh-mob-btn" aria-label="Menu">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
     </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu"
-      class="hidden md:hidden absolute w-full bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t dark:border-slate-800 shadow-2xl transition-all duration-300 origin-top transform">
-      <div class="px-4 py-6 flex flex-col gap-4">
-        <a href="index.html"
-          class="block px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 font-medium">Home</a>
-        <a href="about.html"
-          class="block px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200">About</a>
-        <a href="services.html"
-          class="block px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200">Services</a>
-        <a href="contact.html"
-          class="block px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200">Contact</a>
-      </div>
-    </div>
+    <nav id="mobile-menu" class="kh-mob-nav">
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact</a>
+      <a href="services.html#book" class="mob-cta">Book Appointment</a>
+    </nav>
   </header>
 
   <main id="page" class="pb-12 sm:pb-20">
 
-    <!-- Hero / Gallery Section -->
-    <section class="pt-20 sm:pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
-      <!-- Hero Container: Single Column, Aspect Ratio Controlled -->
-      <div
-        class="relative w-full overflow-hidden rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 aspect-video md:aspect-[21/9] lg:h-[600px] flex flex-col">
-
-        <!-- Slider -->
-        <div id="homeSlider" class="absolute inset-0 w-full h-full"></div>
-
-        <!-- Overlay Content (Always visible, single column) -->
-        <!-- Note: Slider has its own caption, but this is the 'Hero' text if we want static text over slider. 
-                 The request says "Text must sit at bottom of hero". Slider.js handles images. 
-                 If we want a static hero message separate from slider captions: -->
+    <!-- HERO SLIDER -->
+    <section class="slider-section">
+      <div class="slider-wrap">
+        <div class="slider-container">
+          <div id="homeSlider" class="absolute inset-0 w-full h-full"></div>
+        </div>
       </div>
     </section>
 
-    <!-- Hero Text Content -->
-    <div class="relative z-10 max-w-4xl mx-auto text-center px-4">
-      <h1 class="text-2xl font-extrabold mb-4 sm:mb-6 leading-tight tracking-tight drop-shadow-sm">
-        Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Kanglei
-          Career Solution</span>
+    <!-- INTRO TEXT -->
+    <div class="intro-section">
+      <h1 class="intro-title">
+        Welcome to <span class="hl">Kanglei Career Solution</span>
       </h1>
-      <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 mb-6 sm:mb-8 font-medium max-w-2xl mx-auto">
-        Your Gateway to Global Opportunities. Check out our latest events and gallery highlights below.
-      </p>
+      <p class="intro-sub">Your Gateway to Global Opportunities. Check out our latest events and gallery highlights
+        below.</p>
     </div>
 
-    <!-- Welcome / Intro -->
-    <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-10 sm:mb-20 text-center reveal">
-      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-4 sm:mb-6 leading-tight dark:text-white">
+    <!-- WELCOME SECTION -->
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-10 sm:mb-16 text-center reveal">
+      <h2
+        style="font-size:clamp(20px,3.5vw,32px);font-weight:800;color:#0a1628;letter-spacing:-.02em;margin-bottom:14px">
         Shaping Career <span
-          class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Journeys</span>
-      </h1>
-      <p class="text-lg sm:text-xl text-gray-600 dark:text-slate-300 mb-8 leading-relaxed">
+          style="background:linear-gradient(135deg,#065f46,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Journeys</span>
+      </h2>
+      <p style="font-size:15px;color:#5a6478;line-height:1.7;margin-bottom:28px">
         Empowering students and professionals in Manipur and beyond with expert counseling, study abroad opportunities,
         and skill development.
       </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <a href="services.html#book" class="btn btn-primary rounded-full shadow-lg shadow-blue-500/20">Book
-          Consultation</a>
-        <a href="services.html"
-          class="btn btn-outline border-gray-300 dark:border-slate-600 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-800 rounded-full">Explore
-          Services</a>
+      <div class="btn-row">
+        <a href="services.html#book" class="btn-primary-em">Book Consultation</a>
+        <a href="services.html" class="btn-outline-em">Explore Services</a>
       </div>
     </section>
 
-    <!-- Features Grid -->
-    <section class="bg-white dark:bg-slate-900 section border-t border-gray-100 dark:border-slate-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="grid md:grid-cols-3 gap-6">
-          <!-- Card 1 -->
-          <div class="card reveal group hover:-translate-y-2">
-            <div
-              class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- FEATURES -->
+    <section class="feat-section reveal">
+      <div class="feat-inner">
+        <div class="feat-grid">
+          <div class="feat-card">
+            <div class="feat-icon" style="background:#ecfdf5">
+              <svg width="24" height="24" fill="none" stroke="#065f46" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
-                </path>
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h3 class="text-xl font-bold mb-3 dark:text-white">Expert Counseling</h3>
-            <p class="text-gray-600 dark:text-slate-400">Personalized guidance to help you choose the right career path
-              based on your strengths.</p>
+            <div class="feat-title">Expert Counseling</div>
+            <p class="feat-desc">Personalized guidance to help you choose the right career path based on your strengths.
+            </p>
           </div>
-          <!-- Card 2 -->
-          <div class="card reveal delay-100 group hover:-translate-y-2">
-            <div
-              class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="feat-card">
+            <div class="feat-icon" style="background:#eef2ff">
+              <svg width="24" height="24" fill="none" stroke="#4f46e5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                </path>
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
-            <h3 class="text-xl font-bold mb-3 dark:text-white">Admission Support</h3>
-            <p class="text-gray-600 dark:text-slate-400">Complete assistance for university admissions, from forms to
-              interviews.</p>
+            <div class="feat-title">Admission Support</div>
+            <p class="feat-desc">Complete assistance for university admissions, from forms to interviews.</p>
           </div>
-          <!-- Card 3 -->
-          <div class="card reveal delay-200 group hover:-translate-y-2">
-            <div
-              class="w-14 h-14 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="feat-card">
+            <div class="feat-icon" style="background:#fff7ed">
+              <svg width="24" height="24" fill="none" stroke="#ea580c" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                </path>
+                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 class="text-xl font-bold mb-3 dark:text-white">Study Abroad</h3>
-            <p class="text-gray-600 dark:text-slate-400">Navigate the complexities of studying overseas with our
-              comprehensive support.</p>
+            <div class="feat-title">Study Abroad</div>
+            <p class="feat-desc">Navigate the complexities of studying overseas with our comprehensive support.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="section bg-slate-50 dark:bg-slate-950">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div
-          class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-slate-800">
-          <div class="reveal py-4 md:py-0">
-            <div class="text-3xl sm:text-4xl font-bold text-blue-600 mb-2">5k+</div>
-            <div class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-widest">Students</div>
+    <!-- STATS -->
+    <section class="stats-section reveal">
+      <div class="stats-inner">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num">5k+</div>
+            <div class="stat-lbl">Students</div>
           </div>
-          <div class="reveal delay-100 py-4 md:py-0">
-            <div class="text-3xl sm:text-4xl font-bold text-blue-600 mb-2">50+</div>
-            <div class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-widest">Universities</div>
+          <div class="stat-card">
+            <div class="stat-num">50+</div>
+            <div class="stat-lbl">Universities</div>
           </div>
-          <div class="reveal delay-200 py-4 md:py-0">
-            <div class="text-3xl sm:text-4xl font-bold text-blue-600 mb-2">97%</div>
-            <div class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-widest">Success</div>
+          <div class="stat-card">
+            <div class="stat-num">97%</div>
+            <div class="stat-lbl">Success</div>
           </div>
         </div>
       </div>
@@ -246,99 +819,77 @@
 
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-gray-900 border-t border-gray-800 section">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid md:grid-cols-4 gap-12 mb-12 text-center md:text-left">
-        <div class="col-span-1 md:col-span-1 flex flex-col items-center md:items-start">
-          <a href="index.html" class="flex items-center gap-2 mb-6">
-            <img src="img/logo.png" alt="Logo" class="w-8 h-8 rounded-full">
-            <span class="text-xl font-bold text-white">Kanglei</span>
-          </a>
-          <p class="text-gray-400 text-sm leading-relaxed">
-            Your trusted partner in career development and educational guidance in Manipur.
-          </p>
-        </div>
+  <!-- FOOTER -->
+  <footer class="sf">
+    <div class="sf-in">
+      <div class="sf-top">
         <div>
-          <h4 class="text-white font-semibold mb-6">Quick Links</h4>
-          <ul class="space-y-3 text-sm text-gray-400 flex flex-col items-center md:items-start">
-            <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
-            <li><a href="services.html" class="hover:text-white transition-colors">Our Services</a></li>
-            <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
-            <li><a href="services.html#book" class="hover:text-white transition-colors">Book Consultant</a></li>
+          <a href="index.html" class="sf-logo"><img src="img/logo.png" alt="Logo"><span
+              class="sf-logo-t">Kanglei</span></a>
+          <p class="sf-desc">Your trusted partner in career development and educational guidance in Manipur.</p>
+        </div>
+        <div class="sf-col">
+          <h5>Quick Links</h5>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="services.html">Our Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="services.html#book">Book Consultant</a></li>
           </ul>
         </div>
-        <div>
-          <h4 class="text-white font-semibold mb-6">Contact</h4>
-          <ul class="space-y-3 text-sm text-gray-400 flex flex-col items-center md:items-start">
-            <li class="flex items-start gap-3">
-              <svg class="w-5 h-5 text-gray-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-              <span>Imphal, Manipur, India</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-gray-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                </path>
-              </svg>
-              <span>+91 9402070400</span>
-              <span>+91 8119981323</span>
-            </li>
-          </ul>
+        <div class="sf-col">
+          <h5>Contact</h5>
+          <div class="sf-ci"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg><span>Imphal, Manipur, India</span></div>
+          <div class="sf-ci"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <div>
+              <div>+91 9402070400</div>
+              <div>+91 8119981323</div>
+            </div>
+          </div>
         </div>
-        <div class="flex flex-col items-center md:items-start">
-          <h4 class="text-white font-semibold mb-6">Social</h4>
-          <div class="flex gap-4">
+        <div class="sf-col">
+          <h5>Social</h5>
+          <div class="sf-soc">
             <a href="https://www.facebook.com/profile.php?id=61584484165647" target="_blank" rel="noopener noreferrer"
-              class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              class="sf-sb"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
                 <path
                   d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-            </a>
+              </svg></a>
             <a href="https://www.instagram.com/kangleicareer/?hl=en" target="_blank" rel="noopener noreferrer"
-              class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              class="sf-sb"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
                 <path
                   d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M19,5A1,1 0 0,1 20,6A1,1 0 0,1 19,7A1,1 0 0,1 18,6A1,1 0 0,1 19,5Z" />
-              </svg>
-            </a>
+              </svg></a>
           </div>
         </div>
       </div>
-      <div class="text-center pt-8 border-t border-gray-800 text-gray-500 text-sm">
-        &copy; <span id="year">2026</span> Kanglei Career Solution. All rights reserved.
-        <p class="mt-2">Designed by <a href="https://saiyonix.vercel.app" target="_blank" rel="noopener noreferrer"
-            class="text-blue-500 hover:text-blue-400 transition-colors">SaiyoniX</a></p>
+      <hr class="sf-div">
+      <div class="sf-bot">
+        <span class="sf-copy">© <span id="year">2026</span> Kanglei Career Solution. All rights reserved.</span>
+        <span class="sf-cred">Designed by <a href="https://saiyonix.vercel.app" target="_blank"
+            rel="noopener noreferrer">SaiyoniX</a></span>
       </div>
     </div>
   </footer>
 
   <!-- Event Notification System -->
-  <!-- Floating Trigger (Top-Right, below Navbar) -->
   <div id="eventContainer" class="fixed top-24 right-4 z-[60] flex flex-col items-end gap-2 pointer-events-none">
-
-    <!-- Bubble Button -->
     <button id="eventTrigger"
       class="pointer-events-auto group relative w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform duration-300 hidden">
-
-      <!-- Ping Animation -->
       <span
         class="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animate-ping group-hover:hidden"></span>
-
-      <!-- Icon -->
       <svg class="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-        </path>
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
       </svg>
-
-      <!-- Notification Dot -->
       <span class="absolute top-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white bg-red-500"></span>
     </button>
   </div>
@@ -347,19 +898,14 @@
   <div id="eventOverlay"
     class="fixed inset-0 z-[70] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md hidden overflow-hidden transition-[clip-path] duration-700 ease-in-out"
     style="clip-path: circle(0% at 100% 0%);">
-
-    <!-- Close Button -->
     <button id="eventClose"
       class="absolute top-6 right-6 md:top-8 md:right-8 p-2 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 transition-colors z-50">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
-
-    <!-- Content Container -->
     <div id="eventContent"
       class="w-full h-full flex items-center justify-center p-4 md:p-8 opacity-0 transition-opacity duration-500 delay-200">
-      <!-- Content injected by JS -->
       <div class="animate-pulse flex flex-col items-center">
         <div class="w-12 h-12 bg-gray-200 dark:bg-slate-800 rounded-full mb-4"></div>
         <div class="h-4 bg-gray-200 dark:bg-slate-800 rounded w-48"></div>
@@ -367,15 +913,18 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    btn.addEventListener('click', () => menu.classList.toggle('open'));
+  </script>
   <script src="js/reveal.js"></script>
   <script type="module" src="js/app.js?v=2"></script>
   <script type="module">
     import { initSlider } from './js/slider.js';
     import { initEvents } from './js/events.js';
-
     document.addEventListener('DOMContentLoaded', () => {
-      // Initialize Modules
       initSlider('homeSlider');
       initEvents();
     });
