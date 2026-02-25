@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events Admin - Kanglei Career</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+
+<body
+    class="admin-events bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans antialiased min-h-screen flex flex-col opacity-0 transition-opacity duration-500">
+    <style>
+        /* Fix for fixed header overlap */
+        body.admin-events main.page-content {
+            padding-top: 120px !important;
+            /* Mobile safe header offset */
+        }
+
+        @media (min-width: 768px) {
+            body.admin-events main.page-content {
+                padding-top: 100px !important;
+                /* Desktop/Tablet offset */
+            }
+        }
+    </style>
+
+    <!-- Global Loader -->
+    <div id="global-loader"
+        class="fixed inset-0 z-[100] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative flex flex-col items-center">
+            <div
+                class="w-16 h-16 rounded-full border-4 border-blue-100 dark:border-blue-900/30 border-t-blue-600 dark:border-t-blue-400 animate-spin">
+            </div>
+            <div
+                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-blue-600/20 dark:bg-blue-400/20 rounded-full animate-pulse">
+            </div>
+            <div
+                class="absolute -bottom-12 text-sm font-bold tracking-widest text-slate-800 dark:text-white uppercase opacity-80 animate-pulse">
+                Loading
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav
+        class="fixed top-0 left-0 right-0 z-[9999] h-auto md:h-[var(--header-h)] bg-surface/90 backdrop-blur-md border-b border-border transition-all duration-300 pointer-events-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-[var(--header-h)]">
+                <div class="flex items-center gap-8">
+                    <div class="flex-shrink-0 flex items-center gap-3">
+                        <img src="../img/logo.png" alt="Admin Logo" class="h-10 w-10 rounded-full object-cover">
+                        <span class="font-bold text-lg sm:text-xl">Kanglei Admin</span>
+                    </div>
+
+                    <div class="hidden md:flex items-center space-x-1">
+                        <a href="./index.html"
+                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all cursor-pointer pointer-events-auto">Dashboard</a>
+                        <a href="./gallery.html"
+                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all cursor-pointer pointer-events-auto">Gallery</a>
+                        <a href="./events.html"
+                            class="px-4 py-2 rounded-lg text-sm font-semibold bg-accent/10 text-accent cursor-pointer pointer-events-auto">Events</a>
+                        <a href="./trash.html"
+                            class="px-4 py-2 rounded-lg text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 transition-all cursor-pointer pointer-events-auto">Recycle
+                            Bin</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <a href="https://kangleicareersolution.co.in/" target="_blank"
+                        class="flex text-sm text-muted hover:text-accent gap-1 items-center font-medium transition-colors cursor-pointer pointer-events-auto">
+                        <span class="hidden sm:inline">View Website</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </a>
+                    <div class="h-6 w-px bg-border hidden sm:block"></div>
+
+                    <button id="logout-btn"
+                        class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-900/20 transition-all hover:shadow-sm cursor-pointer pointer-events-auto">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Tabs -->
+            <div class="md:hidden flex border-t border-border relative z-[10000]">
+                <a href="./index.html"
+                    class="flex-1 py-4 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer pointer-events-auto touch-manipulation">Dashboard</a>
+                <a href="./gallery.html"
+                    class="flex-1 py-4 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer pointer-events-auto touch-manipulation">Gallery</a>
+                <a href="./events.html"
+                    class="flex-1 py-4 text-center text-sm font-semibold border-b-2 border-accent text-accent bg-surface-2/50 cursor-pointer pointer-events-auto touch-manipulation">Events</a>
+                <a href="./trash.html"
+                    class="flex-1 py-4 text-center text-sm font-medium text-red-600 bg-red-50/50 dark:bg-red-900/10 cursor-pointer pointer-events-auto touch-manipulation">Trash</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="page-content flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal">
+        <div class="page-header flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex flex-col gap-1">
+                <h1 class="page-title">Events Posters
+                </h1>
+                <p class="page-subtitle">Manage homepage event popups</p>
+            </div>
+
+            <div class="flex items-center">
+                <button onclick="document.getElementById('uploadModal').classList.remove('hidden')"
+                    class="btn btn-primary gap-2 group relative overflow-hidden">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000">
+                    </div>
+                    <i class="fas fa-plus text-sm group-hover:rotate-90 transition-transform duration-300"></i>
+                    <span class="font-semibold tracking-wide">Add Event</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8 items-start">
+
+            <!-- Upload Card -->
+            <div class="lg:col-span-1">
+                <div class="card sticky top-24">
+                    <h3 class="text-lg font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Add Event Poster
+                    </h3>
+
+                    <form id="events-upload-form" class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Poster
+                                Image</label>
+
+                            <div class="relative group">
+                                <input type="file" name="file" accept="image/*"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required />
+                                <div
+                                    class="dropzone-premium p-6 text-center border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-800/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/10 group-hover:border-blue-400 transition-all duration-300">
+                                    <div id="events-dropzone-content" class="flex flex-col items-center justify-center">
+                                        <div
+                                            class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-2 flex items-center justify-center">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Choose Image
+                                        </p>
+                                    </div>
+                                    <div id="events-file-preview" class="hidden flex flex-col items-center">
+                                        <img id="events-preview-img"
+                                            class="w-24 h-24 object-cover rounded-lg border border-slate-200 mb-2 shadow-sm" />
+                                        <p class="text-sm font-medium text-blue-600 break-all text-center"
+                                            id="events-file-name"></p>
+                                        <p class="text-xs text-slate-500 mb-1" id="events-file-size"></p>
+                                        <p class="text-xs text-green-600 font-medium">Ready to upload</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Title</label>
+                            <input type="text" name="title" placeholder="Event Title (Optional)"
+                                class="input w-full text-sm">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Start</label>
+                                <input type="text" name="starts_at" class="input w-full text-sm flatpickr-input"
+                                    placeholder="Select...">
+                                <p class="text-[10px] text-slate-500 mt-1">Auto-activates at this time if unchecked.</p>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">End</label>
+                                <input type="text" name="ends_at" class="input w-full text-sm flatpickr-input"
+                                    placeholder="Select...">
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
+                            <input type="checkbox" name="is_active" id="is_active" checked
+                                class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                            <label for="is_active"
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 select-none cursor-pointer">Active
+                                immediately</label>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full btn-base btn-primary py-2.5 shadow-md flex justify-center items-center gap-2">
+                            <span>Upload Event Poster</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- List -->
+            <div class="lg:col-span-2">
+                <div id="events-grid" class="space-y-4">
+                    <!-- Skeleton Loader -->
+                    <div
+                        class="animate-pulse flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div class="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
+                        <div class="flex-1 space-y-3">
+                            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+                            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                        </div>
+                    </div>
+                    <div
+                        class="animate-pulse flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div class="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
+                        <div class="flex-1 space-y-3">
+                            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+                            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="events-empty" class="hidden flex flex-col items-center justify-center py-12 text-center">
+                    <div
+                        class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-slate-900 dark:text-white font-medium">No active events</h3>
+                    <p class="text-slate-500 text-sm mt-1">Upload a poster to announce an event.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="py-6 text-center text-sm text-slate-400 dark:text-slate-600 reveal">
+        <p>Designed by saiyoniX Pvt.ltd</p>
+    </footer>
+
+    <script src="../js/reveal.js"></script>
+    <script type="module" src="../js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="module" src="../js/admin-events.js"></script>
+</body>
+
+</html>

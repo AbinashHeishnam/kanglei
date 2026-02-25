@@ -1,0 +1,16 @@
+{
+  "name": "kanglei-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tailwindcss -i ./site/css/input.css -o ./site/css/style.css --watch",
+    "clean": "rm -rf site/css/style.css",
+    "build:css": "mkdir -p site/css && npx tailwindcss -i ./site/css/input.css -o ./site/css/style.css --minify",
+    "build": "npm run build:css"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.24",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
+  }
+}
