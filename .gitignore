@@ -8,7 +8,9 @@ __pycache__/
 
 # Environment
 .env
-
+# Virtual environments
+venv/
+backend/venv/
 # Uploads (user generated content)
 backend/app/static_uploads/
 
