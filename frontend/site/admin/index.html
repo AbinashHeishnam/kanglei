@@ -201,6 +201,13 @@
             border-color: #fca5a5;
         }
 
+        /* Hide logout button on mobile — it lives in the mobile menu instead */
+        @media(max-width: 767px) {
+            .adm-logout-btn {
+                display: none !important;
+            }
+        }
+
         /* Mobile hamburger */
         .adm-mob-btn {
             display: flex;
@@ -957,6 +964,9 @@
             <a href="./gallery.html">Gallery</a>
             <a href="./events.html">Events</a>
             <a href="./trash.html" class="mob-danger">Recycle Bin</a>
+            <button id="logout-btn-mobile" class="mob-danger"
+                style="display:block;width:100%;text-align:left;padding:10px 12px;font-size:13.5px;font-weight:500;background:none;border:none;cursor:pointer;border-radius:10px;transition:all .2s;color:#dc2626;">Sign
+                Out</button>
         </nav>
     </header>
 
@@ -1627,6 +1637,16 @@
             if (btn && menu) {
                 btn.addEventListener('click', function () {
                     menu.classList.toggle('open');
+                });
+            }
+
+            // Mobile Sign Out — delegate to the desktop logout-btn so the same
+            // confirm-dialog logic in admin.js fires without duplication.
+            var mobileLogout = document.getElementById('logout-btn-mobile');
+            var desktopLogout = document.getElementById('logout-btn');
+            if (mobileLogout && desktopLogout) {
+                mobileLogout.addEventListener('click', function () {
+                    desktopLogout.click();
                 });
             }
         })();
