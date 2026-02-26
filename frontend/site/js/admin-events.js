@@ -13,9 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
     setupForm();
 
     document.getElementById('refresh-btn')?.addEventListener('click', loadEvents);
-    document.getElementById('logout-btn')?.addEventListener('click', () => {
-        localStorage.removeItem('kanglei_admin_token');
-        window.location.href = './login.html';
+    document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        console.log("Logout clicked - Waiting for confirm (events)");
+        const { showConfirm } = await import('./confirm.js');
+        const confirmed = await showConfirm('Are you sure you want to sign out?', 'Sign Out');
+        if (confirmed) {
+            console.log("Confirmed logout. Removing token.");
+            localStorage.removeItem('kanglei_admin_token');
+            window.location.href = './login.html';
+        } else {
+            console.log("Logout cancelled/closed (events).");
+        }
     });
 });
 
@@ -91,24 +101,24 @@ function renderEventRow(evt) {
     }
 
     return `
-        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center group shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-row gap-4 items-center group shadow-sm hover:shadow-md transition-all">
             <!-- Thumbnail -->
-            <div class="w-full sm:w-24 h-48 sm:h-24 bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden flex-shrink-0 relative">
+            <div class="shrink-0 relative bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden" style="width: 84px; min-width: 84px; height: 84px;">
                 <img src="${toAssetUrl(evt.image_url)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                <div class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide backdrop-blur-md ${evt.is_active ? 'bg-green-500/90 text-white shadow-sm' : 'bg-slate-500/90 text-white'}">
-                    ${evt.is_active ? 'Active' : 'Inactive'}
+                <div class="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider backdrop-blur-md ${evt.is_active ? 'bg-green-500 text-white shadow-sm' : 'bg-slate-500 text-white'}">
+                    ${evt.is_active ? 'Active' : 'Offline'}
                 </div>
             </div>
             
             <!-- Content -->
-            <div class="flex-1 min-w-0 w-full">
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
+            <div class="flex-1 min-w-0 flex flex-col justify-between h-full space-y-2">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-2">
+                    <div class="flex-1 min-w-0 w-full">
                         <h4 class="font-bold text-slate-900 dark:text-white truncate text-base mb-1">${evt.title || '<span class="italic text-slate-400">Untitled Event</span>'}</h4>
                         ${scheduleStatus}
                     </div>
                     
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 self-start sm:self-center flex-wrap shrink-0">
                         ${!evt.is_active ? `
                         <button data-id="${evt.id}" class="activate-btn text-xs font-medium bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 dark:text-green-400 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -120,20 +130,20 @@ function renderEventRow(evt) {
                         </button>
                         `}
                         
-                        <button data-id="${evt.id}" class="delete-btn text-slate-400 hover:text-red-500 p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete Event">
+                        <button data-id="${evt.id}" class="delete-btn text-slate-400 hover:text-red-500 p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors shrink-0" title="Delete Event">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-x-8 gap-y-1 mt-2 text-xs text-slate-500 dark:text-slate-400">
-                    <div class="flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>Start: <span class="font-medium text-slate-700 dark:text-slate-300">${formatDate(evt.starts_at)}</span></span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 sm:gap-y-1 mt-2 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="truncate">Start: <span class="font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">${formatDate(evt.starts_at)}</span></span>
                     </div>
-                    <div class="flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span>End: <span class="font-medium text-slate-700 dark:text-slate-300">${formatDate(evt.ends_at)}</span></span>
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <svg class="w-3.5 h-3.5 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="truncate">End: <span class="font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">${formatDate(evt.ends_at)}</span></span>
                     </div>
                 </div>
             </div>

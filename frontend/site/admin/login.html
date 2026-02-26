@@ -11,94 +11,381 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, #cae6f6 0%, #e2f0f9 40%, #f6f9fc 100%);
+            overflow: hidden;
+        }
+
+        /* Abstract soft clouds/glows at bottom */
+        .sky-glow {
+            position: absolute;
+            bottom: -20vh;
+            left: -10vw;
+            width: 60vw;
+            height: 60vh;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+            filter: blur(40px);
+            z-index: 1;
+        }
+
+        .sky-glow-right {
+            left: auto;
+            right: -10vw;
+            bottom: -15vh;
+            width: 70vw;
+            height: 50vh;
+        }
+
+        /* Cloud Texture Overlay */
+        .cloud-texture {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.25;
+            mix-blend-mode: overlay;
+        }
+
+        /* Main Card Container */
+        .auth-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 380px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 28px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
+            text-align: center;
+        }
+
+        /* App Icon Box */
+        .app-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 24px auto;
+            background: white;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.02);
+        }
+
+        .app-icon svg {
+            width: 28px;
+            height: 28px;
+            color: #111827;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+            margin: 0 0 32px 0;
+            padding: 0 10px;
+        }
+
+        /* Inputs */
+        .input-group {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .auth-input {
+            width: 100%;
+            box-sizing: border-box;
+            background: #f1f5f9;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            padding: 14px 14px 14px 40px;
+            font-size: 14px;
+            color: #1e293b;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .auth-input::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .auth-input:focus {
+            background: white;
+            border-color: #cbd5e1;
+            box-shadow: 0 0 0 4px rgba(241, 245, 249, 0.8);
+        }
+
+        /* Forgot Password link */
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 12.5px;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 24px;
+            margin-top: -4px;
+        }
+
+        .forgot-link:hover {
+            color: #0f172a;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(17, 24, 39, 0.2);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .submit-btn:hover {
+            background: #1f2937;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 28px 0;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px dotted #cbd5e1;
+        }
+
+        .divider span {
+            padding: 0 12px;
+        }
+
+        /* Social Auth */
+        .social-grid {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+        }
+
+        .social-btn {
+            flex: 1;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .social-btn:hover {
+            background: #f8fafc;
+        }
+
+        .social-btn img,
+        .social-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Loader inside button */
+        .loader-ring {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Show/Hide utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        #login-error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        #login-status {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #10b981;
+            min-height: 19px;
+        }
+
+        /* Override absolute positioning context */
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 20;
+            padding: 20px;
+        }
+
+        /* Footer Legal Text */
+        .footer-legal {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            z-index: 10;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+    </style>
 </head>
 
-<body
-    class="bg-bg text-text font-sans antialiased min-h-screen flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-300">
+<body>
 
-    <!-- Background Blobs -->
-    <div
-        class="absolute top-0 left-1/4 w-96 h-96 bg-accent/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob">
-    </div>
-    <div
-        class="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000">
-    </div>
-    <div
-        class="absolute -bottom-32 left-1/3 w-96 h-96 bg-pink-500/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000">
-    </div>
+    <!-- Soft Cloud Glows -->
+    <div class="sky-glow"></div>
+    <div class="sky-glow sky-glow-right"></div>
 
-    <!-- Background Grid Pattern -->
-    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+    <!-- Cloud Texture Overlay -->
+    <div class="cloud-texture"></div>
 
-    <!-- Header -->
-    <!-- Header Removed -->
+    <!-- Main Content Wrapper -->
+    <div class="flex-center">
+        <div class="auth-card">
 
-    <div class="w-full max-w-md relative z-20 reveal is-visible">
+            <div class="app-icon">
+                <img src="/img/logo.png" alt="Kanglei Logo"
+                    style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
+            </div>
 
-        <div class="bg-surface rounded-2xl shadow-xl border border-border overflow-hidden backdrop-blur-sm">
-            <div class="p-8 sm:p-10">
-                <div class="text-center mb-10">
-                    <img src="/img/logo.png" alt="Admin Logo"
-                        class="w-20 h-20 rounded-full object-cover mx-auto mb-6 shadow-2xl ring-4 ring-white/50 dark:ring-slate-700/50">
-                    <h1 class="text-3xl font-bold text-text tracking-tight">Admin Portal</h1>
-                    <p class="text-muted mt-2 text-sm">Sign in to manage the platform</p>
+            <!-- Warning: Changing header text to match screenshot layout strictly -->
+            <h1>Admin Login</h1>
+            <p class="subtitle">Login to your account</p>
+
+            <form id="login-form">
+
+                <div class="input-group">
+                    <!-- User Icon -->
+                    <svg class="input-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <!-- IMPORTANT: Keeping name="username" so logic still works even if placeholder says Username -->
+                    <input type="text" name="username" class="auth-input" placeholder="Username" required
+                        autocomplete="username">
                 </div>
 
-                <form id="login-form" class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-semibold text-text mb-2">Username</label>
-                        <input type="text" name="username" required
-                            class="block w-full px-4 py-3 rounded-lg border border-border bg-bg text-text shadow-sm focus:border-accent focus:ring-4 focus:ring-accent-soft transition-all duration-300 outline-none"
-                            placeholder="Enter username">
-                    </div>
+                <div class="input-group" style="margin-bottom: 6px;">
+                    <!-- Lock Icon -->
+                    <svg class="input-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                            clip-rule="evenodd"></path>
+                    </svg>
 
-                    <div>
-                        <label class="block text-sm font-semibold text-text mb-2">Password</label>
-                        <div class="relative">
-                            <input type="password" name="password" id="password-input" required
-                                class="block w-full px-4 py-3 rounded-lg border border-border bg-bg text-text shadow-sm focus:border-accent focus:ring-4 focus:ring-accent-soft transition-all duration-300 outline-none pr-12"
-                                placeholder="••••••••">
-                            <button type="button" id="toggle-password"
-                                class="absolute inset-y-0 right-0 px-3 flex items-center text-muted hover:text-text transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                    </path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                    <input type="password" name="password" id="password-input" class="auth-input" placeholder="Password"
+                        style="padding-right: 40px;" required autocomplete="current-password">
 
-                    <!-- Status -->
-                    <div id="login-status"
-                        class="text-center text-sm font-medium text-accent mb-2 min-h-[20px] transition-all">
-                    </div>
-
-                    <!-- Errors -->
-                    <div id="login-error"
-                        class="hidden text-red-600 text-sm p-4 bg-red-50 dark:bg-red-900/20 rounded-xl text-center font-medium border border-red-200 dark:border-red-900/30">
-                    </div>
-
-                    <button type="submit" class="w-full btn btn-primary py-3.5 text-base shadow-lg shadow-accent/20">
-                        <span>Sign In</span>
-                        <div id="login-loading"
-                            class="hidden w-5 h-5 ml-2 border-2 border-white/50 border-t-white rounded-full animate-spin">
-                        </div>
+                    <!-- Inner Toggle Eye -->
+                    <button type="button" id="toggle-password"
+                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 4px; cursor: pointer; color: #94a3b8;">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21">
+                            </path>
+                        </svg>
                     </button>
-                </form>
-            </div>
+                </div>
 
-            <div class="px-8 py-4 bg-surface-2 border-t border-border text-center">
-                <p class="text-xs text-muted">Protected System &copy; 2026 Kanglei Career Solution</p>
-            </div>
+                <div id="login-status"></div>
+                <div id="login-error" class="hidden"></div>
+
+                <!-- Submit -->
+                <button type="submit" class="submit-btn" id="submit-button">
+                    <span>Sign In</span>
+                    <span id="login-loading" class="hidden loader-ring"></span>
+                </button>
+            </form>
+
         </div>
-
     </div>
 
-
-
+    <!-- Footer Legal -->
+    <div class="footer-legal">
+        &copy; 2026 Kanglei Career Solution. All rights reserved.<br>
+        <span style="opacity: 0.7;">Protected System &bull; Unauthorized access is prohibited</span>
+    </div>
 
     <script type="module" src="../js/app.js"></script>
     <script type="module" src="../js/admin.js"></script>

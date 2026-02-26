@@ -81,17 +81,25 @@ export async function initEvents() {
         if (triggerBtn) triggerBtn.classList.add('hidden');
     }
 
-    // --- Slider Logic ---
     function renderCurrentEvent() {
         if (allEvents.length === 0) return;
         renderEventContent(allEvents[currentIndex], contentContainer, allEvents.length, currentIndex);
 
         // Re-attach slider listeners if buttons exist
+        // Needs a slight delay because innerHTML might not be immediately available if transition is happening, 
+        // though innerHTML is sync. The issue might be that we assign .onclick but the elements are replaced if we don't bind correctly.
         const prevBtn = document.getElementById('event-prev-btn');
         const nextBtn = document.getElementById('event-next-btn');
 
-        if (prevBtn) prevBtn.onclick = prevEvent;
-        if (nextBtn) nextBtn.onclick = nextEvent;
+        if (prevBtn) {
+            // Remove old listeners to be safe (though innerHTML wipes them)
+            prevBtn.onclick = null;
+            prevBtn.onclick = prevEvent;
+        }
+        if (nextBtn) {
+            nextBtn.onclick = null;
+            nextBtn.onclick = nextEvent;
+        }
     }
 
     function nextEvent() {

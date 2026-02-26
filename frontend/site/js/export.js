@@ -15,77 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initExport() {
-    const btn = document.getElementById('exportCsvBtn');
-    if (!btn) return;
-
-    btn.addEventListener('click', async (e) => {
-        if (!e.isTrusted) return;
-        e.preventDefault();
-
-        const originalText = btn.innerHTML;
-
-        try {
-            // 1. Disable & Loading State
-            btn.disabled = true;
-            btn.innerHTML = `
-                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>Downloading...</span>
-            `;
-
-            // 2. Fetch Blob
-            const response = await fetch(`${API_BASE}/admin/appointments/export?format=csv`, {
-                method: 'GET',
-                headers: {
-                    ...authHeader()
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Export failed: ${response.statusText}`);
-            }
-
-            const blob = await response.blob();
-
-            // 3. Extract Filename or Default
-            let filename = `appointments_${new Date().toISOString().slice(0, 10)}.csv`;
-            const disposition = response.headers.get('Content-Disposition');
-            if (disposition && disposition.indexOf('attachment') !== -1) {
-                const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
-                if (matches != null && matches[1]) {
-                    filename = matches[1].replace(/['"]/g, '');
-                }
-            }
-
-            // 4. Trigger Download
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-
-            // 5. Cleanup
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-
-            // Success Toast (Optional, but good UX)
-            // Assuming showToast exists or just silent success. Plan said "toast/alert".
-            // I'll check if toast.js is available. It was in file list.
-            // For now, I'll stick to button state restoration.
-
-        } catch (err) {
-            console.error('Export error:', err);
-            alert('Failed to download CSV. Please try again.');
-        } finally {
-            // Restore Button
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
-    });
+    // CSV Export Logic has been moved to admin.js 
+    // to strictly pull data from the JS state array (currentlyFiltered)
+    // rather than parsing the DOM, in order to guarantee sync with filters and sorts.
 }
 
 function initPdfExport() {

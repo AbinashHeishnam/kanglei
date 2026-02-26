@@ -84,10 +84,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            console.log("Logout clicked - Waiting for confirm (trash)");
             const confirmed = await showConfirm('Are you sure you want to sign out?', 'Sign Out');
             if (confirmed) {
+                console.log("Confirmed logout. Removing token.");
                 localStorage.removeItem('kanglei_admin_token');
                 window.location.href = './login.html';
+            } else {
+                console.log("Logout cancelled/closed (trash).");
             }
         });
     }

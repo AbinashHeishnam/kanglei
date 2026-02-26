@@ -12,256 +12,786 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</head>
-
-<body
-    class="admin-events bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans antialiased min-h-screen flex flex-col opacity-0 transition-opacity duration-500">
     <style>
-        /* Fix for fixed header overlap */
-        body.admin-events main.page-content {
-            padding-top: 120px !important;
-            /* Mobile safe header offset */
+        .hidden {
+            display: none !important;
         }
 
-        @media (min-width: 768px) {
-            body.admin-events main.page-content {
-                padding-top: 100px !important;
-                /* Desktop/Tablet offset */
+        :root {
+            --adm-blue: #1e3a8a;
+            --adm-blue-mid: #2563eb;
+            --adm-blue-light: #3b82f6;
+            --adm-blue-pale: #dbeafe;
+            --adm-blue-faint: #eff6ff;
+            --adm-cream: #f8f9fb;
+        }
+
+        *,
+        *::before,
+        *::after {
+            font-family: 'Inter', system-ui, sans-serif !important;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+            background: var(--adm-cream);
+            color: #111827;
+            margin: 0;
+        }
+
+        .adm-header {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            right: 12px;
+            z-index: 9999;
+            background: rgba(255, 255, 255, .90);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(30, 58, 138, .10);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(30, 58, 138, .08), 0 1px 4px rgba(0, 0, 0, .04);
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+        .adm-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            height: 62px;
+        }
+
+        .adm-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .adm-logo img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--adm-blue-pale);
+        }
+
+        .adm-brand-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -.02em;
+        }
+
+        .adm-brand-name span {
+            color: var(--adm-blue-mid);
+        }
+
+        .adm-brand-tag {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--adm-blue-mid);
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .adm-nav {
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media(min-width:768px) {
+            .adm-nav {
+                display: flex;
+            }
+
+            .adm-mob-btn {
+                display: none !important;
             }
         }
+
+        .adm-nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all .2s;
+        }
+
+        .adm-nav a:hover {
+            background: var(--adm-blue-faint);
+            color: var(--adm-blue);
+        }
+
+        .adm-nav a.active {
+            background: var(--adm-blue-faint);
+            color: var(--adm-blue);
+            font-weight: 600;
+        }
+
+        .adm-nav a.nav-danger {
+            color: #dc2626;
+        }
+
+        .adm-nav a.nav-danger:hover {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .adm-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .adm-view-site {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+            text-decoration: none;
+            transition: color .2s;
+        }
+
+        .adm-view-site:hover {
+            color: var(--adm-blue);
+        }
+
+        .adm-logout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #dc2626;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 7px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .adm-logout-btn:hover {
+            background: #fee2e2;
+        }
+
+        .adm-mob-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--adm-blue-faint);
+            border: none;
+            cursor: pointer;
+            color: var(--adm-blue);
+        }
+
+        .adm-mob-nav {
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            padding: 8px 12px 12px;
+            border-top: 1px solid rgba(30, 58, 138, .07);
+            border-radius: 0 0 18px 18px;
+        }
+
+        .adm-mob-nav.open {
+            display: flex;
+        }
+
+        .adm-mob-nav a {
+            display: block;
+            padding: 10px 12px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all .2s;
+        }
+
+        .adm-mob-nav a:hover,
+        .adm-mob-nav a.active {
+            background: var(--adm-blue-faint);
+            color: var(--adm-blue);
+        }
+
+        .adm-mob-nav a.mob-danger {
+            color: #dc2626;
+        }
+
+        .adm-mob-nav a.mob-danger:hover {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .adm-main {
+            padding-top: 90px;
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        @media(min-width:768px) {
+            .adm-main {
+                padding-top: 96px;
+            }
+        }
+
+        .adm-wrap {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        @media(min-width:640px) {
+            .adm-wrap {
+                padding: 0 24px;
+            }
+        }
+
+        .adm-page-header {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        @media(min-width:768px) {
+            .adm-page-header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .adm-page-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0a1628;
+            letter-spacing: -.03em;
+            margin: 0;
+        }
+
+        .adm-page-subtitle {
+            font-size: 13.5px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .adm-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--adm-blue);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            box-shadow: 0 4px 14px rgba(30, 58, 138, .25);
+        }
+
+        .adm-btn-primary:hover {
+            background: var(--adm-blue-mid);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, .3);
+        }
+
+        .events-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media(min-width:1024px) {
+            .events-layout {
+                grid-template-columns: 360px 1fr;
+            }
+        }
+
+        @media(min-width:1280px) {
+            .events-layout {
+                grid-template-columns: 400px 1fr;
+            }
+        }
+
+        .adm-card {
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            /* very subtle */
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+        }
+
+        @media(min-width:640px) {
+            .adm-card {
+                padding: 24px;
+            }
+        }
+
+        @media(min-width:1024px) {
+            .upload-card {
+                position: sticky;
+                top: 96px;
+            }
+        }
+
+        .adm-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            /* Deeper slate */
+            letter-spacing: -0.01em;
+            margin: 0 0 20px;
+        }
+
+        .dropzone-wrap {
+            position: relative;
+        }
+
+        .dropzone-wrap input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .dropzone-inner {
+            padding: 22px 16px;
+            text-align: center;
+            border: 2px dashed rgba(30, 58, 138, .2);
+            border-radius: 14px;
+            background: var(--adm-blue-faint);
+            transition: all .25s;
+        }
+
+        .dropzone-wrap:hover .dropzone-inner {
+            border-color: var(--adm-blue-light);
+            background: var(--adm-blue-pale);
+        }
+
+        .dropzone-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1px solid var(--adm-blue-pale);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+        }
+
+        .dropzone-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .dropzone-sub {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .adm-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 6px;
+        }
+
+        .adm-input {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            border-radius: 10px;
+            font-size: 13.5px;
+            color: #334155;
+            background: #fff;
+            outline: none;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            transition: all .2s;
+        }
+
+        .adm-input:focus {
+            border-color: var(--adm-blue-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .adm-form-group {
+            margin-top: 14px;
+        }
+
+        .adm-form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        @media(min-width:640px) {
+            .adm-form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .adm-hint {
+            font-size: 10.5px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .adm-checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--adm-blue-faint);
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(30, 58, 138, .10);
+            margin-top: 14px;
+        }
+
+        .adm-checkbox-row label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .adm-card-bare {
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            padding: 14px;
+        }
+
+        @media(min-width:640px) {
+            .adm-card-bare {
+                padding: 20px;
+            }
+        }
+
+        .adm-events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .adm-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 20px;
+            text-align: center;
+        }
+
+        .adm-empty-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--adm-blue-faint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .adm-empty h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            margin: 0 0 6px;
+        }
+
+        .adm-empty p {
+            font-size: 13px;
+            color: #9ca3af;
+            margin: 0;
+        }
+
+        .adm-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #d1d5db;
+        }
     </style>
+</head>
+
+<body class="admin-events opacity-0 transition-opacity duration-500">
 
     <!-- Global Loader -->
     <div id="global-loader"
-        class="fixed inset-0 z-[100] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="relative flex flex-col items-center">
-            <div
-                class="w-16 h-16 rounded-full border-4 border-blue-100 dark:border-blue-900/30 border-t-blue-600 dark:border-t-blue-400 animate-spin">
-            </div>
-            <div
-                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-blue-600/20 dark:bg-blue-400/20 rounded-full animate-pulse">
-            </div>
-            <div
-                class="absolute -bottom-12 text-sm font-bold tracking-widest text-slate-800 dark:text-white uppercase opacity-80 animate-pulse">
-                Loading
-            </div>
-        </div>
+        class="fixed inset-0 z-[100] bg-white bg-opacity-90 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="loader-core"></div>
+        <div class="mt-6 text-xs font-bold tracking-[0.2em] text-slate-400 uppercase animate-pulse">Loading</div>
     </div>
 
-    <!-- Navbar -->
-    <nav
-        class="fixed top-0 left-0 right-0 z-[9999] h-auto md:h-[var(--header-h)] bg-surface/90 backdrop-blur-md border-b border-border transition-all duration-300 pointer-events-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-[var(--header-h)]">
-                <div class="flex items-center gap-8">
-                    <div class="flex-shrink-0 flex items-center gap-3">
-                        <img src="../img/logo.png" alt="Admin Logo" class="h-10 w-10 rounded-full object-cover">
-                        <span class="font-bold text-lg sm:text-xl">Kanglei Admin</span>
-                    </div>
-
-                    <div class="hidden md:flex items-center space-x-1">
-                        <a href="./index.html"
-                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all cursor-pointer pointer-events-auto">Dashboard</a>
-                        <a href="./gallery.html"
-                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all cursor-pointer pointer-events-auto">Gallery</a>
-                        <a href="./events.html"
-                            class="px-4 py-2 rounded-lg text-sm font-semibold bg-accent/10 text-accent cursor-pointer pointer-events-auto">Events</a>
-                        <a href="./trash.html"
-                            class="px-4 py-2 rounded-lg text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 transition-all cursor-pointer pointer-events-auto">Recycle
-                            Bin</a>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <a href="https://kangleicareersolution.co.in/" target="_blank"
-                        class="flex text-sm text-muted hover:text-accent gap-1 items-center font-medium transition-colors cursor-pointer pointer-events-auto">
-                        <span class="hidden sm:inline">View Website</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
-                    <div class="h-6 w-px bg-border hidden sm:block"></div>
-
-                    <button id="logout-btn"
-                        class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-900/20 transition-all hover:shadow-sm cursor-pointer pointer-events-auto">
-                        Sign Out
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile Menu Tabs -->
-            <div class="md:hidden flex border-t border-border relative z-[10000]">
-                <a href="./index.html"
-                    class="flex-1 py-4 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer pointer-events-auto touch-manipulation">Dashboard</a>
-                <a href="./gallery.html"
-                    class="flex-1 py-4 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer pointer-events-auto touch-manipulation">Gallery</a>
-                <a href="./events.html"
-                    class="flex-1 py-4 text-center text-sm font-semibold border-b-2 border-accent text-accent bg-surface-2/50 cursor-pointer pointer-events-auto touch-manipulation">Events</a>
-                <a href="./trash.html"
-                    class="flex-1 py-4 text-center text-sm font-medium text-red-600 bg-red-50/50 dark:bg-red-900/10 cursor-pointer pointer-events-auto touch-manipulation">Trash</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="page-content flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 reveal">
-        <div class="page-header flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="flex flex-col gap-1">
-                <h1 class="page-title">Events Posters
-                </h1>
-                <p class="page-subtitle">Manage homepage event popups</p>
-            </div>
-
-            <div class="flex items-center">
-                <button onclick="document.getElementById('uploadModal').classList.remove('hidden')"
-                    class="btn btn-primary gap-2 group relative overflow-hidden">
-                    <div
-                        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000">
-                    </div>
-                    <i class="fas fa-plus text-sm group-hover:rotate-90 transition-transform duration-300"></i>
-                    <span class="font-semibold tracking-wide">Add Event</span>
+    <!-- ── Floating Header ───────────────────────────────────── -->
+    <header class="adm-header" id="site-header">
+        <div class="adm-header-inner">
+            <a href="./index.html" class="adm-logo">
+                <img src="../img/logo.png" alt="Admin Logo">
+                <div><span class="adm-brand-name">Kanglei <span>Admin</span></span><span
+                        class="adm-brand-tag">Dashboard</span></div>
+            </a>
+            <nav class="adm-nav">
+                <a href="./index.html">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="./gallery.html">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Gallery
+                </a>
+                <a href="./events.html" class="active">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Events
+                </a>
+                <a href="./trash.html" class="nav-danger">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Recycle Bin
+                </a>
+            </nav>
+            <div class="adm-actions">
+                <a href="https://kangleicareersolution.co.in/" target="_blank" class="adm-view-site">
+                    <span class="hidden sm:inline">View Site</span>
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
+                <button id="logout-btn" class="adm-logout-btn">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign Out
+                </button>
+                <button id="admin-menu-btn" class="adm-mob-btn" aria-label="Menu">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" viewBox="0 0 24 24">
+                        <path d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
                 </button>
             </div>
         </div>
+        <nav id="admin-mobile-menu" class="adm-mob-nav">
+            <a href="./index.html">Dashboard</a>
+            <a href="./gallery.html">Gallery</a>
+            <a href="./events.html" class="active">Events</a>
+            <a href="./trash.html" class="mob-danger">Recycle Bin</a>
+        </nav>
+    </header>
 
-        <div class="grid lg:grid-cols-3 gap-8 items-start">
+    <!-- ── Main Content ──────────────────────────────────────── -->
+    <main class="adm-main page-content">
+        <div class="adm-wrap">
+            <!-- Page Header -->
+            <div class="adm-page-header reveal">
+                <div>
+                    <h1 class="adm-page-title text-[24px] font-bold text-[#0f172a] tracking-tight">Event Posters</h1>
+                    <p class="adm-page-subtitle text-[14px] text-slate-500 mt-1">Manage homepage event popups</p>
+                </div>
+                <button onclick="document.getElementById('uploadModal').classList.remove('hidden')" class="hidden">
+                    <!-- Kept button for logic but hidden, the form itself is always visible now on desktop -->
+                </button>
+            </div>
 
-            <!-- Upload Card -->
-            <div class="lg:col-span-1">
-                <div class="card sticky top-24">
-                    <h3 class="text-lg font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                        Add Event Poster
-                    </h3>
+            <!-- Layout -->
+            <div class="events-layout">
 
-                    <form id="events-upload-form" class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Poster
-                                Image</label>
-
-                            <div class="relative group">
-                                <input type="file" name="file" accept="image/*"
-                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required />
+                <!-- Upload Card -->
+                <div class="upload-card">
+                    <div class="adm-card">
+                        <h3 class="adm-card-title">
+                            <svg width="18" height="18" fill="none" stroke="#2563eb" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Add Event Poster
+                        </h3>
+                        <form id="events-upload-form">
+                            <label class="adm-label text-[#0f172a]">Poster Image</label>
+                            <div class="dropzone-wrap group">
+                                <input type="file" name="file" accept="image/*" required id="event-file-upload">
                                 <div
-                                    class="dropzone-premium p-6 text-center border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-800/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/10 group-hover:border-blue-400 transition-all duration-300">
-                                    <div id="events-dropzone-content" class="flex flex-col items-center justify-center">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-2 flex items-center justify-center">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
-                                                </path>
+                                    class="dropzone-inner bg-slate-50 border-slate-200 group-hover:border-blue-400 group-hover:bg-blue-50 transition-all rounded-xl">
+                                    <div id="events-dropzone-content">
+                                        <div class="dropzone-icon border-slate-200 text-blue-600 shadow-sm mx-auto">
+                                            <svg width="20" height="20" fill="none"
+                                                class="opacity-70 group-hover:opacity-100 transition-opacity"
+                                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                             </svg>
                                         </div>
-                                        <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Choose Image
-                                        </p>
+                                        <p class="dropzone-text text-slate-700 mt-3 group-hover:text-blue-700">Drag &
+                                            Drop or Click</p>
+                                        <p class="dropzone-sub text-slate-400 mt-1">PNG, JPG, up to 5MB</p>
                                     </div>
                                     <div id="events-file-preview" class="hidden flex flex-col items-center">
                                         <img id="events-preview-img"
-                                            class="w-24 h-24 object-cover rounded-lg border border-slate-200 mb-2 shadow-sm" />
-                                        <p class="text-sm font-medium text-blue-600 break-all text-center"
+                                            class="w-28 h-28 object-cover rounded-xl border-2 border-white mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+                                        <p class="text-sm font-semibold text-slate-800 break-all text-center"
                                             id="events-file-name"></p>
-                                        <p class="text-xs text-slate-500 mb-1" id="events-file-size"></p>
-                                        <p class="text-xs text-green-600 font-medium">Ready to upload</p>
+                                        <p class="text-xs text-slate-500 mb-2 font-medium" id="events-file-size"></p>
+                                        <span
+                                            class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 uppercase tracking-widest">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            Ready to Upload
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label
-                                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Title</label>
-                            <input type="text" name="title" placeholder="Event Title (Optional)"
-                                class="input w-full text-sm">
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Start</label>
-                                <input type="text" name="starts_at" class="input w-full text-sm flatpickr-input"
-                                    placeholder="Select...">
-                                <p class="text-[10px] text-slate-500 mt-1">Auto-activates at this time if unchecked.</p>
+                            <div class="adm-form-group">
+                                <label class="adm-label">Title</label>
+                                <input type="text" name="title" placeholder="Event Title (Optional)" class="adm-input">
                             </div>
-                            <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">End</label>
-                                <input type="text" name="ends_at" class="input w-full text-sm flatpickr-input"
-                                    placeholder="Select...">
+
+                            <div class="adm-form-row">
+                                <div>
+                                    <label class="adm-label">Start</label>
+                                    <input type="text" name="starts_at" class="adm-input flatpickr-input"
+                                        placeholder="Select...">
+                                    <p class="adm-hint">Auto-activates at this time if unchecked.</p>
+                                </div>
+                                <div>
+                                    <label class="adm-label">End</label>
+                                    <input type="text" name="ends_at" class="adm-input flatpickr-input"
+                                        placeholder="Select...">
+                                </div>
+                            </div>
+
+                            <div class="adm-checkbox-row">
+                                <input type="checkbox" name="is_active" id="is_active" checked
+                                    class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                                <label for="is_active">Active immediately</label>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full mt-6 py-3 px-4 bg-[#1e3a8a] text-white text-[13.5px] font-semibold rounded-xl border-none cursor-pointer flex items-center justify-center gap-2 hover:bg-[#2563eb] transition-all shadow-[0_4px_14px_rgba(30,58,138,0.25)] hover:shadow-[0_6px_20px_rgba(30,58,138,0.3)] hover:-translate-y-[1px]">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                </svg>
+                                Publish Event
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Events List -->
+                <div>
+                    <div class="adm-card-bare">
+                        <div id="events-grid" class="adm-events-list">
+                            <!-- Skeleton Loader -->
+                            <div
+                                class="animate-pulse flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div class="w-20 h-20 bg-slate-200 rounded-lg flex-shrink-0"></div>
+                                <div class="flex-1 space-y-3">
+                                    <div class="h-4 bg-slate-200 rounded w-1/3"></div>
+                                    <div class="h-3 bg-slate-200 rounded w-1/4"></div>
+                                </div>
+                            </div>
+                            <div
+                                class="animate-pulse flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div class="w-20 h-20 bg-slate-200 rounded-lg flex-shrink-0"></div>
+                                <div class="flex-1 space-y-3">
+                                    <div class="h-4 bg-slate-200 rounded w-1/3"></div>
+                                    <div class="h-3 bg-slate-200 rounded w-1/4"></div>
+                                </div>
                             </div>
                         </div>
-
-                        <div
-                            class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                            <input type="checkbox" name="is_active" id="is_active" checked
-                                class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
-                            <label for="is_active"
-                                class="text-sm font-medium text-slate-700 dark:text-slate-300 select-none cursor-pointer">Active
-                                immediately</label>
+                        <!-- Empty State -->
+                        <div id="events-empty" class="hidden adm-empty">
+                            <div class="adm-empty-icon">
+                                <svg width="26" height="26" fill="none" stroke="#93c5fd" stroke-width="1.5"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <h3>No active events</h3>
+                            <p>Upload a poster to announce an event.</p>
                         </div>
-
-                        <button type="submit"
-                            class="w-full btn-base btn-primary py-2.5 shadow-md flex justify-center items-center gap-2">
-                            <span>Upload Event Poster</span>
-                        </button>
-                    </form>
+                    </div>
                 </div>
+
             </div>
-
-            <!-- List -->
-            <div class="lg:col-span-2">
-                <div id="events-grid" class="space-y-4">
-                    <!-- Skeleton Loader -->
-                    <div
-                        class="animate-pulse flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <div class="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
-                        <div class="flex-1 space-y-3">
-                            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
-                            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
-                        </div>
-                    </div>
-                    <div
-                        class="animate-pulse flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <div class="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
-                        <div class="flex-1 space-y-3">
-                            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
-                            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Empty State -->
-                <div id="events-empty" class="hidden flex flex-col items-center justify-center py-12 text-center">
-                    <div
-                        class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                    </div>
-                    <h3 class="text-slate-900 dark:text-white font-medium">No active events</h3>
-                    <p class="text-slate-500 text-sm mt-1">Upload a poster to announce an event.</p>
-                </div>
-            </div>
-
         </div>
-
     </main>
 
-    <footer class="py-6 text-center text-sm text-slate-400 dark:text-slate-600 reveal">
+    <footer class="adm-footer">
         <p>Designed by saiyoniX Pvt.ltd</p>
     </footer>
 
+    <script>
+        (function () {
+            var btn = document.getElementById('admin-menu-btn'), menu = document.getElementById('admin-mobile-menu');
+            if (btn && menu) btn.addEventListener('click', function () { menu.classList.toggle('open'); });
+        })();
+    </script>
+
     <script src="../js/reveal.js"></script>
-    <script type="module" src="../js/app.js"></script>
+    <script type="module" src="../js/app.js?v=2"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script type="module" src="../js/admin-events.js"></script>
+    <script type="module" src="../js/admin-events.js?v=2"></script>
 </body>
 
 </html>

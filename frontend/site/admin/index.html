@@ -11,325 +11,1626 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
 
-<body
-    class="admin-dashboard bg-bg text-text font-sans antialiased min-h-screen flex flex-col opacity-0 transition-opacity duration-500">
     <style>
-        /* Fix for fixed header overlap */
-        body.admin-dashboard main.page-content {
-            padding-top: 120px !important;
-            /* Mobile safe header offset */
+        /* ─── Design Tokens ─────────────────────────────────── */
+        :root {
+            --adm-blue: #1e3a8a;
+            --adm-blue-mid: #2563eb;
+            --adm-blue-light: #3b82f6;
+            --adm-blue-pale: #dbeafe;
+            --adm-blue-faint: #eff6ff;
+            --adm-cream: #f8f9fb;
+            --adm-surface: #ffffff;
+            --adm-border: rgba(30, 58, 138, 0.10);
+            --adm-text: #111827;
+            --adm-muted: #6b7280;
+            --adm-header-h: 62px;
+        }
+
+        * {
+            font-family: 'Inter', system-ui, sans-serif !important;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+            background: var(--adm-cream);
+            color: var(--adm-text);
+        }
+
+        /* ─── Loader ─────────────────────────────────────────── */
+        #global-loader {
+            background: #ffffff !important;
+        }
+
+        /* ─── Floating Admin Header ──────────────────────────── */
+        .adm-header {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            right: 12px;
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--adm-border);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(30, 58, 138, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+        .adm-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            height: var(--adm-header-h);
+        }
+
+        /* Logo */
+        .adm-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .adm-logo img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--adm-blue-pale);
+        }
+
+        .adm-brand-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -0.02em;
+        }
+
+        .adm-brand-name span {
+            color: var(--adm-blue-mid);
+        }
+
+        .adm-brand-tag {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--adm-blue-mid);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Desktop Nav */
+        .adm-nav {
+            display: none;
+            align-items: center;
+            gap: 4px;
         }
 
         @media (min-width: 768px) {
-            body.admin-dashboard main.page-content {
-                padding-top: 100px !important;
-                /* Desktop/Tablet offset */
+            .adm-nav {
+                display: flex;
+            }
+
+            .adm-mob-btn {
+                display: none !important;
             }
         }
+
+        .adm-nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--adm-muted);
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .adm-nav a:hover {
+            background: var(--adm-blue-faint);
+            color: var(--adm-blue);
+        }
+
+        .adm-nav a.active {
+            background: var(--adm-blue-faint);
+            color: var(--adm-blue);
+            font-weight: 600;
+        }
+
+        .adm-nav a.nav-danger {
+            color: #dc2626;
+        }
+
+        .adm-nav a.nav-danger:hover {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        /* Right actions */
+        .adm-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .adm-view-site {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--adm-muted);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+
+        .adm-view-site:hover {
+            color: var(--adm-blue);
+        }
+
+        .adm-logout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #dc2626;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 7px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .adm-logout-btn:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        /* Mobile hamburger */
+        .adm-mob-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--adm-blue-faint);
+            border: none;
+            cursor: pointer;
+            color: var(--adm-blue);
+        }
+
+        /* Mobile dropdown nav (tabs style inside card) */
+        .adm-mob-nav {
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            padding: 8px 12px 12px;
+            border-top: 1px solid rgba(30, 58, 138, 0.07);
+            border-radius: 0 0 18px 18px;
+        }
+
+        .adm-mob-nav.open {
+            display: flex;
+        }
+
+        .adm-mob-nav a {
+            display: block;
+            padding: 10px 12px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .adm-mob-nav a:hover,
+        .adm-mob-nav a.active {
+            background: var(--adm-blue-faint);
+            color: var(--adm-blue);
+        }
+
+        .adm-mob-nav a.mob-danger {
+            color: #dc2626;
+        }
+
+        .adm-mob-nav a.mob-danger:hover {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        /* ─── Main content spacing ───────────────────────────── */
+        .adm-main {
+            padding-top: 90px;
+            /* Mobile: header ~62px + 10px top offset + 18px gap */
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        @media (min-width: 768px) {
+            .adm-main {
+                padding-top: 96px;
+            }
+        }
+
+        /* ─── Page wrapper ───────────────────────────────────── */
+        .adm-wrap {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        @media (min-width: 640px) {
+            .adm-wrap {
+                padding: 0 24px;
+            }
+        }
+
+        /* ─── Page header ────────────────────────────────────── */
+        .adm-page-header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .adm-page-header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .adm-page-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0a1628;
+            letter-spacing: -0.03em;
+            margin: 0;
+        }
+
+        .adm-page-subtitle {
+            font-size: 13.5px;
+            color: var(--adm-muted);
+            margin-top: 4px;
+        }
+
+        /* ─── Toolbar (search + filter) ──────────────────────── */
+        .adm-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .adm-search-wrap {
+            position: relative;
+        }
+
+        .adm-search-wrap svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            width: 16px;
+            height: 16px;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .adm-search-wrap:focus-within svg {
+            color: var(--adm-blue-mid);
+        }
+
+        .adm-search-input {
+            height: 40px;
+            width: 220px;
+            background: #ffffff;
+            border: 1px solid rgba(30, 58, 138, 0.14);
+            border-radius: 100px;
+            font-size: 13px;
+            color: #374151;
+            padding: 0 16px 0 36px;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .adm-search-input:focus {
+            border-color: var(--adm-blue-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .adm-select-wrap {
+            position: relative;
+        }
+
+        .adm-select-wrap svg {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            width: 14px;
+            height: 14px;
+            pointer-events: none;
+        }
+
+        .adm-filter-select {
+            height: 40px;
+            width: 200px;
+            appearance: none;
+            background: #ffffff;
+            border: 1px solid rgba(30, 58, 138, 0.14);
+            border-radius: 100px;
+            font-size: 13px;
+            color: #374151;
+            padding: 0 36px 0 16px;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .adm-filter-select:focus {
+            border-color: var(--adm-blue-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        /* ─── Card / table wrapper ───────────────────────────── */
+        .adm-card {
+            background: #ffffff;
+            border: 1px solid rgba(30, 58, 138, 0.09);
+            border-radius: 20px;
+            box-shadow: 0 2px 16px rgba(30, 58, 138, 0.06);
+            overflow: hidden;
+        }
+
+        /* ─── Table toolbar (inside card) ────────────────────── */
+        .adm-card-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(30, 58, 138, 0.07);
+            background: #f9faff;
+        }
+
+        .adm-card-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .adm-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .adm-btn-del {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+            background: #fef2f2;
+            font-size: 12px;
+            font-weight: 600;
+            color: #dc2626;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .adm-btn-del:hover:not(:disabled) {
+            background: #fee2e2;
+        }
+
+        .adm-btn-del:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .adm-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(30, 58, 138, 0.10);
+        }
+
+        .adm-btn-export {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(30, 58, 138, 0.14);
+            background: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .adm-btn-export:hover {
+            background: var(--adm-blue-faint);
+            border-color: var(--adm-blue-light);
+            color: var(--adm-blue);
+        }
+
+        /* ─── Desktop Table ──────────────────────────────────── */
+        .adm-table-wrap {
+            width: 100%;
+            overflow-x: hidden;
+            /* NO horizontal scroll */
+            position: relative;
+            min-height: 360px;
+        }
+
+        .adm-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        /* Column widths for fixed layout, no overflow */
+        .adm-table colgroup col:nth-child(1) {
+            width: 38px;
+        }
+
+        .adm-table colgroup col:nth-child(2) {
+            width: 52px;
+        }
+
+        .adm-table colgroup col:nth-child(3) {
+            width: 12%;
+        }
+
+        .adm-table colgroup col:nth-child(4) {
+            width: 11%;
+        }
+
+        .adm-table colgroup col:nth-child(5) {
+            width: 13%;
+        }
+
+        .adm-table colgroup col:nth-child(6) {
+            width: 13%;
+        }
+
+        .adm-table colgroup col:nth-child(7) {
+            width: 11%;
+        }
+
+        .adm-table colgroup col:nth-child(8) {
+            width: 9%;
+        }
+
+        .adm-table colgroup col:nth-child(9) {
+            width: 9%;
+        }
+
+        .adm-table colgroup col:nth-child(10) {
+            width: auto;
+        }
+
+        .adm-table thead {
+            background: #f9faff;
+        }
+
+        .adm-table th {
+            padding: 10px 12px;
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+            border-bottom: 1px solid rgba(30, 58, 138, 0.07);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .adm-table td {
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #374151;
+            border-bottom: 1px solid rgba(30, 58, 138, 0.05);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 0;
+            /* required for text-overflow with table-layout:fixed */
+        }
+
+        .adm-table tbody tr:hover {
+            background: var(--adm-blue-faint);
+        }
+
+        .adm-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Checkbox column */
+        .adm-table .col-check {
+            text-align: center;
+            overflow: visible;
+        }
+
+        .adm-table input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            border-radius: 4px;
+            border: 1.5px solid #d1d5db;
+            cursor: pointer;
+            accent-color: var(--adm-blue-mid);
+        }
+
+        /* Mobile: allow horizontal scroll so all columns are visible without distortion */
+        @media (max-width: 767px) {
+            .adm-table-wrap {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Remove fixed layout so columns take their natural width */
+            .adm-table {
+                table-layout: auto;
+                min-width: 780px;
+                /* ensures full content is accessible via scroll */
+            }
+
+            /* All columns visible — no hiding */
+            .adm-table .col-hide-mobile {
+                display: table-cell;
+            }
+
+            .adm-table tbody tr td:nth-child(2),
+            .adm-table tbody tr td:nth-child(5),
+            .adm-table tbody tr td:nth-child(7),
+            .adm-table tbody tr td:nth-child(8),
+            .adm-table tbody tr td:nth-child(10) {
+                display: table-cell;
+            }
+
+            .adm-table td,
+            .adm-table th {
+                padding: 9px 10px;
+                font-size: 12.5px;
+                white-space: nowrap;
+            }
+        }
+
+
+
+        /* ─── Loading Skeleton ───────────────────────────────── */
+        #table-loading {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 20;
+            display: none;
+        }
+
+        #table-loading .sk-rows {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .sk-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .sk-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            animation: skPulse 1.5s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        .sk-lines {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sk-line {
+            height: 10px;
+            border-radius: 6px;
+            background: #e5e7eb;
+            animation: skPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes skPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ─── Empty State ────────────────────────────────────── */
+        #table-empty {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        #table-empty svg {
+            width: 56px;
+            height: 56px;
+            margin-bottom: 16px;
+            color: #d1d5db;
+        }
+
+        #table-empty h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        #table-empty p {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        /* ─── Pagination ─────────────────────────────────────── */
+        .adm-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            border-top: 1px solid rgba(30, 58, 138, 0.07);
+            background: #f9faff;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .adm-pagination-info {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .adm-pagination-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .adm-page-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(30, 58, 138, 0.14);
+            background: #ffffff;
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .adm-page-btn:hover:not(:disabled) {
+            background: var(--adm-blue-faint);
+            border-color: var(--adm-blue-light);
+            color: var(--adm-blue);
+        }
+
+        .adm-page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ─── Footer ─────────────────────────────────────────── */
+        .adm-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #d1d5db;
+        }
+
+        /* ─── Delete Modal ───────────────────────────────────── */
+        #delete-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(5px);
+            padding: 16px;
+        }
+
+        #delete-modal.flex {
+            display: flex;
+        }
+
+        .adm-modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+            max-width: 360px;
+            width: 100%;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .adm-modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .adm-modal-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .adm-modal-msg {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .adm-modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .adm-modal-cancel {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .adm-modal-cancel:hover {
+            background: #f3f4f6;
+        }
+
+        .adm-modal-confirm {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background: #dc2626;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .adm-modal-confirm:hover {
+            background: #b91c1c;
+        }
+
+        /* ─── Util ───────────────────────────────────────────── */
+        .opacity-0 {
+            opacity: 0;
+        }
+
+        .transition-opacity {
+            transition: opacity 0.5s;
+        }
     </style>
+</head>
+
+<body class="admin-dashboard opacity-0 transition-opacity duration-500"
+    style="background: var(--adm-cream); color: var(--adm-text);">
 
     <!-- Global Loader -->
     <div id="global-loader"
-        class="fixed inset-0 z-[100] bg-white dark:bg-slate-900 bg-opacity-90 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
+        class="fixed inset-0 z-[100] bg-white bg-opacity-90 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="loader-core"></div>
-        <div class="mt-6 text-xs font-bold tracking-[0.2em] text-slate-400 dark:text-slate-500 uppercase animate-pulse">
-            Loading</div>
+        <div class="mt-6 text-xs font-bold tracking-[0.2em] text-slate-400 uppercase animate-pulse">Loading</div>
     </div>
 
-    <!-- Navbar -->
-    <nav
-        class="fixed top-0 left-0 right-0 z-[9999] h-auto md:h-[var(--header-h)] bg-surface/90 backdrop-blur-md border-b border-border transition-all duration-300 pointer-events-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-[var(--header-h)]">
-                <div class="flex items-center gap-8">
-                    <div class="flex-shrink-0 flex items-center gap-3">
-                        <img src="../img/logo.png" alt="Admin Logo" class="h-10 w-10 rounded-full object-cover">
-                        <span class="font-bold text-lg sm:text-xl">Kanglei Admin</span>
-                    </div>
-
-                    <div class="hidden md:flex items-center space-x-1">
-                        <a href="./index.html"
-                            class="px-4 py-2 rounded-lg text-sm font-semibold bg-accent/10 text-accent cursor-pointer pointer-events-auto">Dashboard</a>
-                        <a href="./gallery.html"
-                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all cursor-pointer pointer-events-auto">Gallery</a>
-                        <a href="./events.html"
-                            class="px-4 py-2 rounded-lg text-sm font-medium text-muted hover:text-accent hover:bg-surface-2 transition-all cursor-pointer pointer-events-auto">Events</a>
-                        <a href="./trash.html"
-                            class="px-4 py-2 rounded-lg text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 transition-all cursor-pointer pointer-events-auto">Recycle
-                            Bin</a>
-                    </div>
+    <!-- ─── Floating Admin Header ─────────────────────────────── -->
+    <header class="adm-header" id="site-header">
+        <div class="adm-header-inner">
+            <!-- Logo -->
+            <a href="./index.html" class="adm-logo">
+                <img src="../img/logo.png" alt="Admin Logo">
+                <div>
+                    <span class="adm-brand-name">Kanglei <span>Admin</span></span>
+                    <span class="adm-brand-tag">Dashboard</span>
                 </div>
+            </a>
 
-                <div class="flex items-center gap-4">
-                        <a href="https://kangleicareersolution.co.in/" target="_blank"  
-                        class="flex text-sm text-muted hover:text-accent gap-1 items-center font-medium transition-colors cursor-pointer pointer-events-auto">
-                        <span class="hidden sm:inline">View Website</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </a>
-                    <div class="h-6 w-px bg-border hidden sm:block"></div>
+            <!-- Desktop Nav -->
+            <nav class="adm-nav">
+                <a href="./index.html" class="active">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="./gallery.html">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Gallery
+                </a>
+                <a href="./events.html">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Events
+                </a>
+                <a href="./trash.html" class="nav-danger">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Recycle Bin
+                </a>
+            </nav>
 
-                    <button id="logout-btn"
-                        class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-900/20 transition-all hover:shadow-sm cursor-pointer pointer-events-auto">
-                        Sign Out
-                    </button>
-                </div>
-            </div>
+            <!-- Right actions -->
+            <div class="adm-actions">
+                <a href="https://kangleicareersolution.co.in/" target="_blank" class="adm-view-site">
+                    <span class="hidden sm:inline">View Site</span>
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
+                <button id="logout-btn" class="adm-logout-btn">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign Out
+                </button>
 
-            <!-- Mobile Menu Tabs -->
-            <div class="md:hidden flex border-t border-border relative z-[10000]">
-                <a href="./index.html"
-                    class="flex-1 py-4 text-center text-sm font-semibold border-b-2 border-accent text-accent bg-surface-2/50 cursor-pointer pointer-events-auto touch-manipulation">Dashboard</a>
-                <a href="./gallery.html"
-                    class="flex-1 py-4 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer pointer-events-auto touch-manipulation">Gallery</a>
-                <a href="./events.html"
-                    class="flex-1 py-4 text-center text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer pointer-events-auto touch-manipulation">Events</a>
-                <a href="./trash.html"
-                    class="flex-1 py-4 text-center text-sm font-medium text-red-600 bg-red-50/50 dark:bg-red-900/10 cursor-pointer pointer-events-auto touch-manipulation">Trash</a>
+                <!-- Mobile hamburger -->
+                <button id="admin-menu-btn" class="adm-mob-btn" aria-label="Menu">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" viewBox="0 0 24 24">
+                        <path d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="page-content flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header & Toolbar -->
-        <div class="page-header flex flex-col lg:flex-row lg:items-center justify-between gap-6 reveal">
-            <div>
-                <h1 class="page-title">Appointments</h1>
-                <p class="page-subtitle">Manage user bookings and inquiries</p>
-            </div>
+        <!-- Mobile Nav Dropdown -->
+        <nav id="admin-mobile-menu" class="adm-mob-nav">
+            <a href="./index.html" class="active">Dashboard</a>
+            <a href="./gallery.html">Gallery</a>
+            <a href="./events.html">Events</a>
+            <a href="./trash.html" class="mob-danger">Recycle Bin</a>
+        </nav>
+    </header>
 
-            <div class="flex flex-wrap items-center gap-3">
-                <!-- Search -->
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
+    <!-- ─── Main Content ──────────────────────────────────────── -->
+    <main class="adm-main">
+        <div class="adm-wrap">
+
+            <!-- Page Header -->
+            <div class="adm-page-header reveal">
+                <div>
+                    <h1 class="adm-page-title">Appointments</h1>
+                    <p class="adm-page-subtitle">Manage user bookings and inquiries</p>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="adm-toolbar">
+                    <!-- Search -->
+                    <div class="adm-search-wrap">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
+                        <input type="text" id="search-q" class="adm-search-input" placeholder="Search…">
                     </div>
-                    <input type="text" id="search-q"
-                        class="h-10 sm:h-12 w-full sm:w-64 bg-surface border border-border text-text text-sm rounded-full focus:ring-4 focus:ring-accent-soft focus:border-accent block pl-10 pr-4 outline-none transition-all shadow-sm hover:shadow-md"
-                        placeholder="Search appointments...">
-                </div>
 
-                <!-- Filter -->
-                <div class="relative">
-                    <select id="filter-type"
-                        class="h-10 sm:h-12 w-full sm:w-64 appearance-none bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm rounded-full pl-4 pr-10 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none shadow-sm hover:shadow-md cursor-pointer">
-                        <option value="">All Type</option>
-                        <option value="Admission Counselling">Admission Counselling</option>
-                        <option value="Career Counselling">Career Counselling</option>
-                        <option value="Psychometric Test">Psychometric Test</option>
-                        <option value="Others">Others</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Filter -->
+                    <div class="adm-select-wrap">
+                        <select id="filter-type" class="adm-filter-select">
+                            <option value="">All Types</option>
+                            <option value="Admission Counselling">Admission Counselling</option>
+                            <option value="Career Counselling">Career Counselling</option>
+                            <option value="Psychometric Test">Psychometric Test</option>
+                            <option value="Others">Others</option>
+                        </select>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
                             </path>
                         </svg>
                     </div>
                 </div>
             </div>
-        </div>
 
-        </div>
+            <!-- Appointments Card -->
+            <div id="appointments-section" class="adm-card">
 
-        <div id="appointments-section" class="card overflow-hidden">
+                <!-- Card Toolbar -->
+                <div class="adm-card-toolbar">
+                    <span class="adm-card-label">All Appointments</span>
+                    <div class="adm-card-actions">
+                        <button id="delete-selected-btn" disabled class="adm-btn-del">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
+                            Delete Selected <span id="selected-count" class="hidden"></span>
+                        </button>
 
-            <!-- Table Header Controls -->
-            <div
-                class="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                <div class="text-sm text-slate-500">
-                    Appointments
+                        <div class="adm-divider"></div>
+
+                        <button id="exportExcelBtn" class="adm-btn-export">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                style="color:#10b981">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                            Excel
+                        </button>
+                        <button id="exportPdfBtn" class="adm-btn-export">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                style="color:#dc2626">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            PDF
+                        </button>
+                    </div>
                 </div>
 
-                <div class="flex gap-2">
-                    <button id="delete-selected-btn" disabled
-                        class="flex items-center gap-1.5 px-3 py-1.5 border border-red-200 dark:border-red-900 rounded-md text-xs font-medium bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                            </path>
-                        </svg>
-                        Delete Selected <span id="selected-count" class="hidden"></span>
-                    </button>
-                    <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
-                    <button id="exportCsvBtn" class="btn btn-outline gap-2 shadow-sm active:scale-95">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                        </svg>
-                        <span>Export CSV</span>
-                    </button>
-                    <button id="exportPdfBtn" class="btn btn-outline gap-2 shadow-sm active:scale-95 group">
-                        <svg class="w-5 h-5 text-red-600 dark:text-red-400 group-hover:text-red-700" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                        <span>Export PDF</span>
-                    </button>
-                </div>
-            </div>
+                <!-- Desktop Table -->
+                <div class="adm-table-wrap">
+                    <table class="adm-table">
+                        <colgroup>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th class="col-check">
+                                    <input type="checkbox" id="select-all">
+                                </th>
+                                <th class="col-hide-mobile">#</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th class="col-hide-mobile">Address</th>
+                                <th>Type</th>
+                                <th class="col-hide-mobile">Guardian</th>
+                                <th class="col-hide-mobile">DOB</th>
+                                <th>Date</th>
+                                <th>View</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-tbody">
+                            <!-- Rows rendered by admin.js -->
+                        </tbody>
+                    </table>
 
-            <div class="table-container min-h-[400px] relative">
-                <table class="table-premium w-full text-left">
-                    <thead class="bg-slate-50 dark:bg-slate-800/80 sticky top-0 z-10 backdrop-blur-sm">
-                        <tr>
-                            <th
-                                class="w-12 text-center py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                <input type="checkbox" id="select-all"
-                                    class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4">
-                            </th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                #</th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                Name</th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                Phone</th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                Address</th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                Type</th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                Guardian</th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                DOB</th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                Date</th>
-                            <th
-                                class="py-3 px-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-xs uppercase text-slate-500">
-                                Message</th>
-                        </tr>
-                    </thead>
-                    <tbody id="appointments-tbody" class="divide-y divide-slate-100 dark:divide-slate-700">
-                        <!-- Rows rendered by admin.js -->
-                    </tbody>
-                </table>
-
-                <!-- Loading Skeleton -->
-                <div id="table-loading"
-                    class="hidden absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-20">
-                    <div class="space-y-4 p-4 mt-8">
-                        <div class="animate-pulse flex space-x-4">
-                            <div class="rounded-full bg-slate-200 dark:bg-slate-700 h-10 w-10"></div>
-                            <div class="flex-1 space-y-6 py-1">
-                                <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                                <div class="space-y-3">
-                                    <div class="grid grid-cols-3 gap-4">
-                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-2"></div>
-                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-1"></div>
-                                    </div>
+                    <!-- Loading Skeleton -->
+                    <div id="table-loading">
+                        <div class="sk-rows">
+                            <div class="sk-row">
+                                <div class="sk-circle"></div>
+                                <div class="sk-lines">
+                                    <div class="sk-line" style="width:60%"></div>
+                                    <div class="sk-line" style="width:40%"></div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="animate-pulse flex space-x-4">
-                            <div class="rounded-full bg-slate-200 dark:bg-slate-700 h-10 w-10"></div>
-                            <div class="flex-1 space-y-6 py-1">
-                                <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                                <div class="space-y-3">
-                                    <div class="grid grid-cols-3 gap-4">
-                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-2"></div>
-                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-1"></div>
-                                    </div>
+                            <div class="sk-row">
+                                <div class="sk-circle"></div>
+                                <div class="sk-lines">
+                                    <div class="sk-line" style="width:75%"></div>
+                                    <div class="sk-line" style="width:50%"></div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="animate-pulse flex space-x-4">
-                            <div class="rounded-full bg-slate-200 dark:bg-slate-700 h-10 w-10"></div>
-                            <div class="flex-1 space-y-6 py-1">
-                                <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                                <div class="space-y-3">
-                                    <div class="grid grid-cols-3 gap-4">
-                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-2"></div>
-                                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded col-span-1"></div>
-                                    </div>
+                            <div class="sk-row">
+                                <div class="sk-circle"></div>
+                                <div class="sk-lines">
+                                    <div class="sk-line" style="width:55%"></div>
+                                    <div class="sk-line" style="width:35%"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Empty State -->
+                    <div id="table-empty">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                            </path>
+                        </svg>
+                        <h3>No appointments found</h3>
+                        <p>Try adjusting your search filters.</p>
+                    </div>
                 </div>
 
-                <!-- Empty State -->
-                <div id="table-empty" class="hidden flex flex-col items-center justify-center p-12 text-slate-400">
-                    <svg class="w-16 h-16 mb-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
-                        </path>
-                    </svg>
-                    <h3 class="text-lg font-medium text-slate-600 dark:text-slate-300">No appointments found</h3>
-                    <p class="text-sm text-slate-500 mt-1">Try adjusting your search filters.</p>
-                </div>
-            </div>
 
-            <!-- Pagination -->
-            <div
-                class="p-4 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                <span id="page-info" class="text-sm text-slate-500">Showing 0-0</span>
-                <div class="flex gap-2">
-                    <button id="prev-page"
-                        class="px-3 py-1.5 rounded border border-slate-300 dark:border-slate-600 text-sm hover:bg-white dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
-                    <button id="next-page"
-                        class="px-3 py-1.5 rounded border border-slate-300 dark:border-slate-600 text-sm hover:bg-white dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+
+                <!-- Pagination -->
+                <div class="adm-pagination">
+                    <span id="page-info" class="adm-pagination-info">Showing 0–0</span>
+                    <div class="adm-pagination-btns">
+                        <button id="prev-page" class="adm-page-btn">← Prev</button>
+                        <button id="next-page" class="adm-page-btn">Next →</button>
+                    </div>
                 </div>
+
             </div>
+            <!-- /appointments-section -->
 
         </div>
-
     </main>
 
-    <footer class="py-6 text-center text-sm text-slate-400 dark:text-slate-600 reveal">
+    <footer class="adm-footer">
         <p>Designed by saiyoniX Pvt.ltd</p>
     </footer>
 
     <!-- Delete Confirmation Modal -->
-    <div id="delete-modal"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div
-            class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-sm w-full p-6 border border-slate-200 dark:border-slate-700 transform transition-all scale-100">
-            <div class="text-center">
-                <div
-                    class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
-                    <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
-                        </path>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Delete appointment(s)?</h3>
-                <p id="delete-msg" class="text-sm text-slate-500 dark:text-slate-400">This action cannot be undone. You
-                    are about to delete selected appointment(s).</p>
+    <div id="delete-modal">
+        <div class="adm-modal-card">
+            <div class="adm-modal-icon">
+                <svg width="22" height="22" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                    </path>
+                </svg>
             </div>
-            <div class="mt-6 flex gap-3">
-                <button id="cancel-delete"
-                    class="flex-1 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 font-medium transition-colors">
-                    Cancel
-                </button>
-                <button id="confirm-delete"
-                    class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium shadow-sm transition-colors">
-                    Delete
-                </button>
+            <h3 class="adm-modal-title">Delete appointment(s)?</h3>
+            <p id="delete-msg" class="adm-modal-msg">This action cannot be undone. You are about to delete selected
+                appointment(s).</p>
+            <div class="adm-modal-actions">
+                <button id="cancel-delete" class="adm-modal-cancel">Cancel</button>
+                <button id="confirm-delete" class="adm-modal-confirm">Delete</button>
             </div>
         </div>
     </div>
+
+    <!-- ── Premium Appointment Detail Modal (Mature & Simple) ──────────────────── -->
+    <style>
+        @keyframes adm-modal-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        #appt-detail-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.4);
+            /* Fainter, mature backdrop */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 16px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        #appt-detail-modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        #appt-detail-modal .adm-modal-card-inner {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(15, 23, 42, 0.05);
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: adm-modal-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Clean Header */
+        #appt-detail-modal .adm-modal-header {
+            padding: 24px 30px;
+            border-bottom: 1px solid #f1f5f9;
+            background: #ffffff;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        #appt-detail-modal .adm-modal-header-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        #adm-detail-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
+        #adm-detail-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        #adm-detail-date {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        #appt-detail-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            transition: all 0.15s;
+        }
+
+        #appt-detail-close:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        #adm-detail-types {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 30px 20px;
+            background: #ffffff;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .adm-type-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #f8fafc;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            letter-spacing: 0.02em;
+        }
+
+        /* Body & Fields */
+        #appt-detail-modal .adm-modal-body {
+            padding: 24px 30px 30px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        #adm-detail-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media(min-width: 480px) {
+            #adm-detail-body {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .adm-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .adm-field-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .adm-field-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .adm-field-label svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2px;
+            color: #94a3b8;
+        }
+
+        .adm-field-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #0f172a;
+            line-height: 1.5;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            word-break: break-word;
+        }
+
+        .adm-field-value.highlight {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        .adm-message-box {
+            background: #ffffff;
+            border-left: 3px solid #3b82f6;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            padding: 14px 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #334155;
+            border-top: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: pre-wrap;
+        }
+
+        .adm-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #475569;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            margin-left: 8px;
+            vertical-align: middle;
+            transition: all 0.15s;
+        }
+
+        .adm-copy-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .adm-view-col-td {
+            padding: 8px 14px !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            border-bottom: 1px solid rgba(30, 58, 138, .05) !important;
+            white-space: nowrap !important;
+        }
+
+        .adm-view-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 5px 14px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all .15s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .adm-view-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+    </style>
+
+    <div id="appt-detail-modal">
+        <div class="adm-modal-card-inner">
+
+            <!-- Header -->
+            <div class="adm-modal-header">
+                <div class="adm-modal-header-info">
+                    <div id="adm-detail-avatar"></div>
+                    <div>
+                        <div id="adm-detail-name"></div>
+                        <div id="adm-detail-date"></div>
+                    </div>
+                </div>
+                <button id="appt-detail-close" aria-label="Close">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div id="adm-detail-types"></div>
+
+            <!-- Body -->
+            <div class="adm-modal-body">
+                <div id="adm-detail-body"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script to inject View button & handle modal -->
+    <script>
+        (function () {
+            var modal = document.getElementById('appt-detail-modal');
+            var closeBtn = document.getElementById('appt-detail-close');
+            var nameEl = document.getElementById('adm-detail-name');
+            var dateEl = document.getElementById('adm-detail-date');
+            var avatarEl = document.getElementById('adm-detail-avatar');
+            var typesEl = document.getElementById('adm-detail-types');
+            var bodyEl = document.getElementById('adm-detail-body');
+
+            function closeModal() {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 200); // match transition
+            }
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
+
+            function initials(name) {
+                if (!name) return '?';
+                var p = name.trim().split(/\s+/);
+                return p.length >= 2 ? (p[0][0] + p[p.length - 1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
+            }
+
+            // Icons dictionary
+            const icons = {
+                phone: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>',
+                address: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
+                dob: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z"/></svg>',
+                date: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
+                guardian: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>',
+                msg: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>'
+            };
+
+            function makeField(iconKey, label, value, fullWidth, highlight) {
+                if (!value || value === '-' || value.trim() === '') return '';
+                var widthCls = fullWidth ? 'full-width' : '';
+                var highCls = highlight ? 'highlight' : '';
+                var icon = icons[iconKey] || '';
+                return `
+                    <div class="adm-field-group ${widthCls}">
+                        <div class="adm-field-label">${icon} ${label}</div>
+                        <div class="adm-field-value ${highCls}">${value}</div>
+                    </div>
+                `;
+            }
+
+            function phoneField(phone) {
+                if (!phone || phone === '-') return '';
+                var safePhone = phone.replace(/'/g, "\\'");
+                var icon = icons['phone'];
+                return `
+                    <div class="adm-field-group full-width">
+                        <div class="adm-field-label">${icon} Phone</div>
+                        <div class="adm-field-value highlight" style="display:flex;align-items:center;justify-content:space-between;">
+                            ${phone}
+                            <button class="adm-copy-btn" onclick="navigator.clipboard&&navigator.clipboard.writeText('${safePhone}');this.textContent='✓ Copied';setTimeout(()=>this.textContent='Copy',1600)">Copy</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function makeViewBtn(td) {
+                var tr = td.closest('tr');
+                if (!tr) return;
+                var cells = tr.querySelectorAll('td');
+                // 0=check,1=num,2=name,3=phone,4=address,5=type,6=guardian,7=dob,8=date,9=message
+                var data = {
+                    name: cells[2] ? cells[2].innerText.trim() : '',
+                    phone: cells[3] ? cells[3].innerText.trim() : '',
+                    address: cells[4] ? cells[4].innerText.trim() : '',
+                    type: cells[5] ? cells[5].innerText.trim() : '',
+                    guardian: cells[6] ? cells[6].innerText.trim() : '',
+                    dob: cells[7] ? cells[7].innerText.trim() : '',
+                    date: cells[8] ? cells[8].innerText.trim() : '',
+                    message: cells[9] ? cells[9].innerText.trim() : ''
+                };
+
+                /* Replace td with centered View column */
+                td.className = 'adm-view-col-td';
+                td.innerHTML = '';
+
+                var btn = document.createElement('button');
+                btn.className = 'adm-view-btn';
+                btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> Details';
+
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    /* Avatar initials */
+                    avatarEl.textContent = initials(data.name);
+
+                    /* Header info */
+                    nameEl.textContent = data.name || 'Appointment';
+                    dateEl.textContent = data.date ? 'Submitted: ' + data.date : '';
+
+                    /* Type badges */
+                    typesEl.innerHTML = '';
+                    typesEl.style.display = 'none';
+                    if (data.type && data.type !== '-') {
+                        typesEl.style.display = 'flex';
+                        data.type.split('\n').forEach(function (t) {
+                            t = t.trim(); if (!t) return;
+                            var b = document.createElement('span');
+                            b.textContent = t;
+                            b.className = 'adm-type-badge';
+                            typesEl.appendChild(b);
+                        });
+                    }
+
+                    /* Field cards */
+                    var html = '';
+                    html += phoneField(data.phone);
+                    html += makeField('address', 'Address', data.address, true, false);
+                    html += makeField('dob', 'Date of Birth', data.dob, false, false);
+                    html += makeField('date', 'Appointment Date', data.date, false, false);
+                    html += makeField('guardian', 'Guardian Info', data.guardian, true, false);
+
+                    if (data.message && data.message !== '-' && data.message.trim() !== '') {
+                        html += `
+                            <div class="adm-field-group full-width" style="margin-top: 8px;">
+                                <div class="adm-field-label">${icons.msg} Message</div>
+                                <div class="adm-message-box">${data.message}</div>
+                            </div>
+                        `;
+                    }
+
+                    bodyEl.innerHTML = html || '<div style="grid-column:1/-1;text-align:center;padding:32px 20px;color:#9ca3af;font-size:13px;">No additional details provided.</div>';
+
+                    /* Show modal */
+                    modal.style.display = 'flex';
+                    // Force reflow
+                    modal.offsetHeight;
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                });
+
+                td.appendChild(btn);
+            }
+
+            function processRow(tr) {
+                var cells = tr.querySelectorAll('td');
+                if (cells.length >= 10) makeViewBtn(cells[9]);
+            }
+
+            var tbody = document.getElementById('appointments-tbody');
+            if (tbody) {
+                var obs = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (m) {
+                        m.addedNodes.forEach(function (node) {
+                            if (node.tagName === 'TR') processRow(node);
+                        });
+                    });
+                });
+                obs.observe(tbody, { childList: true });
+
+                // Process existing rows on load just in case
+                tbody.querySelectorAll('tr').forEach(processRow);
+            }
+        })();
+    </script>
+
+    <script>
+        (function () {
+            var btn = document.getElementById('admin-menu-btn');
+            var menu = document.getElementById('admin-mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', function () {
+                    menu.classList.toggle('open');
+                });
+            }
+        })();
+    </script>
 
     <script src="../js/reveal.js"></script>
     <script type="module" src="../js/app.js"></script>
@@ -337,13 +1638,13 @@
     <!-- Export Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <!-- Admin Scripts -->
-    <script type="module" src="../js/admin.js"></script>
-    <script type="module" src="../js/admin-events.js"></script>
-    <script type="module" src="../js/trash.js"></script>
-    <script type="module" src="../js/export.js"></script>
-
+    <script type="module" src="../js/admin.js?v=2"></script>
+    <script type="module" src="../js/admin-events.js?v=2"></script>
+    <script type="module" src="../js/trash.js?v=2"></script>
+    <script type="module" src="../js/export.js?v=2"></script>
 
 </body>
 

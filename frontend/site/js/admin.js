@@ -42,10 +42,15 @@ function init() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            console.log("Logout clicked - Waiting for confirm");
             const confirmed = await showConfirm('Are you sure you want to sign out?', 'Sign Out');
             if (confirmed) {
+                console.log("Confirmed logout. Removing token.");
                 localStorage.removeItem('kanglei_admin_token');
                 window.location.href = LOGIN_PAGE;
+            } else {
+                console.log("Logout cancelled/closed.");
             }
         });
     }
@@ -140,11 +145,12 @@ async function initDashboard() {
     let allAppointments = []; // Store source of truth
     let currentFilter = '';
     let currentSearch = '';
+    let currentlyFiltered = [];
 
     // Render Function (Client-side filtering)
     const renderTable = () => {
         // 1. Filter
-        let filtered = allAppointments.filter(appt => {
+        currentlyFiltered = allAppointments.filter(appt => {
             // Filter by Appointment Type (array check)
             let matchesType = true;
             if (currentFilter) {
@@ -166,13 +172,13 @@ async function initDashboard() {
         // 2. Render
         tbody.innerHTML = '';
 
-        if (filtered.length === 0) {
+        if (currentlyFiltered.length === 0) {
             if (empty) empty.classList.remove('hidden');
             return;
         }
         if (empty) empty.classList.add('hidden');
 
-        filtered.forEach((appt, index) => {
+        currentlyFiltered.forEach((appt, index) => {
             const row = document.createElement('tr');
             row.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group';
 
@@ -228,6 +234,90 @@ async function initDashboard() {
         // Re-attach checkbox listeners
         updateCheckboxListeners();
     };
+
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+    if (exportExcelBtn) {
+        exportExcelBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            if (currentlyFiltered.length === 0) {
+                if (typeof showToast === 'function') showToast("No records to export.", "error");
+                else alert("No records to export.");
+                return;
+            }
+
+            if (typeof XLSX === 'undefined') {
+                if (typeof showToast === 'function') showToast("Excel export library not loaded.", "error");
+                else alert("Excel export library not loaded.");
+                return;
+            }
+
+            const originalText = exportExcelBtn.innerHTML;
+            exportExcelBtn.innerHTML = `
+                <svg class="w-4 h-4 animate-spin inline-block mr-1" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Exporting...</span>`;
+            exportExcelBtn.disabled = true;
+
+            try {
+                const headers = ['SL No.', 'Name', 'Phone', 'Address', 'Type', 'Guardian Details', 'DOB', 'Appointment Date', 'Message'];
+                const excelData = [headers];
+
+                currentlyFiltered.forEach((appt, index) => {
+                    const typeStr = Array.isArray(appt.appointment_type) ? appt.appointment_type.join('; ') : (appt.appointment_type || '-');
+                    const dateStr = new Date(appt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                    const row = [
+                        index + 1,
+                        appt.name || '',
+                        appt.phone || '',
+                        appt.address || '',
+                        typeStr,
+                        appt.guardian_name ? `${appt.guardian_name} (${appt.guardian_contact || ''})` : '',
+                        appt.date_of_birth || '',
+                        dateStr,
+                        appt.message || ''
+                    ];
+                    excelData.push(row);
+                });
+
+                // Create Workbook
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+                // Auto-size columns slightly
+                const colWidths = [
+                    { wch: 8 },  // SL No
+                    { wch: 20 }, // Name
+                    { wch: 15 }, // Phone
+                    { wch: 30 }, // Address
+                    { wch: 15 }, // Type
+                    { wch: 25 }, // Guardian
+                    { wch: 12 }, // DOB
+                    { wch: 18 }, // Appt Date
+                    { wch: 40 }  // Message
+                ];
+                ws['!cols'] = colWidths;
+
+                XLSX.utils.book_append_sheet(wb, ws, "Appointments");
+
+                // Download
+                const filename = `Appointments_Export_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                XLSX.writeFile(wb, filename);
+
+                if (typeof showToast === 'function') showToast("Excel exported successfully!", "success");
+
+            } catch (err) {
+                console.error("Excel Export failed:", err);
+                if (typeof showToast === 'function') showToast("Failed to generate Excel file.", "error");
+            } finally {
+                exportExcelBtn.innerHTML = originalText;
+                exportExcelBtn.disabled = false;
+            }
+        });
+    }
 
     const fetchAppointments = async () => {
         tbody.style.opacity = '0.5';
