@@ -173,10 +173,10 @@ async function initDashboard() {
         tbody.innerHTML = '';
 
         if (currentlyFiltered.length === 0) {
-            if (empty) empty.classList.remove('hidden');
+            if (empty) empty.style.display = 'flex';
             return;
         }
-        if (empty) empty.classList.add('hidden');
+        if (empty) empty.style.display = 'none';
 
         currentlyFiltered.forEach((appt, index) => {
             const row = document.createElement('tr');
