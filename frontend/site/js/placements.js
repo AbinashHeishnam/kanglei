@@ -33,8 +33,18 @@ export async function initPlacements() {
 
         const cards = Array.from(container.querySelectorAll('.placement-card'));
 
-        // ── Centering for ≤2 images ───────────────────────────────
-        if (data.length <= 2) {
+        function cardsPerView() {
+            const w = window.innerWidth;
+            if (w <= 540) return 1;
+            if (w <= 768) return 2;
+            return 3;
+        }
+
+        const cpv = cardsPerView();
+        const pages = Math.ceil(data.length / cpv);
+
+        // ── Centering for single-page views ────────────────────────
+        if (pages === 1) {
             container.classList.add('centered');
         } else {
             container.classList.remove('centered');
@@ -44,7 +54,6 @@ export async function initPlacements() {
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry, i) => {
                 if (entry.isIntersecting) {
-                    // Stagger each card by 100ms
                     const card = entry.target;
                     const idx = cards.indexOf(card);
                     setTimeout(() => {
@@ -57,9 +66,10 @@ export async function initPlacements() {
 
         cards.forEach(card => revealObserver.observe(card));
 
-        // ── Auto-slider (only if > 3 cards) ──────────────────────
-        if (data.length > 3) {
+        // ── Auto-slider (only if multiple pages) ──────────────────────
+        if (pages > 1) {
             setupSlider(container, cards, dotsWrap, section);
+            if (dotsWrap) dotsWrap.style.display = 'flex';
         } else if (dotsWrap) {
             dotsWrap.style.display = 'none';
         }
@@ -126,17 +136,26 @@ function setupSlider(track, cards, dotsWrap, section) {
             idx = current > 0 ? 0 : max;
         }
         current = idx;
+        // Calculate exact pixel offset using flex gap from track
+        const trackStyle = window.getComputedStyle(track);
+        // Extract gap if present, default to 28 based on CSS
+        const flexGap = trackStyle.gap ? parseFloat(trackStyle.gap) : 28;
 
-        // Calculate pixel offset: sum of widths + gaps up to idx
         let offset = 0;
         for (let i = 0; i < idx; i++) {
             if (cards[i]) {
                 const style = window.getComputedStyle(cards[i]);
-                const gap = parseFloat(style.marginRight) || 20;
-                offset += cards[i].offsetWidth + gap;
+                const margin = parseFloat(style.marginLeft) + parseFloat(style.marginRight) || 0;
+                offset += cards[i].offsetWidth + margin + flexGap;
             }
         }
-        track.style.transform = `translateX(-${offset}px)`;
+
+        // Edge case: don't overscroll past max width
+        const sliderWidth = track.parentElement.offsetWidth;
+        const trackTotalWidth = track.scrollWidth;
+        const maxScroll = Math.max(0, trackTotalWidth - sliderWidth);
+
+        track.style.transform = `translateX(-${Math.min(offset, maxScroll)}px)`;
         updateDots(current);
     }
 

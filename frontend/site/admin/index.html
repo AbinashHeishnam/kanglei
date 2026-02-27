@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         /* ─── Design Tokens ─────────────────────────────────── */
@@ -688,6 +690,133 @@
 
 
 
+        /* ── Analytics Section ── */
+        .adm-analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 32px;
+            margin-bottom: 24px;
+        }
+
+        @media(min-width: 768px) {
+            .adm-analytics-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media(min-width: 1024px) {
+            .adm-analytics-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .adm-stat-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .adm-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        }
+
+        .adm-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--adm-blue-mid);
+            opacity: 0;
+            transition: opacity .2s;
+        }
+
+        .adm-stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .adm-stat-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 8px;
+        }
+
+        .adm-stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+
+        .adm-stat-trend {
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .adm-stat-trend.positive {
+            color: #10b981;
+        }
+
+        .adm-stat-trend.negative {
+            color: #ef4444;
+        }
+
+        .adm-stat-trend.neutral {
+            color: #94a3b8;
+        }
+
+        .adm-chart-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+            margin-bottom: 32px;
+        }
+
+        .adm-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .adm-chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .adm-chart-wrap {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            min-height: 350px;
+        }
+
+        canvas#appointmentsChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
         /* ─── Loading Skeleton ───────────────────────────────── */
         #table-loading {
             position: absolute;
@@ -1208,6 +1337,45 @@
 
             </div>
             <!-- /appointments-section -->
+
+            <!-- Analytics Section -->
+            <div class="adm-analytics-section reveal">
+                <!-- Stat Cards Grid -->
+                <div class="adm-analytics-grid">
+                    <div class="adm-stat-card">
+                        <div class="adm-stat-title">Today</div>
+                        <div class="adm-stat-value" id="stat-today">0</div>
+                        <div class="adm-stat-trend neutral" id="trend-today">-</div>
+                    </div>
+                    <div class="adm-stat-card">
+                        <div class="adm-stat-title">Yesterday</div>
+                        <div class="adm-stat-value" id="stat-yesterday">0</div>
+                    </div>
+                    <div class="adm-stat-card">
+                        <div class="adm-stat-title">This Month</div>
+                        <div class="adm-stat-value" id="stat-month">0</div>
+                        <div class="adm-stat-trend neutral" id="trend-month">-</div>
+                    </div>
+                    <div class="adm-stat-card">
+                        <div class="adm-stat-title">This Year</div>
+                        <div class="adm-stat-value" id="stat-year">0</div>
+                    </div>
+                    <div class="adm-stat-card" style="border-left: 4px solid var(--adm-blue-mid);">
+                        <div class="adm-stat-title">Total Bookings</div>
+                        <div class="adm-stat-value text-blue-600" id="stat-total">0</div>
+                    </div>
+                </div>
+
+                <!-- Trend Chart -->
+                <div class="adm-chart-card">
+                    <div class="adm-chart-header">
+                        <div class="adm-chart-title">Booking Trends (Last 14 Days)</div>
+                    </div>
+                    <div class="adm-chart-wrap">
+                        <canvas id="appointmentsChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </main>

@@ -147,6 +147,8 @@ async function initDashboard() {
     let currentSearch = '';
     let currentlyFiltered = [];
     let currentLocation = 'Imphal'; // Default location
+    let currentPage = 1;
+    const rowsPerPage = 10;
 
     // Location Filter Tabs
     const locTabs = document.querySelectorAll('.adm-loc-tab');
@@ -183,7 +185,41 @@ async function initDashboard() {
             return matchesType && matchesSearch;
         });
 
-        // 2. Render
+        // Track pagination data BEFORE slicing for rendering
+        const totalItems = currentlyFiltered.length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        // Render Analytics based on ALL filtered data, before pagination chops it up
+        calculateAnalytics(currentlyFiltered);
+
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        const pageData = currentlyFiltered.slice(startIndex, endIndex);
+
+        // Update Pagination UI
+        const pageInfo = document.getElementById('page-info');
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+
+        if (pageInfo) {
+            pageInfo.textContent = `Showing ${totalItems === 0 ? 0 : startIndex + 1}–${Math.min(endIndex, totalItems)} of ${totalItems}`;
+        }
+        if (prevBtn) {
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.classList.toggle('opacity-50', currentPage === 1);
+            prevBtn.classList.toggle('cursor-not-allowed', currentPage === 1);
+        }
+        if (nextBtn) {
+            const isLast = currentPage === totalPages || totalItems === 0;
+            nextBtn.disabled = isLast;
+            nextBtn.classList.toggle('opacity-50', isLast);
+            nextBtn.classList.toggle('cursor-not-allowed', isLast);
+        }
+
+        // 2. Render Check
         tbody.innerHTML = '';
 
         if (currentlyFiltered.length === 0) {
@@ -192,7 +228,7 @@ async function initDashboard() {
         }
         if (empty) empty.style.display = 'none';
 
-        currentlyFiltered.forEach((appt, index) => {
+        pageData.forEach((appt, index) => {
             const row = document.createElement('tr');
             row.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group';
             row.dataset.location = appt.location || 'Not Specified';
@@ -201,15 +237,14 @@ async function initDashboard() {
                 month: 'short', day: 'numeric', year: 'numeric'
             });
 
-            // Badge color logic for Types (if multiple, just render them)
-            // Logic moved to innerHTML loop below
+            const actualRowNumber = startIndex + index + 1;
 
             row.innerHTML = `
                 <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-center">
                     <input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 select-row" value="${appt.id}">
                 </td>
                 <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-xs text-slate-500 font-mono">
-                    ${(index + 1).toString().padStart(2, '0')}
+                    ${actualRowNumber.toString().padStart(2, '0')}
                 </td>
                 <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800">
                     <div class="font-medium text-slate-900 dark:text-white">${appt.name}</div>
@@ -249,6 +284,181 @@ async function initDashboard() {
         // Re-attach checkbox listeners
         updateCheckboxListeners();
     };
+
+    // ─── Analytics Engine ──────────────────────────────────────────────────
+    let analyticsChartInstance = null;
+
+    function calculateAnalytics(data) {
+        if (!data) return;
+
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfYesterday = new Date(startOfToday.getTime() - 86400000);
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+        let countToday = 0;
+        let countYesterday = 0;
+        let countThisMonth = 0;
+        let countLastMonth = 0;
+        let countThisYear = 0;
+
+        // Array to count last 14 days
+        const last14DaysCounts = new Array(14).fill(0);
+        const last14DaysLabels = [];
+        for (let i = 13; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+            last14DaysLabels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        }
+
+        data.forEach(appt => {
+            const created = new Date(appt.created_at);
+            if (isNaN(created.getTime())) return;
+
+            if (created >= startOfToday) countToday++;
+            else if (created >= startOfYesterday && created < startOfToday) countYesterday++;
+
+            if (created >= startOfMonth) countThisMonth++;
+            else if (created >= startOfLastMonth && created < startOfMonth) countLastMonth++;
+
+            if (created >= startOfYear) countThisYear++;
+
+            // Chart distribution
+            const diffTime = Math.abs(startOfToday - new Date(created.getFullYear(), created.getMonth(), created.getDate()));
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            // if within 13 days in the past (14 total bounds)
+            if (created >= startOfToday) {
+                last14DaysCounts[13]++;
+            } else if (diffDays > 0 && diffDays <= 13) {
+                last14DaysCounts[13 - diffDays]++; // 13 is today, 12 is yesterday...
+            }
+        });
+
+        // Update UI Text
+        const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+        safeSet('stat-today', countToday);
+        safeSet('stat-yesterday', countYesterday);
+        safeSet('stat-month', countThisMonth);
+        safeSet('stat-year', countThisYear);
+        safeSet('stat-total', data.length);
+
+        // Trend calculations
+        const trendToday = document.getElementById('trend-today');
+        if (trendToday) {
+            if (countYesterday === 0) {
+                trendToday.innerHTML = countToday > 0 ? `<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> +100%` : '-';
+                trendToday.className = countToday > 0 ? 'adm-stat-trend positive' : 'adm-stat-trend neutral';
+            } else {
+                const perc = Math.round(((countToday - countYesterday) / countYesterday) * 100);
+                if (perc > 0) {
+                    trendToday.innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> +${perc}%`;
+                    trendToday.className = 'adm-stat-trend positive';
+                } else if (perc < 0) {
+                    trendToday.innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg> ${perc}%`;
+                    trendToday.className = 'adm-stat-trend negative';
+                } else {
+                    trendToday.innerHTML = `0%`;
+                    trendToday.className = 'adm-stat-trend neutral';
+                }
+            }
+        }
+
+        const trendMonth = document.getElementById('trend-month');
+        if (trendMonth) {
+            if (countLastMonth === 0) {
+                trendMonth.innerHTML = countThisMonth > 0 ? `<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> +100%` : '-';
+                trendMonth.className = countThisMonth > 0 ? 'adm-stat-trend positive' : 'adm-stat-trend neutral';
+            } else {
+                const percM = Math.round(((countThisMonth - countLastMonth) / countLastMonth) * 100);
+                if (percM > 0) {
+                    trendMonth.innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> +${percM}%`;
+                    trendMonth.className = 'adm-stat-trend positive';
+                } else if (percM < 0) {
+                    trendMonth.innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg> ${percM}%`;
+                    trendMonth.className = 'adm-stat-trend negative';
+                } else {
+                    trendMonth.innerHTML = `0%`;
+                    trendMonth.className = 'adm-stat-trend neutral';
+                }
+            }
+        }
+
+        renderChart(last14DaysLabels, last14DaysCounts);
+    }
+
+    function renderChart(labels, data) {
+        const ctx = document.getElementById('appointmentsChart');
+        if (!ctx) return;
+
+        // If Chart.js isn't loaded yet via CDN, retry in 500ms
+        if (!window.Chart) {
+            setTimeout(() => renderChart(labels, data), 500);
+            return;
+        }
+
+        if (analyticsChartInstance) {
+            analyticsChartInstance.destroy();
+        }
+
+        // Create sleek gradient
+        const canvasCtx = ctx.getContext('2d');
+        const gradientInfo = canvasCtx.createLinearGradient(0, 0, 0, 300);
+        gradientInfo.addColorStop(0, 'rgba(37, 99, 235, 0.2)');   // adm-blue-mid
+        gradientInfo.addColorStop(1, 'rgba(37, 99, 235, 0.01)');
+
+        analyticsChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Appointments',
+                    data: data,
+                    borderColor: '#2563eb', // adm-blue-mid
+                    backgroundColor: gradientInfo,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#2563eb',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.4 // Smooth curve
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        titleFont: { family: 'Inter', size: 13 },
+                        bodyFont: { family: 'Inter', size: 14, weight: 'bold' },
+                        displayColors: false,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false, drawBorder: false },
+                        ticks: { font: { family: 'Inter', size: 11 }, color: '#64748b' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(226, 232, 240, 0.6)', borderDash: [4, 4], drawBorder: false },
+                        ticks: { font: { family: 'Inter', size: 11 }, color: '#64748b', stepSize: 1, precision: 0 }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+            }
+        });
+    }
 
     const exportExcelBtn = document.getElementById('exportExcelBtn');
     if (exportExcelBtn) {
@@ -366,13 +576,38 @@ async function initDashboard() {
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             currentSearch = e.target.value.trim().toLowerCase();
+            currentPage = 1;
             renderTable();
         });
     }
     if (filterSelect) {
         filterSelect.addEventListener('change', (e) => {
             currentFilter = e.target.value;
+            currentPage = 1;
             renderTable();
+        });
+    }
+
+    // Pagination Listeners
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(currentlyFiltered.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            } // Prevent double clicking explicitly
         });
     }
 
