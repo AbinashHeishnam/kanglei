@@ -1,8 +1,12 @@
 from pydantic import BaseModel, Field
 from datetime import datetime, date
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 VALID_STATUSES = {"NEW", "CONTACTED", "SCHEDULED", "COMPLETED", "CANCELLED"}
+
+# Allowed branch locations
+BranchLocation = Literal["Imphal", "Thoubal"]
+
 
 class AppointmentCreate(BaseModel):
     counseling_type: str = Field(default="General Counseling", min_length=2, max_length=100)
@@ -10,12 +14,15 @@ class AppointmentCreate(BaseModel):
     phone: str = Field(min_length=6, max_length=30)
     address: Optional[str] = Field(default=None, max_length=300)
     message: Optional[str] = None
-    
-    # New Fields
+
+    # REQUIRED FIELD
+    location: BranchLocation
+
     date_of_birth: Optional[date] = None
     guardian_name: Optional[str] = Field(default=None, max_length=255)
     guardian_contact: Optional[str] = Field(default=None, max_length=30)
     appointment_type: Optional[List[str]] = Field(default=None)
+
 
 class AppointmentOut(BaseModel):
     id: int
@@ -26,8 +33,9 @@ class AppointmentOut(BaseModel):
     message: Optional[str]
     status: str
     created_at: datetime
-    
-    # New Fields
+
+    location: BranchLocation
+
     date_of_birth: Optional[date]
     guardian_name: Optional[str]
     guardian_contact: Optional[str]
@@ -35,6 +43,7 @@ class AppointmentOut(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class StatusUpdate(BaseModel):
     status: str = Field(min_length=2, max_length=30)

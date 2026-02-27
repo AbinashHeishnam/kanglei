@@ -5,6 +5,7 @@ from app.api.v1.endpoints.auth import router as auth_router
 from app.api.v1.endpoints.gallery import router as gallery_router
 from app.api.v1.endpoints.exports import router as exports_router
 from app.api.v1.endpoints.events import router as events_router
+from app.api.v1.endpoints.placements import router as placements_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health_router, tags=["health"])
@@ -15,3 +16,4 @@ api_router.include_router(exports_router, tags=["exports"])
 api_router.include_router(events_router, tags=["events"])
 from app.api.v1.endpoints.trash import router as trash_router
 api_router.include_router(trash_router, tags=["trash"])
+api_router.include_router(placements_router)

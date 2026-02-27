@@ -45,6 +45,11 @@ export function initServiceForm(formId) {
             return;
         }
 
+        if (!data.location) {
+            showToast('Please select a branch location.', 'error');
+            return;
+        }
+
         if (phoneNumber.length !== 10) {
             showToast('Please enter a valid 10-digit phone number.', 'error');
             document.getElementById('phone-number').focus();
@@ -74,28 +79,39 @@ export function initServiceForm(formId) {
 
         try {
             const payload = {
-                name: data.name,
-                phone: fullPhone, // Use the combined phone number
-                counseling_type: "General Counseling", // Hardcoded or from hidden field if we kept it
-                address: data.address || '',
-                message: data.message || '',
-
-                // New Fields
+                counseling_type: "General Counseling",
+                name: data.name.trim(),
+                phone: fullPhone.trim(),
+                address: data.address.trim() || null,
+                message: data.message.trim() || null,
+                location: data.location, // MUST be Imphal or Thoubal
                 date_of_birth: data.date_of_birth || null,
-                guardian_name: data.guardian_name || null,
-                guardian_contact: fullGuardianPhone,
-                appointment_type: appointmentTypes
+                guardian_name: data.guardian_name.trim() || null,
+                guardian_contact: fullGuardianPhone || null,
+                appointment_type: appointmentTypes.length ? appointmentTypes : null
             };
 
-            await apiPost('/appointments', payload);
+            const res = await fetch("http://127.0.0.1:8000/api/v1/appointments", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error(errorData);
+                alert(errorData.detail || "Submission failed");
+                return;
+            }
 
             showToast('Appointment requested successfully!', 'success');
             form.reset();
-            // No drop downs to reset
 
         } catch (err) {
             console.error('Appointment submit error:', err);
-            showToast(err.message || 'Failed to request appointment. Try again.', 'error');
+            alert('Failed to request appointment. Try again.');
         } finally {
             btn.disabled = false;
             btn.innerText = originalText;

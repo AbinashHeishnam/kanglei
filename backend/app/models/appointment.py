@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, Date, TIMESTAMP, JSON, func
-from app.db.base import Base  # <-- THIS IS CRUCIAL
+from app.db.base import Base
 
 
 class Appointment(Base):
@@ -20,3 +20,6 @@ class Appointment(Base):
     guardian_name = Column(String(255), nullable=True)
     guardian_contact = Column(String(30), nullable=True)
     appointment_type = Column(JSON, nullable=True)
+
+    # --- LOCATION FIELD ---
+    location = Column(String(50), nullable=False, server_default="Imphal")

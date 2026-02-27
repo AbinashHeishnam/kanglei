@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiDelete, toAssetUrl } from './api.js';
+import { apiGet, apiPost, apiDelete, apiPatch, toAssetUrl } from './api.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './confirm.js';
 
@@ -28,12 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = {
         appointment: document.getElementById('tab-appointments'),
         gallery: document.getElementById('tab-gallery'),
-        event: document.getElementById('tab-events')
+        event: document.getElementById('tab-events'),
+        placement: document.getElementById('tab-placements')
     };
     const contents = {
         appointment: document.getElementById('content-appointments'),
         gallery: document.getElementById('content-gallery'),
-        event: document.getElementById('content-events')
+        event: document.getElementById('content-events'),
+        placement: document.getElementById('content-placements')
     };
 
     let currentTab = 'appointment';
@@ -41,16 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function switchTab(tabName) {
         currentTab = tabName;
 
-        // Reset all tabs
+        // Reset all tabs (remove active)
         Object.values(tabs).forEach(t => {
             if (!t) return;
-            t.className = 'px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50';
+            t.classList.remove('active');
         });
 
         // Activate current tab
-        const activeClass = 'bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-white ring-1 ring-slate-200 dark:ring-slate-600';
         if (tabs[tabName]) {
-            tabs[tabName].className = `px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${activeClass}`;
+            tabs[tabName].classList.add('active');
         }
 
         // Hide all contents
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tabName === 'appointment') loadAppointments();
             else if (tabName === 'gallery') loadGallery();
             else if (tabName === 'event') loadEvents();
+            else if (tabName === 'placement') loadPlacements();
         }
     }
 
@@ -77,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabs.appointment) tabs.appointment.onclick = () => switchTab('appointment');
     if (tabs.gallery) tabs.gallery.onclick = () => switchTab('gallery');
     if (tabs.event) tabs.event.onclick = () => switchTab('event');
+    if (tabs.placement) tabs.placement.onclick = () => switchTab('placement');
 
 
     // Logout
@@ -114,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Refresh current tab
                 if (currentTab === 'appointment') loadAppointments();
                 else if (currentTab === 'gallery') loadGallery();
+                else if (currentTab === 'placement') loadPlacements();
                 else loadEvents();
             } catch (err) {
                 console.error(err);
@@ -495,6 +499,84 @@ async function loadEvents() {
 }
 
 
+// --- Logic: Placements ---
+
+async function loadPlacements() {
+    const grid = document.getElementById('trash-placements-grid');
+    const emptyEl = document.getElementById('trash-placements-empty');
+
+    if (!grid) return;
+
+    grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400">Loading...</div>';
+
+    try {
+        const data = await apiGet('/placements/trash', true);
+        currentData = data || [];
+        grid.innerHTML = '';
+
+        if (!data || data.length === 0) {
+            emptyEl.classList.remove('hidden');
+            return;
+        }
+        emptyEl.classList.add('hidden');
+
+        data.forEach(item => {
+            const cleanedPath = item.image_path
+                ? item.image_path.replace(/^static_uploads\//, '')
+                : '';
+            const url = cleanedPath
+                ? toAssetUrl(`uploads/${cleanedPath}`)
+                : toAssetUrl(null);
+
+            const div = document.createElement('div');
+            const isSelected = selectedIds.has(String(item.id));
+
+            div.className = 'group relative bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm flex gap-4 hover:border-red-200 dark:hover:border-red-900/50 transition-colors';
+
+            div.innerHTML = `
+                <!-- Checkbox -->
+                <div class="absolute top-4 right-4 z-20">
+                    <input type="checkbox" class="row-checkbox w-5 h-5 rounded border-slate-300 text-red-600 focus:ring-red-500 cursor-pointer" data-id="${item.id}" ${isSelected ? 'checked' : ''}>
+                </div>
+
+                <div class="h-24 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-700 border border-slate-100 dark:border-slate-600">
+                    <img src="${url}" class="w-full h-full object-contain" loading="lazy">
+                </div>
+
+                <div class="flex-1 min-w-0 flex flex-col justify-between">
+                    <div class="pr-8">
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">Placement</h4>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                            Deleted: ${item.deleted_at ? new Date(item.deleted_at).toLocaleDateString() : '-'}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 mt-2">
+                        <button class="restore-btn text-xs font-semibold text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-lg transition-colors" data-id="${item.id}" data-type="placement">
+                            Restore
+                        </button>
+                        <button class="delete-btn text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg transition-colors" data-id="${item.id}" data-type="placement">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+
+        bindActions();
+        bindSelectionEvents();
+
+    } catch (err) {
+        console.error('loadPlacements error:', err);
+        // Graceful fallback: show empty state instead of a hard error
+        grid.innerHTML = '';
+        if (emptyEl) emptyEl.classList.remove('hidden');
+    }
+}
+
+
 // --- Actions ---
 
 function bindActions() {
@@ -520,21 +602,29 @@ async function handleRestore(e, btn) {
     target.disabled = true;
     try {
         let url;
+        let isPatch = false;
         if (type === 'gallery') {
             url = `/admin/gallery/${id}/restore`;
         } else if (type === 'event') {
             url = `/admin/events/${id}/restore`;
+        } else if (type === 'placement') {
+            url = `/placements/restore/${id}`;
+            isPatch = true;
         } else {
             // Appointment or default
             url = `/admin/trash/${type}/${id}/restore`;
         }
 
-        console.log(`TRASH RESTORE START: POST ${url}`);
+        console.log(`TRASH RESTORE START: ${isPatch ? 'PATCH' : 'POST'} ${url}`);
 
         // We use apiPost which returns data or throws. 
         // We can't easily get raw response status unless we refactor api.js, 
         // but success here implies 200/2xx.
-        await apiPost(url, {}, true);
+        if (isPatch) {
+            await apiPatch(url, {}, true);
+        } else {
+            await apiPost(url, {}, true);
+        }
 
         console.log(`TRASH RESTORE SUCCESS: POST ${url}`);
         showToast('Restored successfully', 'success');
@@ -542,6 +632,7 @@ async function handleRestore(e, btn) {
         // Refresh
         if (type === 'appointment') loadAppointments();
         else if (type === 'gallery') loadGallery();
+        else if (type === 'placement') loadPlacements();
         else loadEvents();
 
     } catch (err) {
@@ -562,12 +653,17 @@ async function handleDelete(e, btn) {
 
     target.disabled = true;
     try {
-        await apiDelete(`/admin/trash/${type}/${id}`, true);
+        if (type === 'placement') {
+            await apiDelete(`/placements/trash/${id}`, true);
+        } else {
+            await apiDelete(`/admin/trash/${type}/${id}`, true);
+        }
         showToast('Deleted permanently', 'success');
 
         // Refresh
         if (type === 'appointment') loadAppointments();
         else if (type === 'gallery') loadGallery();
+        else if (type === 'placement') loadPlacements();
         else loadEvents();
     } catch (err) {
         console.error(err);

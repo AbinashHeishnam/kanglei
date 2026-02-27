@@ -146,6 +146,20 @@ async function initDashboard() {
     let currentFilter = '';
     let currentSearch = '';
     let currentlyFiltered = [];
+    let currentLocation = 'Imphal'; // Default location
+
+    // Location Filter Tabs
+    const locTabs = document.querySelectorAll('.adm-loc-tab');
+    if (locTabs.length) {
+        locTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                locTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentLocation = tab.dataset.loc;
+                fetchAppointments();
+            });
+        });
+    }
 
     // Render Function (Client-side filtering)
     const renderTable = () => {
@@ -181,6 +195,7 @@ async function initDashboard() {
         currentlyFiltered.forEach((appt, index) => {
             const row = document.createElement('tr');
             row.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group';
+            row.dataset.location = appt.location || 'Not Specified';
 
             const dateStr = new Date(appt.created_at).toLocaleDateString('en-US', {
                 month: 'short', day: 'numeric', year: 'numeric'
@@ -324,8 +339,13 @@ async function initDashboard() {
         if (loading) loading.classList.remove('hidden');
 
         try {
-            // Fetch all (limit 1000) for client-side filtering
-            allAppointments = await apiGet(`/admin/appointments?limit=1000`, true);
+            // Fetch all (limit 1000) for client-side filtering applies location from DB directly
+            let endpoint = `/admin/appointments?limit=1000`;
+            if (currentLocation) {
+                endpoint += `&location=${currentLocation}`;
+            }
+
+            allAppointments = await apiGet(endpoint, true);
             tbody.style.opacity = '1';
 
             renderTable();

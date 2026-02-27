@@ -354,91 +354,242 @@
       transform: translateY(-2px)
     }
 
-    /* FEATURES */
-    .feat-section {
-      background: #f3f4f6;
-      border-top: 1px solid rgba(30, 58, 138, .07);
-      border-bottom: 1px solid rgba(30, 58, 138, .07);
-      padding: 48px 20px
-    }
-
-    .feat-inner {
-      max-width: 1100px;
-      margin: 0 auto
-    }
-
-    .feat-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px
-    }
-
-    @media(min-width:640px) {
-      .feat-grid {
-        grid-template-columns: repeat(3, 1fr)
-      }
-    }
-
-    .feat-card {
-      background: #fff;
-      border: 1px solid rgba(30, 58, 138, .08);
-      border-radius: 20px;
-      padding: 26px 22px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, .04);
-      transition: all .3s;
+    /* ─── PLACEMENTS SECTION ─────────────────────────────────── */
+    .placements-section {
       position: relative;
-      overflow: hidden
+      background: linear-gradient(180deg, #f0fdfa 0%, #f4fdf8 50%, #ffffff 100%);
+      padding: 100px 0 88px;
+      overflow: hidden;
+      border-top: 1px solid rgba(16, 185, 129, 0.08);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.05);
     }
 
-    .feat-card::after {
+    /* Soft ambient glow behind slider */
+    .placements-section::before {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--em), var(--em-light));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform .3s
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 60%;
+      background: rgba(16, 185, 129, 0.04);
+      filter: blur(100px);
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
     }
 
-    .feat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 16px 40px rgba(30, 58, 138, .10);
-      border-color: rgba(59, 130, 246, .2)
+    .placements-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
     }
 
-    .feat-card:hover::after {
-      transform: scaleX(1)
+    /* ── Header ── */
+    .placements-header {
+      text-align: center;
+      margin-bottom: 56px;
     }
 
-    .feat-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
+    .placements-title {
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .placements-title .pl-hl {
+      color: #10b981;
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Title accent bar */
+    .placements-title-bar {
+      width: 80px;
+      height: 5px;
+      background: linear-gradient(90deg, #10b981, #34d399);
+      border-radius: 6px;
+      margin: 16px auto 0;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .placements-sub {
+      font-size: 16px;
+      color: #64748b;
+      font-weight: 500;
+      margin-top: 18px;
+    }
+
+    /* ── Slider wrapper ── */
+    .placements-slider-wrap {
+      position: relative;
+      overflow: hidden;
+      padding: 24px 0;
+      margin: -24px 0;
+      /* offset padding to avoid clipping shadows */
+    }
+
+    /* ── Track ── */
+    .placements-track {
+      display: flex;
+      gap: 28px;
+      transition: transform 0.6s cubic-bezier(.25, .8, .25, 1);
+      /* JS drives translate via --pl-offset */
+      will-change: transform;
+    }
+
+    .placements-track.centered {
+      justify-content: center;
+    }
+
+    /* ── Cards ── */
+    .placement-card {
+      flex: 0 0 auto;
+      min-width: 320px;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 1);
+      border: 1px solid rgba(226, 232, 240, 0.8);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 18px;
-      transition: transform .3s
+      transition: transform 0.4s cubic-bezier(.175, .885, .32, 1.275), box-shadow 0.4s ease;
+      /* scroll reveal: start hidden */
+      opacity: 0;
+      transform: translateY(40px);
     }
 
-    .feat-card:hover .feat-icon {
-      transform: scale(1.1)
+    .placement-card.pl-visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.8s cubic-bezier(.25, .8, .25, 1),
+        transform 0.8s cubic-bezier(.25, .8, .25, 1),
+        box-shadow 0.4s ease, border-color 0.4s ease;
     }
 
-    .feat-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 10px
+    /* hover override (only after reveal) */
+    @media (hover: hover) {
+      .placement-card.pl-visible:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
+        border-color: rgba(16, 185, 129, 0.3);
+      }
     }
 
-    .feat-desc {
-      font-size: 13px;
-      color: #6b7280;
-      line-height: 1.65
+    .placement-image-wrapper {
+      height: 380px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 12px;
+      background-color: #f8fafc;
+      border: 1px solid rgba(241, 245, 249, 1);
+    }
+
+    .placement-image-wrapper img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      object-position: center;
+      padding: 12px;
+      border-radius: 12px;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    @media (hover: hover) {
+      .placement-card.pl-visible:hover .placement-image-wrapper img {
+        transform: scale(1.03);
+      }
+    }
+
+    /* ── Responsive card widths ── */
+    @media (max-width: 768px) {
+      .placement-card {
+        min-width: 280px;
+        max-width: 320px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .placement-card {
+        min-width: 82vw;
+        max-width: 88vw;
+        flex-shrink: 0;
+      }
+
+      .placements-track.centered {
+        justify-content: flex-start;
+      }
+    }
+
+    /* ── Dot indicators ── */
+    .pl-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 36px;
+    }
+
+    .pl-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.2);
+      transition: all 0.4s cubic-bezier(.25, .8, .25, 1);
+      cursor: pointer;
+    }
+
+    .pl-dot.active {
+      background: #10b981;
+      width: 28px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+
+    /* ── Skeleton ── */
+    .placement-skeleton {
+      flex: 0 0 auto;
+      width: calc(33.333% - 18px);
+      min-height: 240px;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: skelShimmer 1.4s ease-in-out infinite;
+    }
+
+    @media (max-width: 768px) {
+      .placement-skeleton {
+        width: calc(50% - 10px);
+      }
+    }
+
+    @media (max-width: 540px) {
+      .placement-skeleton {
+        width: 82vw;
+      }
+    }
+
+    @keyframes skelShimmer {
+      0% {
+        background-position: 200% 0
+      }
+
+      100% {
+        background-position: -200% 0
+      }
     }
 
     /* STATS */
@@ -758,42 +909,30 @@
       </div>
     </section>
 
-    <!-- FEATURES -->
-    <section class="feat-section reveal">
-      <div class="feat-inner">
-        <div class="feat-grid">
-          <div class="feat-card">
-            <div class="feat-icon" style="background:#eff6ff">
-              <svg width="24" height="24" fill="none" stroke="#1e3a8a" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <div class="feat-title">Expert Counseling</div>
-            <p class="feat-desc">Personalized guidance to help you choose the right career path based on your strengths.
-            </p>
-          </div>
-          <div class="feat-card">
-            <div class="feat-icon" style="background:#dbeafe">
-              <svg width="24" height="24" fill="none" stroke="#2563eb" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-            <div class="feat-title">Admission Support</div>
-            <p class="feat-desc">Complete assistance for university admissions, from forms to interviews.</p>
-          </div>
-          <div class="feat-card">
-            <div class="feat-icon" style="background:#e0f2fe">
-              <svg width="24" height="24" fill="none" stroke="#0284c7" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div class="feat-title">Study Abroad</div>
-            <p class="feat-desc">Navigate the complexities of studying overseas with our comprehensive support.</p>
-          </div>
+    <!-- PLACEMENTS -->
+    <section id="placements-section" class="placements-section">
+      <div class="placements-inner">
+        <div class="placements-header">
+          <h2 class="placements-title">Our Successful <span class="pl-hl">Placements</span></h2>
+          <div class="placements-title-bar"></div>
+          <p class="placements-sub">Real students. Real success stories.</p>
         </div>
+        <div class="placements-slider-wrap">
+          <button id="pl-prev" class="pl-arrow pl-prev" aria-label="Previous placements" style="display:none">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <div id="placements-container" class="placements-track"></div>
+          <button id="pl-next" class="pl-arrow pl-next" aria-label="Next placements" style="display:none">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+        <div id="pl-dots" class="pl-dots"></div>
       </div>
     </section>
 
@@ -924,9 +1063,11 @@
   <script type="module">
     import { initSlider } from './js/slider.js';
     import { initEvents } from './js/events.js';
+    import { initPlacements } from './js/placements.js';
     document.addEventListener('DOMContentLoaded', () => {
       initSlider('homeSlider');
       initEvents();
+      initPlacements();
     });
   </script>
 </body>

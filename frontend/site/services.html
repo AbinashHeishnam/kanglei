@@ -561,6 +561,38 @@
             gap: 18px
         }
 
+        .branch-card {
+            display: block;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+        }
+
+        .branch-card input {
+            display: none;
+        }
+
+        .branch-content {
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 16px;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            height: 100%;
+        }
+
+        .branch-card:hover .branch-content {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .branch-card input:checked+.branch-content {
+            border-color: #2563eb;
+            background: #f0f7ff;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.2);
+        }
+
         /* FOOTER */
         .sf {
             background: #070e1f;
@@ -900,8 +932,7 @@
                                 <div style="display:flex">
                                     <div class="ph-prefix">+91</div>
                                     <input type="tel" id="phone-number" name="phone_number" required
-                                        class="p-input ph-field" maxlength="10" placeholder="9876543210"
-                                        inputmode="numeric">
+                                        class="p-input ph-field" maxlength="10" inputmode="numeric">
                                 </div>
                             </div>
                         </div>
@@ -922,8 +953,7 @@
                                 <div style="display:flex">
                                     <div class="ph-prefix">+91</div>
                                     <input type="tel" id="guardian-contact" name="guardian_contact"
-                                        class="p-input ph-field" maxlength="10" placeholder="9876543210"
-                                        inputmode="numeric">
+                                        class="p-input ph-field" maxlength="10" inputmode="numeric">
                                 </div>
                             </div>
                             <div>
@@ -956,6 +986,37 @@
                             <textarea name="message" rows="4" class="p-input"
                                 placeholder="Tell us how we can help you..."></textarea>
                         </div>
+
+                        <div class="branch-selector" style="margin-top: 4px;">
+                            <label class="p-lbl" style="margin-bottom: 12px; display: block; font-size: 13px;">
+                                Select Branch <span style="color:#e11d48">*</span>
+                            </label>
+
+                            <div class="fg2">
+                                <label class="branch-card">
+                                    <input type="radio" name="location" value="Imphal" required>
+                                    <div class="branch-content">
+                                        <h4
+                                            style="font-size: 14px; font-weight: 700; color: #111827; margin: 0 0 4px 0;">
+                                            Imphal Branch</h4>
+                                        <p style="font-size: 12.5px; color: #6b7280; margin: 0; line-height: 1.4;">New
+                                            Checkon Traffic Point</p>
+                                    </div>
+                                </label>
+
+                                <label class="branch-card">
+                                    <input type="radio" name="location" value="Thoubal" required>
+                                    <div class="branch-content">
+                                        <h4
+                                            style="font-size: 14px; font-weight: 700; color: #111827; margin: 0 0 4px 0;">
+                                            Thoubal Branch</h4>
+                                        <p style="font-size: 12.5px; color: #6b7280; margin: 0; line-height: 1.4;">
+                                            Thoubal Bazar Post Office</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
                         <button type="submit" class="sub-btn">Confirm Appointment</button>
                     </form>
                 </div>
