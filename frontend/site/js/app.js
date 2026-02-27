@@ -137,20 +137,18 @@ function initPageLoader() {
     document.body.classList.remove('opacity-0');
     document.body.classList.add('opacity-100');
 
-    // If loader was actively shown (e.g. from a page transition), hide it smoothly
-    if (loader.classList.contains('active-loader')) {
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                loader.classList.remove('opacity-100', 'active-loader');
-                loader.classList.add('opacity-0', 'pointer-events-none');
-                if (inner) inner.style.transform = 'scale(1.05)'; // Expand out slightly
+    // Always hide the loader smoothly on load, regardless of if it's new or hardcoded
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            loader.classList.remove('opacity-100', 'active-loader');
+            loader.classList.add('opacity-0', 'pointer-events-none');
+            if (inner) inner.style.transform = 'scale(1.05)'; // Expand out slightly
 
-                setTimeout(() => {
-                    loader.style.zIndex = '-1';
-                }, 700);
-            }, 100);
-        });
-    }
+            setTimeout(() => {
+                loader.style.zIndex = '-1';
+            }, 700);
+        }, 100);
+    });
 }
 
 // Intercept clicks on links for smooth exit transitions
