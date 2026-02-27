@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavbar();
     initScrollReveal();
     initPageLoader(); // New loader logic
+    initPageTransitions(); // Intercept page jumps
 });
 
 // Theme Management with Smooth Transitions
@@ -104,16 +105,25 @@ function initPageLoader() {
     if (!document.getElementById('global-loader')) {
         const loader = document.createElement('div');
         loader.id = 'global-loader';
-        loader.className = 'fixed inset-0 z-[100] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-500 pointer-events-none';
+        loader.className = 'fixed inset-0 z-[99999] bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl flex flex-col items-center justify-center transition-all duration-700 pointer-events-none opacity-0';
+
+        // Premium minimal ring and glow design
         loader.innerHTML = `
-            <div class="relative flex flex-col items-center">
-                <!-- Outer Ring -->
-                <div class="w-16 h-16 rounded-full border-4 border-blue-100 dark:border-blue-900/30 border-t-blue-600 dark:border-t-blue-400 animate-spin"></div>
-                <!-- Inner Pulse -->
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-blue-600/20 dark:bg-blue-400/20 rounded-full animate-pulse"></div>
-                <!-- Logo/Brand (Optional) -->
-                <div class="absolute -bottom-12 text-sm font-bold tracking-widest text-slate-800 dark:text-white uppercase opacity-80 animate-pulse">
-                    Loading
+            <div class="relative flex flex-col items-center justify-center transform scale-95 transition-transform duration-700" id="global-loader-inner">
+                <!-- Outer glowing ring -->
+                <div class="absolute inset-0 rounded-full w-20 h-20 -left-2 -top-2 bg-emerald-500/20 blur-xl animate-pulse"></div>
+                <div class="absolute inset-0 rounded-full w-20 h-20 -left-2 -top-2 bg-blue-500/20 blur-xl animate-pulse delay-150"></div>
+                
+                <!-- Main Spinner -->
+                <svg class="w-16 h-16 animate-spin text-emerald-600 dark:text-emerald-400" viewBox="0 0 50 50">
+                    <circle class="opacity-20" cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-90" fill="currentColor" d="M25 5 Q 35 5 39 10 L 41 8 Q 36 2 25 1 L 25 5 Z"></path>
+                    <path class="opacity-90" fill="currentColor" d="M25 1 L 25 5 A 20 20 0 0 1 45 25 L 49 25 A 24 24 0 0 0 25 1 Z"></path>
+                </svg>
+
+                <!-- Status Text -->
+                <div class="absolute -bottom-14 text-[11px] font-bold tracking-[0.2em] text-slate-800 dark:text-white uppercase transition-opacity duration-500" id="global-loader-text">
+                    <span class="animate-pulse">Loading</span>
                 </div>
             </div>
         `;
@@ -121,27 +131,69 @@ function initPageLoader() {
     }
 
     const loader = document.getElementById('global-loader');
+    const inner = document.getElementById('global-loader-inner');
 
-    // 2. Hide Loader on Load (Fade Out)
-    // Wait a tiny bit for smooth "arrival" feel
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            loader.classList.add('opacity-0');
-            loader.classList.add('opacity-0');
-            // Enforce non-blocking interaction
-            loader.classList.add('pointer-events-none');
-            // Also fade in body content
-            document.body.classList.remove('opacity-0');
-            document.body.classList.add('opacity-100');
+    // Make sure body content is ready
+    document.body.classList.remove('opacity-0');
+    document.body.classList.add('opacity-100');
 
-            // Backup safety: remove loader from DOM after transition to prevent z-index issues
+    // If loader was actively shown (e.g. from a page transition), hide it smoothly
+    if (loader.classList.contains('active-loader')) {
+        requestAnimationFrame(() => {
             setTimeout(() => {
-                // We don't remove it because we need it for page exit animation.
-                // But we can hide it.
-                loader.style.zIndex = '-1';
-            }, 500);
-        }, 300); // 300ms initial hold
-    });
+                loader.classList.remove('opacity-100', 'active-loader');
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                if (inner) inner.style.transform = 'scale(1.05)'; // Expand out slightly
 
+                setTimeout(() => {
+                    loader.style.zIndex = '-1';
+                }, 700);
+            }, 100);
+        });
+    }
+}
+
+// Intercept clicks on links for smooth exit transitions
+function initPageTransitions() {
+    document.addEventListener('click', (e) => {
+        // Find closest A tag
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        // Ignore links without hrefs, anchor links (#), or external target="_blank"
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || link.target === '_blank') return;
+
+        // Ignore javascript:, mailto:, tel:
+        if (href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+        // Internal domain check
+        if (link.hostname !== window.location.hostname && link.hostname !== '') return;
+
+        // Ignore if Ctrl/Cmd/Shift is pressed (opening in new tab)
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+
+        // Skip if same page (e.g href="/about" while currently on /about)
+        if (link.pathname === window.location.pathname && link.search === window.location.search) return;
+
+        e.preventDefault();
+
+        // 1. Show the loader
+        const loader = document.getElementById('global-loader');
+        const inner = document.getElementById('global-loader-inner');
+
+        if (loader) {
+            loader.style.zIndex = '99999';
+            loader.classList.remove('opacity-0', 'pointer-events-none');
+            loader.classList.add('opacity-100', 'active-loader'); // Active flag tells next page it was a smooth transition
+
+            if (inner) inner.style.transform = 'scale(1)'; // Snap to perfect size
+        }
+
+        // 2. Wait for animation, then navigate
+        setTimeout(() => {
+            window.location.href = href;
+        }, 400); // 400ms gives time for the elegant fade in
+    });
 }
 

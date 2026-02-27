@@ -105,3 +105,19 @@ body {
         transform: none !important;
     }
 }
+
+/* 6. Premium Page Loader Triggers */
+#global-loader {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+#global-loader.active-loader {
+    opacity: 1 !important;
+    pointer-events: all !important;
+}
+
+/* Ensure absolute delays work natively without Tailwind variants if needed */
+.delay-150 {
+    animation-delay: 150ms;
+}
