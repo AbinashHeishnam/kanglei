@@ -92,9 +92,9 @@ function renderPlacementRow(item) {
     const isActive = item.is_active;
 
     return `
-    <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 flex flex-row gap-4 items-center group shadow-sm hover:shadow-md transition-all">
+    <div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row gap-4 items-center group shadow-sm hover:shadow-md transition-all">
         <!-- Thumbnail -->
-        <div class="shrink-0 relative bg-slate-100 rounded-lg overflow-hidden" style="width:84px;min-width:84px;height:84px;">
+        <div class="shrink-0 relative bg-slate-100 rounded-lg overflow-hidden" style="width:100px;min-width:100px;height:100px;">
             <img src="${imgUrl}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" alt="Placement">
             <div class="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider backdrop-blur-md ${isActive ? 'bg-green-500 text-white shadow-sm' : 'bg-slate-500 text-white'}">
                 ${isActive ? 'Active' : 'Inactive'}
@@ -102,14 +102,14 @@ function renderPlacementRow(item) {
         </div>
 
         <!-- Content -->
-        <div class="flex-1 min-w-0 flex flex-col justify-between h-full space-y-2">
-            <div class="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-2">
+        <div class="flex-1 min-w-0 flex flex-col justify-between h-full space-y-2 w-full">
+            <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-3 sm:gap-2 w-full text-center sm:text-left">
                 <div class="flex-1 min-w-0 w-full">
                     <h4 class="font-bold text-slate-900 truncate text-base mb-1">Placement</h4>
-                    <p class="text-xs text-slate-400 truncate">${item.image_path || ''}</p>
+                    <p class="text-xs text-slate-400 truncate w-full relative sm:max-w-none max-w-[200px] mx-auto sm:mx-0">${item.image_path || ''}</p>
                 </div>
 
-                <div class="flex items-center gap-2 self-start sm:self-center flex-wrap shrink-0">
+                <div class="flex items-center justify-center sm:justify-start gap-2 self-center sm:self-center flex-wrap shrink-0">
                     ${!isActive ? `
                     <button data-id="${item.id}" class="activate-btn text-xs font-medium bg-green-50 text-green-600 hover:bg-green-100 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>

@@ -91,7 +91,7 @@ export function initServiceForm(formId) {
                 appointment_type: appointmentTypes.length ? appointmentTypes : null
             };
 
-            const res = await fetch("http://127.0.0.1:8000/api/v1/appointments", {
+            const res = await fetch("/api/v1/appointments", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
