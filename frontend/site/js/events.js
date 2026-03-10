@@ -27,20 +27,69 @@ export async function initEvents() {
         // (Though API /events usually returns active ones, let's be safe if logic changes)
         allEvents = events ? events.filter(e => e.is_active !== false) : [];
 
+        const container = document.getElementById('eventContainer');
+
         if (allEvents.length === 0) {
             console.log("No upcoming events found.");
+            if (container) container.style.display = 'none';
             return;
         }
 
-        // Show trigger button
-        triggerBtn.classList.remove('hidden');
+        if (container) {
+            // Hide the bell trigger icon
+            if (triggerBtn) {
+                triggerBtn.style.display = 'none';
+            }
+
+            // Remove float classes, reuse container
+            container.className = '';
+
+            // Move container directly under header
+            const header = document.querySelector('header');
+            if (header) {
+                header.after(container);
+            }
+
+            // Build ticker wrapper
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.id = 'event-ticker-wrapper';
+
+            const containerDiv = document.createElement('div');
+            containerDiv.className = 'max-w-7xl mx-auto px-4 sm:px-6'; // Standard header/container width
+
+            const tickerDiv = document.createElement('div');
+            tickerDiv.id = 'event-ticker';
+
+            const viewportDiv = document.createElement('div');
+            viewportDiv.className = 'ticker-viewport';
+
+            const trackDiv = document.createElement('div');
+            trackDiv.id = 'ticker-track';
+            trackDiv.className = 'ticker-track';
+
+            const itemsHtml = `<span class="ticker-item" data-index="0">⭐ New Event</span>`;
+            trackDiv.innerHTML = itemsHtml;
+
+            viewportDiv.appendChild(trackDiv);
+            tickerDiv.appendChild(viewportDiv);
+            containerDiv.appendChild(tickerDiv);
+            wrapperDiv.appendChild(containerDiv);
+
+            container.appendChild(wrapperDiv);
+
+            // Wire up clicks to original logic
+            trackDiv.querySelectorAll('.ticker-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    currentIndex = parseInt(e.target.getAttribute('data-index'));
+                    openEventPanel();
+                });
+            });
+        }
 
         // Render Initial Content
         renderCurrentEvent();
 
-        // 2. Auto-Popup Logic (Check if ANY event in the list is unseen? Or just the latest?)
-        // Let's stick to the latest (first one) for the auto-popup trigger to avoid spam.
-        // Or specific logic: if the *first* one hasn't been seen.
+        // 2. Auto-Popup Logic
         const latestEventId = allEvents[0].id;
         const sessionKey = `event_seen_${latestEventId}`;
         const hasSeen = sessionStorage.getItem(sessionKey);
@@ -53,9 +102,11 @@ export async function initEvents() {
         }
 
         // 3. Event Listeners
-        triggerBtn.addEventListener('click', () => {
-            openEventPanel();
-        });
+        if (triggerBtn) {
+            triggerBtn.addEventListener('click', () => {
+                openEventPanel();
+            });
+        }
 
         closeBtn.addEventListener('click', () => {
             closeEventPanel();
@@ -120,10 +171,9 @@ export async function initEvents() {
         if (isMenuOpen) return;
         isMenuOpen = true;
 
-        // Get trigger center position for accurate radial origin
-        const rect = triggerBtn.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
+        // Set origin to screen center
+        const x = window.innerWidth / 2;
+        const y = window.innerHeight / 2;
 
         // Set origin dynamically
         overlay.style.clipPath = `circle(0% at ${x}px ${y}px)`;
@@ -146,9 +196,8 @@ export async function initEvents() {
         if (!isMenuOpen) return;
         isMenuOpen = false;
 
-        const rect = triggerBtn.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
+        const x = window.innerWidth / 2;
+        const y = window.innerHeight / 2;
 
         contentContainer.classList.add('opacity-0');
         overlay.style.clipPath = `circle(0% at ${x}px ${y}px)`;
@@ -259,10 +308,9 @@ function renderEventContent(event, container, total, index) {
                         Register Now
                     </a>` : ''}
                     
-                    <button class="px-8 py-4 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-white font-semibold text-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
-                        onclick="navigator.share ? navigator.share({title: '${event.title}', text: 'Check out this event!', url: window.location.href}) : showToast('Share Link Copied!', 'success')">
-                        Share Event
-                    </button>
+                    <a href="services.html#book" class="px-8 py-4 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-white font-semibold text-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
+                        Book Now
+                    </a>
                     
                      <!-- Mobile Slider Controls (Backup if space is tight) -->
                      ${total > 1 ? `
