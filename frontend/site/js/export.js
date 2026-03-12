@@ -52,18 +52,17 @@ function initPdfExport() {
 
             // Better approach: Parse data manually from DOM to ensure clean PDF
             // This ensures we skip the checkbox column and handle formatting correctly
-            const headers = ['#', 'Name', 'Phone', 'Address', 'Type', 'DOB', 'Date', 'Message'];
+            const headers = ['#', 'Name', 'Phone', 'Address', 'Type', 'Date', 'Message'];
             const data = [];
 
             const rows = document.querySelectorAll('#appointments-tbody tr');
             rows.forEach((row) => {
                 const cells = row.querySelectorAll('td');
-                if (cells.length < 2) return; // Skip weird rows
+                if (cells.length < 2) return;
 
                 // Skip index 0 (checkbox)
-                // 1: Index, 2: Name, 3: Phone, 4: Address, 5: Type, 6: DOB, 7: Date, 8: Message
+                // 1: Index, 2: Name, 3: Phone, 4: Address, 5: Type, 6: Date, 7: Message
 
-                // Need to extract text safely. Some have nested divs.
                 const getText = (cell) => cell ? cell.innerText.trim() : '';
 
                 const rowData = [
@@ -71,10 +70,9 @@ function initPdfExport() {
                     getText(cells[2]), // Name
                     getText(cells[3]), // Phone
                     getText(cells[4]), // Address
-                    getText(cells[5]).replace(/\n/g, ', '), // Type (badges)
-                    getText(cells[6]), // DOB
-                    getText(cells[7]), // Date
-                    getText(cells[8])  // Message
+                    getText(cells[5]).replace(/\n/g, ', '), // Type
+                    getText(cells[6]), // Date
+                    getText(cells[7])  // Message
                 ];
                 data.push(rowData);
             });

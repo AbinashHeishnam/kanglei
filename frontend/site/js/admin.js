@@ -240,37 +240,31 @@ async function initDashboard() {
             const actualRowNumber = startIndex + index + 1;
 
             row.innerHTML = `
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-center">
-                    <input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4 select-row" value="${appt.id}">
+                <td class="col-check">
+                    <input type="checkbox" class="select-row" value="${appt.id}">
                 </td>
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-xs text-slate-500 font-mono">
-                    ${actualRowNumber.toString().padStart(2, '0')}
+                <td class="col-num">${actualRowNumber.toString().padStart(2, '0')}</td>
+                <td>
+                    <span class="adm-cell-name" title="${appt.name}">${appt.name}</span>
                 </td>
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800">
-                    <div class="font-medium text-slate-900 dark:text-white">${appt.name}</div>
+                <td>
+                    <span class="adm-cell-phone">${appt.phone}</span>
                 </td>
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-sm text-slate-600 dark:text-slate-400">
-                    ${appt.phone}
+                <td class="col-hide-mobile">
+                    <span class="adm-cell-address" title="${appt.address || ''}">${appt.address || '—'}</span>
                 </td>
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-sm text-slate-500 truncate max-w-[150px]" title="${appt.address || ''}">
-                    ${appt.address || '-'}
-                </td>
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800">
-                    <div class="flex flex-col gap-1">
+                <td>
+                    <div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start">
                         ${(appt.appointment_type && appt.appointment_type.length)
-                    ? appt.appointment_type.map(t => `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">${t}</span>`).join('')
-                    : '<span class="text-xs text-slate-400">-</span>'}
+                    ? appt.appointment_type.map(t => `<span class="appt-type-badge">${t}</span>`).join('')
+                    : '<span style="color:#d1d5db;font-size:12px">—</span>'}
                     </div>
                 </td>
-
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-sm text-slate-500 whitespace-nowrap">
-                    ${appt.date_of_birth || '-'}
+                <td>
+                    <span class="adm-cell-date">${dateStr}</span>
                 </td>
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-sm text-slate-500 whitespace-nowrap">
-                    ${dateStr}
-                </td>
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-sm text-slate-500 truncate max-w-[200px]" title="${appt.message || ''}">
-                    ${appt.message || '-'}
+                <td style="text-align:center;color:#9ca3af;font-size:12px" title="${appt.message || ''}">
+                    ${appt.message ? appt.message.slice(0, 30) + (appt.message.length > 30 ? '…' : '') : '—'}
                 </td>
             `;
             tbody.appendChild(row);
@@ -482,7 +476,7 @@ async function initDashboard() {
             exportExcelBtn.disabled = true;
 
             try {
-                const headers = ['SL No.', 'Name', 'Phone', 'Address', 'Type', 'DOB', 'Appointment Date', 'Message'];
+                const headers = ['SL No.', 'Name', 'Phone', 'Address', 'Type', 'Appointment Date', 'Message'];
                 const excelData = [headers];
 
                 currentlyFiltered.forEach((appt, index) => {
@@ -495,7 +489,6 @@ async function initDashboard() {
                         appt.phone || '',
                         appt.address || '',
                         typeStr,
-                        appt.date_of_birth || '',
                         dateStr,
                         appt.message || ''
                     ];
@@ -513,7 +506,6 @@ async function initDashboard() {
                     { wch: 15 }, // Phone
                     { wch: 30 }, // Address
                     { wch: 15 }, // Type
-                    { wch: 12 }, // DOB
                     { wch: 18 }, // Appt Date
                     { wch: 40 }  // Message
                 ];

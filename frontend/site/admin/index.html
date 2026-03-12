@@ -546,104 +546,87 @@
         }
 
         /* ─── Desktop Table ──────────────────────────────────── */
+        /* ─── Table Wrapper ──────────────────────────────────── */
         .adm-table-wrap {
             width: 100%;
-            overflow-x: hidden;
-            /* NO horizontal scroll */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             position: relative;
-            min-height: 360px;
+            min-height: 200px;
         }
 
+        /* ─── Table Base ────────────────────────────────────────── */
         .adm-table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            table-layout: auto;
+            /* browser auto-sizes columns to content */
+            min-width: 640px;
         }
 
-        /* Column widths for fixed layout, no overflow */
-        .adm-table colgroup col:nth-child(1) {
-            width: 38px;
-        }
-
-        .adm-table colgroup col:nth-child(2) {
-            width: 52px;
-        }
-
-        .adm-table colgroup col:nth-child(3) {
-            width: 12%;
-        }
-
-        .adm-table colgroup col:nth-child(4) {
-            width: 11%;
-        }
-
-        .adm-table colgroup col:nth-child(5) {
-            width: 13%;
-        }
-
-        .adm-table colgroup col:nth-child(6) {
-            width: 13%;
-        }
-
-        .adm-table colgroup col:nth-child(7) {
-            width: 11%;
-        }
-
-        .adm-table colgroup col:nth-child(8) {
-            width: 9%;
-        }
-
-        .adm-table colgroup col:nth-child(9) {
-            width: 9%;
-        }
-
-        .adm-table colgroup col:nth-child(10) {
-            width: auto;
-        }
-
+        /* ─── Header ──────────────────────────────────────────── */
         .adm-table thead {
-            background: #f9faff;
+            background: linear-gradient(135deg, #f8faff 0%, #f1f5ff 100%);
+            border-bottom: 2px solid rgba(30, 58, 138, 0.08);
         }
 
         .adm-table th {
-            padding: 10px 12px;
-            font-size: 10.5px;
-            font-weight: 700;
+            padding: 12px 14px;
+            font-size: 10px;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.1em;
             color: #6b7280;
-            border-bottom: 1px solid rgba(30, 58, 138, 0.07);
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            text-align: left;
         }
 
+        .adm-table th.col-check {
+            text-align: center;
+            width: 40px;
+        }
+
+        .adm-table th.col-num {
+            text-align: center;
+            width: 44px;
+        }
+
+        /* ─── Body Cells ─────────────────────────────────────── */
         .adm-table td {
-            padding: 10px 12px;
+            padding: 11px 14px;
+            border-bottom: 1px solid rgba(30, 58, 138, 0.05);
             font-size: 13px;
             color: #374151;
-            border-bottom: 1px solid rgba(30, 58, 138, 0.05);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 0;
-            /* required for text-overflow with table-layout:fixed */
+            vertical-align: middle;
+        }
+
+        .adm-table td.col-check {
+            text-align: center;
+            width: 40px;
+        }
+
+        .adm-table td.col-num {
+            text-align: center;
+            width: 44px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .adm-table tbody tr {
+            transition: background 0.15s;
         }
 
         .adm-table tbody tr:hover {
-            background: var(--adm-blue-faint);
+            background: #f5f8ff;
         }
 
         .adm-table tbody tr:last-child td {
             border-bottom: none;
         }
 
-        /* Checkbox column */
-        .adm-table .col-check {
-            text-align: center;
-            overflow: visible;
-        }
-
+        /* ─── Checkbox ───────────────────────────────────────── */
         .adm-table input[type="checkbox"] {
             width: 15px;
             height: 15px;
@@ -653,38 +636,67 @@
             accent-color: var(--adm-blue-mid);
         }
 
-        /* Mobile: allow horizontal scroll so all columns are visible without distortion */
+        /* ─── Type Badges ────────────────────────────────────── */
+        .appt-type-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+            white-space: nowrap;
+            margin-bottom: 2px;
+        }
+
+        /* ─── Date Cell ──────────────────────────────────────── */
+        .adm-cell-date {
+            font-size: 12px;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        /* ─── Name Cell ──────────────────────────────────────── */
+        .adm-cell-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        .adm-cell-phone {
+            font-size: 13px;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .adm-cell-address {
+            font-size: 12px;
+            color: #6b7280;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        /* ─── Mobile ─────────────────────────────────────────── */
         @media (max-width: 767px) {
-            .adm-table-wrap {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+
+            .adm-table th,
+            .adm-table td {
+                padding: 10px 10px;
+                font-size: 12px;
             }
 
-            /* Remove fixed layout so columns take their natural width */
-            .adm-table {
-                table-layout: auto;
-                min-width: 780px;
-                /* ensures full content is accessible via scroll */
-            }
-
-            /* All columns visible — no hiding */
             .adm-table .col-hide-mobile {
-                display: table-cell;
-            }
-
-            .adm-table tbody tr td:nth-child(2),
-            .adm-table tbody tr td:nth-child(5),
-            .adm-table tbody tr td:nth-child(7),
-            .adm-table tbody tr td:nth-child(8),
-            .adm-table tbody tr td:nth-child(10) {
-                display: table-cell;
-            }
-
-            .adm-table td,
-            .adm-table th {
-                padding: 9px 10px;
-                font-size: 12.5px;
-                white-space: nowrap;
+                display: none;
             }
         }
 
@@ -1252,30 +1264,18 @@
                 <!-- Desktop Table -->
                 <div class="adm-table-wrap">
                     <table class="adm-table">
-                        <colgroup>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                        </colgroup>
                         <thead>
                             <tr>
                                 <th class="col-check">
                                     <input type="checkbox" id="select-all">
                                 </th>
-                                <th class="col-hide-mobile">#</th>
+                                <th class="col-num">#</th>
                                 <th>Name</th>
                                 <th>Phone</th>
                                 <th class="col-hide-mobile">Address</th>
                                 <th>Type</th>
-                                <th class="col-hide-mobile">DOB</th>
-                                <th>Date</th>
-                                <th>View</th>
+                                <th style="white-space:nowrap">Date</th>
+                                <th style="text-align:center">View</th>
                             </tr>
                         </thead>
                         <tbody id="appointments-tbody">
@@ -1772,15 +1772,14 @@
                 var tr = td.closest('tr');
                 if (!tr) return;
                 var cells = tr.querySelectorAll('td');
-                // 0=check,1=num,2=name,3=phone,4=address,5=type,6=dob,7=date,8=message
+                // 0=check,1=num,2=name,3=phone,4=address,5=type,6=date,7=message
                 var data = {
                     name: cells[2] ? cells[2].innerText.trim() : '',
                     phone: cells[3] ? cells[3].innerText.trim() : '',
                     address: cells[4] ? cells[4].innerText.trim() : '',
                     type: cells[5] ? cells[5].innerText.trim() : '',
-                    dob: cells[6] ? cells[6].innerText.trim() : '',
-                    date: cells[7] ? cells[7].innerText.trim() : '',
-                    message: cells[8] ? cells[8].innerText.trim() : '',
+                    date: cells[6] ? cells[6].innerText.trim() : '',
+                    message: cells[7] ? cells[7].innerText.trim() : '',
                     location: tr.dataset.location || 'Not Specified'
                 };
 
@@ -1821,7 +1820,6 @@
                     html += phoneField(data.phone);
                     html += makeField('address', 'Branch Location', data.location, false, true);
                     html += makeField('address', 'Address', data.address, true, false);
-                    html += makeField('dob', 'Date of Birth', data.dob, false, false);
                     html += makeField('date', 'Appointment Date', data.date, false, false);
 
                     if (data.message && data.message !== '-' && data.message.trim() !== '') {
@@ -1848,7 +1846,7 @@
 
             function processRow(tr) {
                 var cells = tr.querySelectorAll('td');
-                if (cells.length >= 9) makeViewBtn(cells[8]);
+                if (cells.length >= 8) makeViewBtn(cells[7]);
             }
 
             var tbody = document.getElementById('appointments-tbody');
