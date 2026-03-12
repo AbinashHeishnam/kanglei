@@ -1262,7 +1262,6 @@
                             <col>
                             <col>
                             <col>
-                            <col>
                         </colgroup>
                         <thead>
                             <tr>
@@ -1274,7 +1273,6 @@
                                 <th>Phone</th>
                                 <th class="col-hide-mobile">Address</th>
                                 <th>Type</th>
-                                <th class="col-hide-mobile">Guardian</th>
                                 <th class="col-hide-mobile">DOB</th>
                                 <th>Date</th>
                                 <th>View</th>
@@ -1774,16 +1772,15 @@
                 var tr = td.closest('tr');
                 if (!tr) return;
                 var cells = tr.querySelectorAll('td');
-                // 0=check,1=num,2=name,3=phone,4=address,5=type,6=guardian,7=dob,8=date,9=message
+                // 0=check,1=num,2=name,3=phone,4=address,5=type,6=dob,7=date,8=message
                 var data = {
                     name: cells[2] ? cells[2].innerText.trim() : '',
                     phone: cells[3] ? cells[3].innerText.trim() : '',
                     address: cells[4] ? cells[4].innerText.trim() : '',
                     type: cells[5] ? cells[5].innerText.trim() : '',
-                    guardian: cells[6] ? cells[6].innerText.trim() : '',
-                    dob: cells[7] ? cells[7].innerText.trim() : '',
-                    date: cells[8] ? cells[8].innerText.trim() : '',
-                    message: cells[9] ? cells[9].innerText.trim() : '',
+                    dob: cells[6] ? cells[6].innerText.trim() : '',
+                    date: cells[7] ? cells[7].innerText.trim() : '',
+                    message: cells[8] ? cells[8].innerText.trim() : '',
                     location: tr.dataset.location || 'Not Specified'
                 };
 
@@ -1826,7 +1823,6 @@
                     html += makeField('address', 'Address', data.address, true, false);
                     html += makeField('dob', 'Date of Birth', data.dob, false, false);
                     html += makeField('date', 'Appointment Date', data.date, false, false);
-                    html += makeField('guardian', 'Guardian Info', data.guardian, true, false);
 
                     if (data.message && data.message !== '-' && data.message.trim() !== '') {
                         html += `
@@ -1852,7 +1848,7 @@
 
             function processRow(tr) {
                 var cells = tr.querySelectorAll('td');
-                if (cells.length >= 10) makeViewBtn(cells[9]);
+                if (cells.length >= 9) makeViewBtn(cells[8]);
             }
 
             var tbody = document.getElementById('appointments-tbody');

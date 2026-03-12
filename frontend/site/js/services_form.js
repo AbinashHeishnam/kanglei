@@ -7,7 +7,7 @@ export function initServiceForm(formId) {
     // No dynamic country codes anymore, fixed to +91 in HTML
 
     const phoneInput = form.querySelector('#phone-number');
-    const guardianPhoneInput = form.querySelector('#guardian-contact');
+    // guardian-contact field removed from UI — no longer queried
 
     // Strict Phone Validation Helper
     const attachPhoneValidation = (inputEl) => {
@@ -20,7 +20,7 @@ export function initServiceForm(formId) {
     };
 
     attachPhoneValidation(phoneInput);
-    attachPhoneValidation(guardianPhoneInput);
+    // guardianPhoneInput removed from UI — validation skipped
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -32,15 +32,15 @@ export function initServiceForm(formId) {
         const countryCode = '+91';
         const phoneNumber = document.getElementById('phone-number').value;
 
-        // Guardian components
-        const guardianPhoneNumber = document.getElementById('guardian-contact')?.value || '';
+        // Guardian fields removed from UI — always null
+        const guardianPhoneNumber = null;
 
         // Appointment Types
         const typeCheckboxes = form.querySelectorAll('input[name="appointment_type"]:checked');
         const appointmentTypes = Array.from(typeCheckboxes).map(cb => cb.value);
 
         // Custom Validation
-        if (!data.name || !phoneNumber || !data.guardian_name) {
+        if (!data.name || !phoneNumber) {
             showToast('Please fill in all required fields.', 'error');
             return;
         }
@@ -56,12 +56,6 @@ export function initServiceForm(formId) {
             return;
         }
 
-        // Guardian Validation (if provided)
-        if (guardianPhoneNumber && guardianPhoneNumber.length !== 10) {
-            showToast('Please enter a valid 10-digit guardian phone number.', 'error');
-            document.getElementById('guardian-contact').focus();
-            return;
-        }
 
         // Appointment Type Validation
         if (appointmentTypes.length === 0) {
@@ -70,7 +64,6 @@ export function initServiceForm(formId) {
         }
 
         const fullPhone = `${countryCode}${phoneNumber}`;
-        const fullGuardianPhone = guardianPhoneNumber ? `${countryCode}${guardianPhoneNumber}` : null;
 
         const btn = form.querySelector('button[type="submit"]');
         const originalText = btn.innerText;
@@ -86,8 +79,8 @@ export function initServiceForm(formId) {
                 message: data.message.trim() || null,
                 location: data.location, // MUST be Imphal or Thoubal
                 date_of_birth: data.date_of_birth || null,
-                guardian_name: data.guardian_name.trim() || null,
-                guardian_contact: fullGuardianPhone || null,
+                guardian_name: null,
+                guardian_contact: null,
                 appointment_type: appointmentTypes.length ? appointmentTypes : null
             };
 

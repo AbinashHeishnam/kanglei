@@ -33,6 +33,7 @@ class AppointmentOut(BaseModel):
     message: Optional[str]
     status: str
     created_at: datetime
+    deleted_at: Optional[datetime] = None
 
     location: BranchLocation
 

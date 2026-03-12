@@ -262,12 +262,7 @@ async function initDashboard() {
                     : '<span class="text-xs text-slate-400">-</span>'}
                     </div>
                 </td>
-                <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-sm">
-                   ${appt.guardian_name ? `
-                        <div class="font-medium text-slate-900 dark:text-white">${appt.guardian_name}</div>
-                        <div class="text-xs text-slate-500">${appt.guardian_contact || ''}</div>
-                   ` : '<span class="text-slate-400">-</span>'}
-                </td>
+
                 <td class="py-3 px-4 border-b border-slate-100 dark:border-slate-800 text-sm text-slate-500 whitespace-nowrap">
                     ${appt.date_of_birth || '-'}
                 </td>
@@ -487,7 +482,7 @@ async function initDashboard() {
             exportExcelBtn.disabled = true;
 
             try {
-                const headers = ['SL No.', 'Name', 'Phone', 'Address', 'Type', 'Guardian Details', 'DOB', 'Appointment Date', 'Message'];
+                const headers = ['SL No.', 'Name', 'Phone', 'Address', 'Type', 'DOB', 'Appointment Date', 'Message'];
                 const excelData = [headers];
 
                 currentlyFiltered.forEach((appt, index) => {
@@ -500,7 +495,6 @@ async function initDashboard() {
                         appt.phone || '',
                         appt.address || '',
                         typeStr,
-                        appt.guardian_name ? `${appt.guardian_name} (${appt.guardian_contact || ''})` : '',
                         appt.date_of_birth || '',
                         dateStr,
                         appt.message || ''
@@ -519,7 +513,6 @@ async function initDashboard() {
                     { wch: 15 }, // Phone
                     { wch: 30 }, // Address
                     { wch: 15 }, // Type
-                    { wch: 25 }, // Guardian
                     { wch: 12 }, // DOB
                     { wch: 18 }, // Appt Date
                     { wch: 40 }  // Message
