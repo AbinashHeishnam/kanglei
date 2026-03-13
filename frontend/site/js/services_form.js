@@ -4,23 +4,20 @@ export function initServiceForm(formId) {
     const form = document.getElementById(formId);
     if (!form) return;
 
-    // No dynamic country codes anymore, fixed to +91 in HTML
-
     const phoneInput = form.querySelector('#phone-number');
-    // guardian-contact field removed from UI — no longer queried
 
-    // Strict Phone Validation Helper
+    // Phone validation
     const attachPhoneValidation = (inputEl) => {
         if (!inputEl) return;
+
         inputEl.addEventListener('input', (e) => {
-            let val = e.target.value.replace(/\D/g, ''); // Remove non-digits
-            if (val.length > 10) val = val.slice(0, 10); // Max 10 digits
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length > 10) val = val.slice(0, 10);
             e.target.value = val;
         });
     };
 
     attachPhoneValidation(phoneInput);
-    // guardianPhoneInput removed from UI — validation skipped
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -28,18 +25,19 @@ export function initServiceForm(formId) {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        // Hardcode +91 as per new requirement
         const countryCode = '+91';
-        const phoneNumber = document.getElementById('phone-number').value;
+        const phoneNumber = phoneInput.value;
 
-        // Guardian fields removed from UI — always null
-        const guardianPhoneNumber = null;
+        const typeCheckboxes = form.querySelectorAll(
+            'input[name="appointment_type"]:checked'
+        );
 
-        // Appointment Types
-        const typeCheckboxes = form.querySelectorAll('input[name="appointment_type"]:checked');
         const appointmentTypes = Array.from(typeCheckboxes).map(cb => cb.value);
 
-        // Custom Validation
+        // ========================
+        // Validation
+        // ========================
+
         if (!data.name || !phoneNumber) {
             showToast('Please fill in all required fields.', 'error');
             return;
@@ -52,12 +50,10 @@ export function initServiceForm(formId) {
 
         if (phoneNumber.length !== 10) {
             showToast('Please enter a valid 10-digit phone number.', 'error');
-            document.getElementById('phone-number').focus();
+            phoneInput.focus();
             return;
         }
 
-
-        // Appointment Type Validation
         if (appointmentTypes.length === 0) {
             showToast('Please select at least one Appointment Type.', 'error');
             return;
@@ -67,67 +63,91 @@ export function initServiceForm(formId) {
 
         const btn = form.querySelector('button[type="submit"]');
         const originalText = btn.innerText;
+
         btn.disabled = true;
-        btn.innerHTML = `<svg class="animate-spin h-5 w-5 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+        btn.innerHTML = `
+        <svg class="animate-spin h-5 w-5 mx-auto text-white"
+        xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
+            <circle class="opacity-25"
+            cx="12" cy="12" r="10"
+            stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0
+            C5.373 0 0 5.373 0 12h4zm2
+            5.291A7.962 7.962 0 014
+            12H0c0 3.042 1.135 5.824
+            3 7.938l3-2.647z"></path>
+        </svg>
+        `;
 
         try {
+
             const payload = {
                 counseling_type: "General Counseling",
                 name: data.name.trim(),
-                phone: fullPhone.trim(),
-                address: data.address.trim() || null,
-                message: data.message.trim() || null,
-                location: data.location, // MUST be Imphal or Thoubal
+                phone: fullPhone,
+                address: data.address ? data.address.trim() : null,
+                message: data.message ? data.message.trim() : null,
+                location: data.location,
                 date_of_birth: data.date_of_birth || null,
-                guardian_name: null,
-                guardian_contact: null,
-                appointment_type: appointmentTypes.length ? appointmentTypes : null
+
+                // Removed fields (backend still supports them)
+                guardian_name: "",
+                guardian_contact: "",
+
+                appointment_type: appointmentTypes
             };
 
-            const res = await fetch("/api/v1/appointments", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!res.ok) {
-                const errorData = await res.json();
-                console.error(errorData);
-                alert(errorData.detail || "Submission failed");
-                return;
-            }
+            // ✅ Use API wrapper instead of fetch
+            await apiPost("/appointments", payload, false);
 
             showToast('Appointment requested successfully!', 'success');
+
             form.reset();
 
         } catch (err) {
+
             console.error('Appointment submit error:', err);
-            alert('Failed to request appointment. Try again.');
+
+            showToast(
+                err.message || 'Submission failed',
+                'error'
+            );
+
         } finally {
+
             btn.disabled = false;
             btn.innerText = originalText;
+
         }
     });
 
-    // Animate inputs
+    // ========================
+    // Input animation
+    // ========================
+
     const inputs = form.querySelectorAll('input, select, textarea');
+
     inputs.forEach(input => {
-        // if (input.id === 'country-code' || input.id === 'guardian-country-code') return;
-        // Since we removed the IDs, this check is less necessary but good to clean up if IDs completely gone from DOM
-        // Actually, we replaced them with DIVs so they are not inputs anymore, so this selector wont pick them.
 
         input.addEventListener('focus', () => {
-            input.parentElement.classList.add('transition-transform', 'duration-200');
+            input.parentElement.classList.add(
+                'transition-transform',
+                'duration-200'
+            );
+
             if (!input.parentElement.classList.contains('gap-2')) {
                 input.parentElement.classList.add('scale-[1.02]');
             }
         });
+
         input.addEventListener('blur', () => {
             if (!input.parentElement.classList.contains('gap-2')) {
                 input.parentElement.classList.remove('scale-[1.02]');
             }
         });
+
     });
 }
