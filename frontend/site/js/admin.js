@@ -719,7 +719,7 @@ function initGallery() {
                 fileName.textContent = file.name;
 
                 // Show Size
-                const distinctSize = file.size < 1024 * 1024
+                const distinctSize = file.size < 5 * 1024 * 1024
                     ? `${(file.size / 1024).toFixed(1)} KB`
                     : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
                 if (sizeEl) sizeEl.textContent = distinctSize;
