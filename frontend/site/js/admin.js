@@ -163,6 +163,15 @@ async function initDashboard() {
         });
     }
 
+    const TYPE_LABELS = {
+        admission: "Admission",
+        counseling: "Counseling",
+        psychometric_test: "Psychometric Test",
+        group_discussion: "Group Discussion",
+        personality_development: "Personality Development Class",
+        interview_class: "Interview Class"
+    };
+
     // Render Function (Client-side filtering)
     const renderTable = () => {
         // 1. Filter
@@ -256,7 +265,7 @@ async function initDashboard() {
                 <td>
                     <div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start">
                         ${(appt.appointment_type && appt.appointment_type.length)
-                    ? appt.appointment_type.map(t => `<span class="appt-type-badge">${t}</span>`).join('')
+                    ? appt.appointment_type.map(t => `<span class="appt-type-badge">${TYPE_LABELS[t] || t}</span>`).join('')
                     : '<span style="color:#d1d5db;font-size:12px">—</span>'}
                     </div>
                 </td>
@@ -480,7 +489,7 @@ async function initDashboard() {
                 const excelData = [headers];
 
                 currentlyFiltered.forEach((appt, index) => {
-                    const typeStr = Array.isArray(appt.appointment_type) ? appt.appointment_type.join('; ') : (appt.appointment_type || '-');
+                    const typeStr = Array.isArray(appt.appointment_type) ? appt.appointment_type.map(t => TYPE_LABELS[t] || t).join('; ') : (appt.appointment_type || '-');
                     const dateStr = new Date(appt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
                     const row = [
