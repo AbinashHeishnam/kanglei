@@ -261,9 +261,9 @@
 
         /* ===== HERO ===== */
         .hero-section {
-            padding: 56px 20px 48px;
+            padding: 64px 24px 56px;
             text-align: center;
-            max-width: 760px;
+            max-width: 860px;
             margin: 0 auto;
         }
 
@@ -291,12 +291,12 @@
         }
 
         .hero-title {
-            font-size: clamp(28px, 5vw, 46px);
+            font-size: clamp(30px, 5vw, 52px);
             font-weight: 800;
             color: #0a1628;
-            line-height: 1.15;
-            letter-spacing: -0.03em;
-            margin-bottom: 16px;
+            line-height: 1.12;
+            letter-spacing: -0.035em;
+            margin-bottom: 20px;
         }
 
         .hero-title .highlight {
@@ -308,10 +308,10 @@
         }
 
         .hero-sub {
-            font-size: 16px;
-            line-height: 1.7;
-            color: #5a6478;
-            max-width: 580px;
+            font-size: 16.5px;
+            line-height: 1.8;
+            color: #4b5670;
+            max-width: 680px;
             margin: 0 auto;
         }
 
@@ -382,16 +382,16 @@
 
         /* ===== SECTION WRAPPER ===== */
         .section-wrap {
-            max-width: 1060px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
         }
 
         .section-head {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 28px;
+            margin-bottom: 36px;
         }
 
         .section-head.centered {
@@ -414,18 +414,20 @@
         }
 
         .section-label {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--emerald-mid);
+            margin-bottom: 4px;
         }
 
         .section-title {
-            font-size: clamp(20px, 3vw, 26px);
-            font-weight: 700;
+            font-size: clamp(22px, 3.2vw, 30px);
+            font-weight: 800;
             color: #0a1628;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
             margin: 4px 0 0;
         }
 
@@ -548,9 +550,9 @@
         }
 
         .mvv-text {
-            font-size: 13px;
-            color: #6b7280;
-            line-height: 1.65;
+            font-size: 14.5px;
+            color: #4b5563;
+            line-height: 1.75;
         }
 
         .mvv-list {
@@ -560,18 +562,19 @@
         }
 
         .mvv-list li {
-            font-size: 13px;
-            color: #6b7280;
-            padding: 5px 0;
+            font-size: 14.5px;
+            color: #4b5563;
+            padding: 6px 0;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            line-height: 1.6;
         }
 
         .mvv-list li::before {
             content: '';
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: var(--emerald-light);
             flex-shrink: 0;
@@ -1032,6 +1035,145 @@
         .mb-section {
             margin-bottom: 48px;
         }
+
+        /* ===== PREMIUM LEADERSHIP CARDS ===== */
+        .premium-leader-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 32px 24px;
+            border: 1px solid rgba(30, 58, 138, 0.08);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            .premium-leader-card {
+                flex-direction: row;
+                padding: 40px;
+                gap: 48px;
+            }
+        }
+
+        .premium-leader-card:hover {
+            box-shadow: 0 16px 48px rgba(30, 58, 138, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .premium-leader-img-wrap {
+            position: relative;
+            flex-shrink: 0;
+            width: 200px;
+            height: 250px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 12px 32px rgba(30, 58, 138, 0.15);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @media (min-width: 768px) {
+            .premium-leader-img-wrap {
+                width: 220px;
+                height: 275px;
+            }
+        }
+
+        .premium-leader-card:hover .premium-leader-img-wrap {
+            transform: scale(1.03);
+            box-shadow: 0 16px 40px rgba(30, 58, 138, 0.25);
+        }
+
+        .premium-leader-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .premium-leader-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.6) 100%);
+            border-radius: 18px;
+            pointer-events: none;
+        }
+
+        .premium-leader-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        @media (min-width: 768px) {
+            .premium-leader-info {
+                text-align: left;
+            }
+        }
+
+        .premium-leader-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0a1628;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+
+        @media (min-width: 768px) {
+            .premium-leader-name {
+                font-size: 28px;
+            }
+        }
+
+        .premium-leader-role {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--emerald-mid);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .premium-leader-divider {
+            width: 40px;
+            height: 4px;
+            background: var(--emerald-light);
+            border-radius: 4px;
+            margin: 0 auto 20px;
+        }
+
+        @media (min-width: 768px) {
+            .premium-leader-divider {
+                margin-left: 0;
+            }
+        }
+
+        .premium-leader-desc {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #4b5563;
+        }
+
+        @media (min-width: 768px) {
+            .premium-leader-desc {
+                font-size: 16px;
+            }
+        }
+
+        .premium-leader-desc p {
+            margin-bottom: 10px;
+        }
+
+        .premium-leader-desc p:last-child {
+            margin-bottom: 0;
+        }
+
+        .premium-leader-desc strong {
+            color: #1f2937;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -1092,9 +1234,13 @@
                 About <span class="highlight">Kanglei<br>Career Solution</span>
             </h1>
             <p class="hero-sub">
-                Guiding Manipur's students toward informed career choices since our founding. We are a team of dedicated
-                educators and counselors dealing with the complexities of modern education and professional pathways,
-                helping you build a future that resonates with your true potential.
+                With strong expertise in Management Career Guidance, we have successfully guided students for MBA & PGDM
+                programs at reputed institutions. We are proud to share that 100+ of our students are now placed in
+                corporate organizations with competitive salary packages.
+                Over the years, we have guided 5000+ students across diverse career paths, including MBBS, Nursing,
+                Medical & Allied Courses, Engineering, Architecture, Design, Journalism, Aviation, Agriculture,
+                Psychology, and more.
+                Our approach focuses on helping students make informed, confident, and future-ready career decisions.
             </p>
         </section>
 
@@ -1116,44 +1262,7 @@
             </div>
         </div>
 
-        <div class="section-divider"></div>
 
-        <!-- ===== OUR JOURNEY ===== -->
-        <div class="section-wrap journey-section reveal">
-            <div class="section-head centered">
-                <span class="section-label">History</span>
-                <h2 class="section-title">Our Journey</h2>
-            </div>
-
-            <div class="timeline-grid">
-                <div class="timeline-item">
-                    <span class="timeline-year">2017</span>
-                    <div class="timeline-title">Humble Beginnings</div>
-                    <p class="timeline-text">Started out small, laying the foundation for future growth and impact in
-                        career counseling.</p>
-                </div>
-                <div class="timeline-item">
-                    <span class="timeline-year" style="background: #7c3aed;">Growth Phase</span>
-                    <div class="timeline-title">Expansion</div>
-                    <p class="timeline-text">Expanded services to include scholarship guidance, competitive exam preps
-                        &amp; international admissions.</p>
-                </div>
-                <div class="timeline-item">
-                    <span class="timeline-year" style="background: #db2777;">Transformation</span>
-                    <div class="timeline-title">Going Digital</div>
-                    <p class="timeline-text">Launched online counseling and a comprehensive appointment booking system
-                        for accessibility.</p>
-                </div>
-                <div class="timeline-item">
-                    <span class="timeline-year">December 2025</span>
-                    <div class="timeline-title">New Milestone</div>
-                    <p class="timeline-text">Opened our offices in Imphal and Thoubal, strengthening our reach and
-                        services.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="section-divider"></div>
 
         <!-- ===== MISSION VISION VALUES ===== -->
         <div class="section-wrap mvv-section reveal">
@@ -1207,120 +1316,50 @@
             </div>
         </div>
 
-        <div class="section-divider"></div>
 
-        <!-- ===== WHAT WE DO ===== -->
-        <div class="section-wrap reveal">
-            <div class="whatwedo-section">
-                <div class="section-head centered" style="margin-bottom: 24px;">
-                    <span class="section-label">Services</span>
-                    <h2 class="section-title">What We Do</h2>
-                </div>
-                <div class="services-grid">
-                    <div class="service-pill">
-                        <div class="service-dot" style="background:#eff6ff;">
-                            <svg width="16" height="16" fill="none" stroke="#1e3a8a" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                        </div>
-                        <span class="service-name">Admissions Counselling</span>
-                    </div>
-                    <div class="service-pill">
-                        <div class="service-dot" style="background:#dbeafe;">
-                            <svg width="16" height="16" fill="none" stroke="#2563eb" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                        </div>
-                        <span class="service-name">Career Counselling</span>
-                    </div>
-                    <div class="service-pill">
-                        <div class="service-dot" style="background:#eff6ff;">
-                            <svg width="16" height="16" fill="none" stroke="#3b82f6" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
-                        </div>
-                        <span class="service-name">Psychometric Assessments</span>
-                    </div>
-                    <div class="service-pill">
-                        <div class="service-dot" style="background:#e0f2fe;">
-                            <svg width="16" height="16" fill="none" stroke="#0284c7" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <span class="service-name">Scholarships &amp; Financial Aid</span>
-                    </div>
-                    <div class="service-pill">
-                        <div class="service-dot" style="background:#dbeafe;">
-                            <svg width="16" height="16" fill="none" stroke="#1d4ed8" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <span class="service-name">Study Abroad Programs</span>
-                    </div>
-                    <div class="service-pill">
-                        <div class="service-dot" style="background:#eff6ff;">
-                            <svg width="16" height="16" fill="none" stroke="#60a5fa" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
-                        <span class="service-name">Soft Skills Development</span>
-                    </div>
-                    <div class="service-pill">
-                        <div class="service-dot" style="background:#dbeafe;">
-                            <svg width="16" height="16" fill="none" stroke="#2563eb" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                        </div>
-                        <span class="service-name">Competitive Exam Prep</span>
-                    </div>
-                    <div class="service-pill">
-                        <div class="service-dot" style="background:#e0f2fe;">
-                            <svg width="16" height="16" fill="none" stroke="#0369a1" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                            </svg>
-                        </div>
-                        <span class="service-name">Mock Tests &amp; Interviews</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section-divider"></div>
 
         <div class="section-wrap leadership-section reveal">
             <div class="section-head centered">
-                <span class="section-label">Founder & Director</span>
+                <span class="section-label">Our Team</span>
                 <h2 class="section-title">Meet Our Leadership</h2>
             </div>
 
-            <div
-                class="max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-12 shadow-xl border border-gray-100 dark:border-slate-800 flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                <div class="w-full md:w-1/3 flex justify-center mb-6 md:mb-0">
-                    <div
-                        class="relative w-48 h-48 sm:w-56 sm:h-56 rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl">
-                        <img src="img/dowson.jpg" alt="Takhelmayum Dowson Singh" class="w-full h-full object-cover">
+            <div style="display:flex; flex-direction:column; gap:36px; max-width:56rem; margin:0 auto;">
+
+                <!-- Card 1: Dowson Singh -->
+                <div class="premium-leader-card">
+                    <div class="premium-leader-img-wrap">
+                        <img src="img/dowson.jpg" alt="Takhelmayum Dowson Singh">
+                        <div class="premium-leader-overlay"></div>
+                    </div>
+                    <div class="premium-leader-info">
+                        <h3 class="premium-leader-name">Takhelmayum Dowson Singh</h3>
+                        <p class="premium-leader-role">Admission Counsellor</p>
+                        <div class="premium-leader-divider"></div>
+                        <div class="premium-leader-desc">
+                            <p><strong>MA Sociology</strong> from Annamalai University, Tamilnadu</p>
+                            <p>More than <strong>10 years</strong> of experience in Admission Counselling.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="w-full md:w-2/3 text-center md:text-left">
-                    <h3 class="text-2xl sm:text-3xl font-black text-black dark:text-white mb-2">Takhelmayum Dowson
-                        Singh</h3>
-                    <p class="text-blue-600 font-semibold text-lg mb-4">Admission Counsellor</p>
-                    <div class="w-16 h-1 bg-[var(--em-mid)] mx-auto md:mx-0 mb-6 rounded-full"></div>
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4 text-[15px] sm:text-[16px]">
-                        <strong>MA Sociology</strong> from Annamalai University, Tamilnadu
-                    </p>
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-[15px] sm:text-[16px]">
-                        More than <strong>10 years</strong> of experience in Admission Counselling.
-                    </p>
+
+                <!-- Card 2: Martina Moirangthem -->
+                <div class="premium-leader-card">
+                    <div class="premium-leader-img-wrap">
+                        <img src="img/martina.jpg" alt="Martina Moirangthem">
+                        <div class="premium-leader-overlay"></div>
+                    </div>
+                    <div class="premium-leader-info">
+                        <h3 class="premium-leader-name">Martina Moirangthem</h3>
+                        <p class="premium-leader-role">Counselling Psychologist</p>
+                        <div class="premium-leader-divider"></div>
+                        <div class="premium-leader-desc">
+                            <p><strong>MA Psychology</strong> (Specialization in Clinical Psychology)</p>
+                            <p><strong>UGC-NET</strong> qualified.</p>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
 
