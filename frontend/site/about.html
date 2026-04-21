@@ -1174,6 +1174,110 @@
             color: #1f2937;
             font-weight: 600;
         }
+
+        /* ===== DINESH MODAL SETTINGS ===== */
+        #dinesh-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .dinesh-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .dinesh-modal-content {
+            background: var(--white);
+            padding: 36px 32px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        /* HOVER TRIGGER (Desktop via JS) */
+        .dinesh-modal.js-hover-active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dinesh-modal.js-hover-active .dinesh-modal-content {
+            transform: translateY(0);
+        }
+
+        /* CLICK TRIGGER (Mobile via JS) */
+        .dinesh-modal.js-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .dinesh-modal.js-active .dinesh-modal-content {
+            transform: translateY(0);
+        }
+
+        .dinesh-view-more {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 10px 24px;
+            background: var(--emerald);
+            color: var(--white) !important;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .dinesh-view-more:hover {
+            opacity: 0.9;
+        }
+
+        @media (min-width: 1024px) {
+            .dinesh-view-more {
+                display: none;
+            }
+        }
+
+        .dinesh-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #4b5563;
+            z-index: 10;
+        }
+
+        @media (min-width: 1024px) {
+            .dinesh-close-btn {
+                display: none;
+            }
+        }
     </style>
 </head>
 
@@ -1326,7 +1430,30 @@
 
             <div style="display:flex; flex-direction:column; gap:36px; max-width:56rem; margin:0 auto;">
 
-                <!-- Card 1: Dowson Singh -->
+                <!-- Card 1: Athokpam Dinesh Singh -->
+                <div id="dinesh-wrapper">
+                    <div class="premium-leader-card">
+                        <div class="premium-leader-img-wrap">
+                            <img src="img/dinesh.jpg" alt="Athokpam Dinesh Singh">
+                            <div class="premium-leader-overlay"></div>
+                        </div>
+                        <div class="premium-leader-info">
+                            <h3 class="premium-leader-name">Athokpam Dinesh Singh</h3>
+                            <p class="premium-leader-role">Career Counselling & Academic Planning</p>
+                            <div class="premium-leader-divider"></div>
+                            <div class="premium-leader-desc">
+                                <p><strong>MBA &amp; Higher Education Guidance</strong></p>
+                                <p><strong>Student Mentorship &amp; Skill Development</strong></p>
+                                <p><strong>Admission Strategy &amp; Decision Support</strong></p>
+                            </div>
+                            <button class="dinesh-view-more" onclick="openDineshModal(event)">View More</button>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <!-- Card 2: Dowson Singh -->
                 <div class="premium-leader-card">
                     <div class="premium-leader-img-wrap">
                         <img src="img/dowson.jpg" alt="Takhelmayum Dowson Singh">
@@ -1470,10 +1597,73 @@
 
     <script src="js/reveal.js"></script>
     <script type="module" src="js/app.js"></script>
+    <!-- Dinesh Modal Popup -->
+    <div class="dinesh-modal" id="dinesh-modal">
+        <div class="dinesh-modal-content">
+            <button class="dinesh-close-btn" onclick="closeDineshModal(event)">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h3 class="premium-leader-name" style="margin-bottom: 8px;">Athokpam Dinesh Singh</h3>
+            <p class="premium-leader-role" style="color: var(--emerald); font-weight: 700; margin-bottom: 20px;">
+                Academic
+                Counsellor | Career Guidance Expert</p>
+
+            <div class="premium-leader-desc" style="color: #4b5563; font-size: 15px; text-align: left;">
+                <p style="margin-bottom: 12px;">Athokpam Dinesh Singh is a highly experienced Academic
+                    Counsellor with over 13+ years of expertise in student guidance, career counselling,
+                    and academic advisory.</p>
+                <p style="margin-bottom: 12px;">He holds an MBA in Marketing &amp; Finance (2012) and
+                    has worked with reputed institutions across the Northeast. He began his professional
+                    journey with Triumphant Institute of Management Education (T.I.M.E.), Guwahati,
+                    where he was actively involved in delivering student training under a North Eastern
+                    Council (NEC) sponsored programme.</p>
+                <p style="margin-bottom: 12px;">He further served at The Assam Royal Global University,
+                    Guwahati for 10 years as a Counsellor-cum-Manager, leading counselling operations
+                    and managing student outreach for the entire Manipur region.</p>
+                <p style="margin-bottom: 8px; font-weight: bold;">With deep industry insight and a
+                    student-centric approach, he specializes in:</p>
+                <ul style="list-style: disc; margin-left: 20px; margin-bottom: 16px;">
+                    <li>Career Counselling &amp; Academic Planning</li>
+                    <li>MBA &amp; Higher Education Guidance</li>
+                    <li>Student Mentorship &amp; Skill Development</li>
+                    <li>Admission Strategy &amp; Decision Support</li>
+                </ul>
+                <p style="margin-bottom: 0;">He is committed to empowering students with the right
+                    direction, helping them make informed career choices and achieve long-term success.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('year').textContent = new Date().getFullYear();
+
+            // Dinesh Modal Hover Logic (Desktop)
+            const dineshWrapper = document.getElementById('dinesh-wrapper');
+            const dineshModal = document.getElementById('dinesh-modal');
+
+            if (dineshWrapper && dineshModal) {
+                dineshWrapper.addEventListener('mouseenter', () => {
+                    if (window.innerWidth >= 1024) dineshModal.classList.add('js-hover-active');
+                });
+                dineshWrapper.addEventListener('mouseleave', () => {
+                    if (window.innerWidth >= 1024) dineshModal.classList.remove('js-hover-active');
+                });
+            }
         });
+
+        // Dinesh Modal Click Logic (Mobile)
+        function openDineshModal(e) {
+            if (e) e.preventDefault();
+            document.getElementById('dinesh-modal').classList.add('js-active');
+        }
+        function closeDineshModal(e) {
+            if (e) e.preventDefault();
+            document.getElementById('dinesh-modal').classList.remove('js-active');
+        }
     </script>
 </body>
 
