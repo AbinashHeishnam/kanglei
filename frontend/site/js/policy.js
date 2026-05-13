@@ -1,5 +1,6 @@
 /**
  * Policy Modal System for Kanglei Career Solution
+ * Version: 1.1.0
  * Handles Terms of Use and Privacy & Refund Policy
  */
 
