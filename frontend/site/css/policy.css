@@ -120,6 +120,8 @@
     display: flex;
     gap: 16px;
     margin: 8px 0;
+    position: relative;
+    z-index: 100;
 }
 
 .sf-policy-links a {
