@@ -53,6 +53,8 @@ const policies = {
 };
 
 export function initPolicies() {
+    console.log("KCS Policy System: Initializing...");
+
     // 1. Create Modal Container if it doesn't exist
     if (!document.getElementById('policy-modal')) {
         const modal = document.createElement('div');
@@ -62,7 +64,7 @@ export function initPolicies() {
             <div class="policy-modal-container">
                 <div class="policy-modal-header">
                     <h2 id="policy-modal-title">Policy</h2>
-                    <button id="policy-modal-close" class="policy-close-btn">
+                    <button id="policy-modal-close" class="policy-close-btn" aria-label="Close modal">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -87,20 +89,30 @@ export function initPolicies() {
             document.body.style.overflow = '';
         };
 
-        closeBtn.onclick = closeModal;
-        closeBottomBtn.onclick = closeModal;
+        if (closeBtn) closeBtn.onclick = closeModal;
+        if (closeBottomBtn) closeBottomBtn.onclick = closeModal;
         modal.onclick = (e) => {
             if (e.target === modal) closeModal();
         };
+
+        console.log("KCS Policy System: Modal container injected.");
     }
 
     const modal = document.getElementById('policy-modal');
     const titleEl = document.getElementById('policy-modal-title');
     const bodyEl = document.getElementById('policy-modal-body');
 
+    if (!modal || !titleEl || !bodyEl) {
+        console.error("KCS Policy System: Failed to find modal elements.");
+        return;
+    }
+
     const openPolicy = (type) => {
         const policy = policies[type];
-        if (!policy) return;
+        if (!policy) {
+            console.warn(`KCS Policy System: Policy type "${type}" not found.`);
+            return;
+        }
 
         titleEl.textContent = policy.title;
         bodyEl.innerHTML = policy.content;
@@ -109,21 +121,25 @@ export function initPolicies() {
         
         // Scroll to top of modal body
         bodyEl.scrollTop = 0;
+        console.log(`KCS Policy System: Opened ${type} policy.`);
     };
 
-    // 2. Bind to links
+    // 2. Bind to links using Event Delegation
     document.addEventListener('click', (e) => {
-        const termsLink = e.target.closest('#open-terms');
-        const privacyLink = e.target.closest('#open-privacy');
-        const termsLink2 = e.target.closest('#open-terms-alt'); // For about.html if needed
-        const privacyLink2 = e.target.closest('#open-privacy-alt');
+        const target = e.target;
+        
+        // Find closest link with our IDs
+        const termsLink = target.closest('#open-terms') || target.closest('#open-terms-alt');
+        const privacyLink = target.closest('#open-privacy') || target.closest('#open-privacy-alt');
 
-        if (termsLink || termsLink2) {
+        if (termsLink) {
             e.preventDefault();
             openPolicy('terms');
-        } else if (privacyLink || privacyLink2) {
+        } else if (privacyLink) {
             e.preventDefault();
             openPolicy('privacy');
         }
     });
+
+    console.log("KCS Policy System: Ready.");
 }
