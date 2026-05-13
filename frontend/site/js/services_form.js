@@ -61,12 +61,9 @@ export function initServiceForm(formId) {
 
         const policyAgree = form.querySelector('#policy-agree');
         if (policyAgree && !policyAgree.checked) {
-            console.warn("KCS Form: Submission blocked - Policy agreement not checked.");
             showToast('You must agree to the Terms and Privacy Policy to proceed.', 'error');
             policyAgree.focus();
             return;
-        } else if (!policyAgree) {
-            console.error("KCS Form: Policy checkbox element not found!");
         }
 
         const fullPhone = `${countryCode}${phoneNumber}`;

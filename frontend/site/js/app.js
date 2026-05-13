@@ -1,4 +1,4 @@
-import { initPolicies } from './legal.js';
+import { initPolicies } from './policy.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
