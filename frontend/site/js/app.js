@@ -1,9 +1,12 @@
+import { initPolicies } from './policy.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initNavbar();
     initScrollReveal();
     initPageLoader(); // New loader logic
     initPageTransitions(); // Intercept page jumps
+    initPolicies(); // Policy modals
 });
 
 // Theme Management with Smooth Transitions

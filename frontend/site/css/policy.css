@@ -1,0 +1,203 @@
+/* Policy Modal Styling */
+.policy-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.policy-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.policy-modal-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 650px;
+    max-height: 85vh;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.policy-modal-overlay.active .policy-modal-container {
+    transform: scale(1);
+}
+
+.policy-modal-header {
+    padding: 24px 32px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: none;
+}
+
+.policy-modal-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.policy-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.policy-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg);
+}
+
+.policy-modal-body {
+    padding: 32px;
+    overflow-y: auto;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #475569;
+}
+
+.policy-section p {
+    margin-bottom: 16px;
+}
+
+.policy-section p:last-child {
+    margin-bottom: 0;
+}
+
+.policy-modal-footer {
+    padding: 20px 32px;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    display: flex;
+    justify-content: flex-end;
+    background: #f8fafc;
+}
+
+.policy-btn-primary {
+    padding: 10px 24px;
+    background: #1e3a8a;
+    color: #ffffff;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.policy-btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+}
+
+/* Footer link styling */
+.sf-policy-links {
+    display: flex;
+    gap: 16px;
+    margin: 8px 0;
+}
+
+.sf-policy-links a {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.35);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.sf-policy-links a:hover {
+    color: #3b82f6;
+    text-decoration: underline;
+}
+
+/* Form Checkbox Styling */
+.policy-checkbox-group {
+    margin: 24px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.policy-checkbox-group:hover {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+}
+
+.policy-checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: #1e3a8a;
+}
+
+.policy-checkbox-group label {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #475569;
+    cursor: pointer;
+}
+
+.policy-checkbox-group label a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.policy-checkbox-group label a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .policy-modal-container {
+        max-height: 90vh;
+        border-radius: 20px;
+    }
+    
+    .policy-modal-header, .policy-modal-body, .policy-modal-footer {
+        padding: 20px;
+    }
+    
+    .sf-policy-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .policy-checkbox-group {
+        padding: 12px;
+    }
+
+    .policy-checkbox-group label {
+        font-size: 12.5px;
+    }
+}

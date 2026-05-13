@@ -59,6 +59,13 @@ export function initServiceForm(formId) {
             return;
         }
 
+        const policyAgree = form.querySelector('#policy-agree');
+        if (policyAgree && !policyAgree.checked) {
+            showToast('You must agree to the Terms and Privacy Policy to proceed.', 'error');
+            policyAgree.focus();
+            return;
+        }
+
         const fullPhone = `${countryCode}${phoneNumber}`;
 
         const btn = form.querySelector('button[type="submit"]');
