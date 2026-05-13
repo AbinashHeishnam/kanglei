@@ -54,6 +54,7 @@ const policies = {
 };
 
 export function initPolicies() {
+    console.log("Policy System Initialized");
     // 1. Create Modal Container if it doesn't exist
     if (!document.getElementById('policy-modal')) {
         const modal = document.createElement('div');
